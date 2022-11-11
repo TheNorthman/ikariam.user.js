@@ -7,7 +7,6 @@
 // @include		 http*s*.ikariam.*/*
 // @exclude		 http*support*.ikariam.*/*
 // @require	     https://code.jquery.com/jquery-1.12.4.min.js
-// @require      file:///C:\Projects\Private\Ikariam\user.js\tnt.Collection\tnt.Collection.user.js
 // @grant GM_addStyle
 // @grant GM_getValue
 // @grant GM_setValue
