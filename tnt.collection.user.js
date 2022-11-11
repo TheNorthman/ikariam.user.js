@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         TNT Collection Dev
+// @name         TNT Collection
 // @version      1.2
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
