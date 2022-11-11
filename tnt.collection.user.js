@@ -117,7 +117,7 @@ var tnt = {
             method: 'GET',
             headers: { 'Content-type': 'application/x-www-form-urlencoded' },
             onload: function (response) {
-                console.dir(response);
+                tnt.debug("dir", response);
                 if (response.responseText.split("&")[0].split("=")[1] != tnt.version) {
                     $("#tntOptionsLink").css("color", "darkred");
                     $("#tntColVersion").html(response.responseText.split("&")[0].split("=")[1]);
@@ -159,67 +159,67 @@ tnt.init();
 
 // General styles
 GM_addStyle("\
-        /* Show level styles */\
-        .tntLvl{\
-            position:relative;\
-            top:10px;\
-            left:10px;\
-            color:black;\
-            line-height:13px;\
-            background:gold;\
-            font-size:9px;\
-            font-weight:bold;\
-            text-align:center;\
-            vertical-align:middle;\
-            height: 14px;\
-            width: 14px;\
-            border-radius: 50%;\
-            border: 1px solid #000;\
-            display: inline-block;\
-        }\
-        .tnt_wood{\
-            top:19px;\
-            left:12px;\
-        }\
-        .tnt_marble{\
-            top:25px;\
-            left:30px;\
-        }\
-        .tnt_wine{\
-            top:15px;\
-            left:40px\
-        }\
-        .tnt_crystal{\
-            top:17px;\
-            left:18px;\
-        }\
-        .tnt_sulfur{\
-            top:20px;\
-            left:34px;\
-        }\
-        #mainview a:hover{\
-            text-decoration:none;\
-        }\
-        .tntHide,\
-            #infocontainer .tntLvl, #actioncontainer .tntLvl{\
-            display:none;\
-        }\
-        #tntOptions {\
-            position:absolute;\
-            top:40px;\
-            left:380px;\
-            width:620px;\
-            border:1px #755931 solid;\
-            border-top:none;\
-            background-color:#FEE8C3;\
-            background:#DBBE8C url(/skin/layout/bg_stone.jpg) repeat scroll center top;\
-            padding:10px 10px 0px 10px;\
-        }\
-        #tntOptions legend{\
-            font-weight:bold;\
-        }\
-        .txtCenter{\
-            text-align:center;\
-        }\
-    ");
+    /* Show level styles */\
+    .tntLvl{\
+        position:relative;\
+        top:10px;\
+        left:10px;\
+        color:black;\
+        line-height:13px;\
+        background:gold;\
+        font-size:9px;\
+        font-weight:bold;\
+        text-align:center;\
+        vertical-align:middle;\
+        height: 14px;\
+        width: 14px;\
+        border-radius: 50%;\
+        border: 1px solid #000;\
+        display: inline-block;\
+    }\
+    .tnt_wood{\
+        top:19px;\
+        left:12px;\
+    }\
+    .tnt_marble{\
+        top:25px;\
+        left:30px;\
+    }\
+    .tnt_wine{\
+        top:15px;\
+        left:40px\
+    }\
+    .tnt_crystal{\
+        top:17px;\
+        left:18px;\
+    }\
+    .tnt_sulfur{\
+        top:20px;\
+        left:34px;\
+    }\
+    #mainview a:hover{\
+        text-decoration:none;\
+    }\
+    .tntHide,\
+        #infocontainer .tntLvl, #actioncontainer .tntLvl{\
+        display:none;\
+    }\
+    #tntOptions {\
+        position:absolute;\
+        top:40px;\
+        left:380px;\
+        width:620px;\
+        border:1px #755931 solid;\
+        border-top:none;\
+        background-color:#FEE8C3;\
+        background:#DBBE8C url(/skin/layout/bg_stone.jpg) repeat scroll center top;\
+        padding:10px 10px 0px 10px;\
+    }\
+    #tntOptions legend{\
+        font-weight:bold;\
+    }\
+    .txtCenter{\
+        text-align:center;\
+    }\
+");
 // General styles - END
