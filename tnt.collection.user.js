@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.3
+// @version      1.3.1
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -410,7 +410,8 @@ var tnt = {
                 if (GM_getValue("version") != tnt.version) { tnt.core.options.setup(); }
 
                 /* Add option link, option box and eventlisteners */
-                $("#GF_toolbar ul").append('\
+                // $("#GF_toolbar ul").append('\
+                $('\
                     <li>\
                         <a id="tntOptionsLink" href="javascript:void(0);">TNT Options v' + tnt.version + '</a>\
                         <div id="tntOptions" class="tntBox" style="display:none;">\
@@ -446,7 +447,7 @@ var tnt = {
                             </div>\
                         </div>\
                     </li>\
-                ').attr('style', 'width:1200px;');
+                ').insertBefore('li.serverTime'); //.attr('style', 'width:1200px;');
 
                 // Open close option dialog
                 $("#tntOptionsLink").bind("click", function () {
