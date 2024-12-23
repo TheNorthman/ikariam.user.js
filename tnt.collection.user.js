@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.48
+// @version      1.4.49
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -852,13 +852,13 @@ GM_addStyle("\
         border-collapse:collapse;\
     }\
     .tnt_resource_table td{\
-        border:1px #755931 solid;\
-        padding:2px 5px 2px 5px;\
+        border:1pxrgb(0, 0, 0) solid;\
+        padding:2px 5px 2px 5px!important;\
         text-align:right;\
     }\
     .tnt_resource_table th{\
-        border:1px #755931 solid;\
-        padding:2px 5px 2px 5px;\
+        border:1pxrgb(0, 0, 0) solid;\
+        padding:2px 5px 2px 5px!important;\
         text-align:center;\
     }\
     .tnt_resource_icon{\
