@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.22
+// @version      1.4.23
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -743,6 +743,7 @@ var tnt = {
                 total.crystal += value.crystal;
                 total.sulfur += value.sulfur;
             });
+console.dir(total);
 
             tnt.data.storage.resources.total = total;
 
