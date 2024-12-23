@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.73
+// @version      1.4.74
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -723,13 +723,13 @@ var tnt = {
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
                         <th class="tnt_center tnt_bold">City</th>\
-                        ' + GM_getValue("cityShowPopulation") ? '<th class="tnt_center">Population</th>' : '' + '\
-                        ' + GM_getValue("cityShowCitizens") ? '<th class="tnt_center">Citizens</th>' : '' + '\
-                        ' + GM_getValue("cityShowResourcesWood") ? '<th class="tnt_center">' + tnt.resource.getIcon(0) + '</th>' : '' + '\
-                        ' + GM_getValue("cityShowResourcesWine") ? '<th class="tnt_center">' + tnt.resource.getIcon(1) + '</th>' : '' + '\
-                        ' + GM_getValue("cityShowResourcesMarble") ? '<th class="tnt_center">' + tnt.resource.getIcon(2) + '</th>' : '' + '\
-                        ' + GM_getValue("cityShowResourcesCrystal") ? '<th class="tnt_center">' + tnt.resource.getIcon(3) + '</th>' : '' + '\
-                        ' + GM_getValue("cityShowResourcesSulfur") ? '<th class="tnt_center">' + tnt.resource.getIcon(4) + '</th>' : '' + '\
+                        <th class="tnt_center"' + GM_getValue("cityShowPopulation") ? ' style="display:none;"' : '' + '>Population</th>\
+                        <th class="tnt_center"' + GM_getValue("cityShowCitizens") ? ' style="display:none;"' : '' + '>Citizens</th>\
+                        <th class="tnt_center"' + GM_getValue("cityShowResourcesWood") ? ' style="display:none;"' : '' + '>' + tnt.resource.getIcon(0) + '</th>\
+                        <th class="tnt_center"' + GM_getValue("cityShowResourcesWine") ? ' style="display:none;"' : '' + '>' + tnt.resource.getIcon(1) + '</th>\
+                        <th class="tnt_center"' + GM_getValue("cityShowResourcesMarble") ? ' style="display:none;"' : '' + '>' + tnt.resource.getIcon(2) + '</th>\
+                        <th class="tnt_center"' + GM_getValue("cityShowResourcesCrystal") ? ' style="display:none;"' : '' + '>' + tnt.resource.getIcon(3) + '</th>\
+                        <th class="tnt_center"' + GM_getValue("cityShowResourcesSulfur") ? ' style="display:none;"' : '' + '>' + tnt.resource.getIcon(4) + '</th>\
                     </tr>';
 
                 // Add city rows
