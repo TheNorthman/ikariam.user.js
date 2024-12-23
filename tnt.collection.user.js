@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.58
+// @version      1.4.59
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -702,11 +702,11 @@ var tnt = {
                         <td class="tnt_city">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + (value.hasConstruction ? ' *' : '') + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + (tnt.resource.checkMax(value) ? ' storage_danger' : '') + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
-                        <td class="tnt_wine' + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
-                        <td class="tnt_marble' + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
-                        <td class="tnt_crystal' + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
-                        <td class="tnt_sulfur' + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.sulfur.toLocaleString() + '</td>\
+                        <td class="tnt_wood' + tnt.resource.checkMax(value) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wine' + tnt.resource.checkMax(value) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
+                        <td class="tnt_marble' + tnt.resource.checkMax(value) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
+                        <td class="tnt_crystal' + tnt.resource.checkMax(value) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
+                        <td class="tnt_sulfur' + tnt.resource.checkMax(value) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.sulfur.toLocaleString() + '</td>\
                     </tr>';
                 });
 
@@ -728,33 +728,33 @@ var tnt = {
             }
         },
 
-        checkMax: function (city) {
+        checkMinMax: function (city) {
             if (GM_getValue("cityShowResources")) {
                 // var city = tnt.data.storage.resources.city[cityID];
                 var max = city.max;
                 switch (city.producedTradegood) {
                     case 1:
                         // Wine
-                        if (city.wine > (max*.8)) {
-                            return true;
+                        if (city.wine > (max*.8) || city.wine < 100000) {
+                            return ' storage_danger';
                         }
                         break;
                     case 2:
                         // Marble
-                        if (city.marble > (max*.8)) {
-                            return true;
+                        if (city.marble > (max*.8) || city.marble < 100000) {
+                            return ' storage_danger';
                         }
                         break;
                     case 3:
                         // Crystal
-                        if (city.crystal > (max*.8)) {
-                            return true;
+                        if (city.crystal > (max*.8) || city.crystal < 100000) {
+                            return ' storage_danger';
                         }
                         break;
                     case 4:
                         // Sulfur
-                        if (city.sulfur > (max*.8)) {
-                            return true;
+                        if (city.sulfur > (max*.8) || city.sulfur < 100000) {
+                            return ' storage_danger';
                         }
                         break;
                 }
