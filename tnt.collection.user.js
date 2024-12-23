@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.26
+// @version      1.4.27
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -740,7 +740,6 @@ var tnt = {
                 total.crystal += value.crystal;
                 total.sulfur += value.sulfur;
             });
-console.dir(total);
 
             tnt.data.storage.resources.total = total;
 
@@ -831,8 +830,8 @@ console.dir(total);
             sulfur: function () { return ikariam.model.currentResources[4]; }
         },
         actionPoints: function () { return $("#value_maxActionPoints").text(); },
-        population: function () { return parseInt(ikariam.model.currentResources.population); },
-        citizens: function () { return parseInt(ikariam.model.currentResources.citizens); },
+        population: function () { return ikariam.model.currentResources.population; },
+        citizens: function () { return ikariam.model.currentResources.citizens; },
         cityList: function () {
             get.tmp = { cityList: {} };
             $("#citySelect option").each(function () {
