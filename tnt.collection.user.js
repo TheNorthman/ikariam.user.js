@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.43
+// @version      1.4.44
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -773,11 +773,11 @@ var tnt = {
                         <td class="tnt_city">' + tnt.resource.getIcon(tnt.data.storage.resources.city[cityID].producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
-                        <td class="tnt_wine' + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
-                        <td class="tnt_marble' + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
-                        <td class="tnt_crystal' + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
-                        <td class="tnt_sulfur">' + value.sulfur.toLocaleString() + '</td>\
+                        <td class="tnt_wood' + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wine' + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
+                        <td class="tnt_marble' + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
+                        <td class="tnt_crystal' + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
+                        <td class="tnt_sulfur' + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.sulfur.toLocaleString() + '</td>\
                     </tr>';
                 });
 
