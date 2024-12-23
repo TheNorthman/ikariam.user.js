@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.40
+// @version      1.4.41
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -193,9 +193,6 @@ var tnt = {
             // Do ALL the items that needs to be done on every page
             tnt.all();
 
-            // Init cooperation with IkaTweaks
-            tnt.core.ikaTweaks.init();
-
             // Do the items regarding the current page
             switch ($("body").attr("id")) {
                 case "island": tnt.island(); break;
@@ -276,6 +273,9 @@ var tnt = {
             init: function () {
                 // Merge storage
                 tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
+                var ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_"));
+                tnt.data.ikaTweaks = ikaTweaks ? ikaTweaks : {};
+                console.dir(tnt.data.ikaTweaks);
             },
 
             get: function (group, name) {
