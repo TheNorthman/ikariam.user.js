@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.14
+// @version      1.4.15
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -767,6 +767,8 @@ var tnt = {
                 var table = '<table border="1" cellpadding="2">\
                     <tr>\
                         <th>City</th>\
+                        <th>Population</th>\
+                        <th>Citizens</th>\
                         <th><img src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
                         <th><img src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
                         <th><img src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
@@ -777,6 +779,8 @@ var tnt = {
                 $.each(tnt.data.storage.resources.city, function (index, value) {
                     table += '<tr>\
                         <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
+                        <td> class="tnt_population">' + value.population + '</td>\
+                        <td class="tnt_citizens">' + value.citizens + '</td>\
                         <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
                         <td class="tnt_wine">' + value.wine.toLocaleString() + '</td>\
                         <td class="tnt_marble">' + value.marble.toLocaleString() + '</td>\
