@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.59
+// @version      1.4.60
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -702,11 +702,11 @@ var tnt = {
                         <td class="tnt_city">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + (value.hasConstruction ? ' *' : '') + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + tnt.resource.checkMax(value) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
-                        <td class="tnt_wine' + tnt.resource.checkMax(value) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
-                        <td class="tnt_marble' + tnt.resource.checkMax(value) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
-                        <td class="tnt_crystal' + tnt.resource.checkMax(value) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
-                        <td class="tnt_sulfur' + tnt.resource.checkMax(value) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.sulfur.toLocaleString() + '</td>\
+                        <td class="tnt_wood' + tnt.resource.checkMinMax(value) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wine' + tnt.resource.checkMinMax(value) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
+                        <td class="tnt_marble' + tnt.resource.checkMinMax(value) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
+                        <td class="tnt_crystal' + tnt.resource.checkMinMax(value) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
+                        <td class="tnt_sulfur' + tnt.resource.checkMinMax(value) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.sulfur.toLocaleString() + '</td>\
                     </tr>';
                 });
 
