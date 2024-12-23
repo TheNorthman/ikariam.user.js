@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.47
+// @version      1.4.48
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -681,7 +681,7 @@ var tnt = {
             if (GM_getValue("cityShowResources")) {
                 $('body').append(tnt.template.resources);
 
-                var table = '<table border="1" cellpadding="2">\
+                var table = '<table id="tnt_resource_table">\
                     <tr>\
                         <th class="tnt_center tnt_bold">City</th>\
                         <th class="tnt_center">Population</th>\
@@ -847,6 +847,19 @@ GM_addStyle("\
     }\
     .tnt_bold{\
         font-weight:bold;\
+    }\
+    .tnt_resource_table{\
+        border-collapse:collapse;\
+    }\
+    .tnt_resource_table td{\
+        border:1px #755931 solid;\
+        padding:2px 5px 2px 5px;\
+        text-align:right;\
+    }\
+    .tnt_resource_table th{\
+        border:1px #755931 solid;\
+        padding:2px 5px 2px 5px;\
+        text-align:center;\
     }\
     .tnt_resource_icon{\
         vertical-align:middle;\
