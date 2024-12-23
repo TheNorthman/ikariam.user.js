@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.54
+// @version      1.4.55
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -730,7 +730,7 @@ var tnt = {
 
         checkMax: function (cityID) {
             if (GM_getValue("cityShowResources")) {
-                var max = tnt.data.resources[cityID].max;
+                var max = tnt.data.storage.resources[cityID].max;
                 switch (tnt.data.resources[cityID].producedTradegood) {
                     case 1:
                         // Wine
