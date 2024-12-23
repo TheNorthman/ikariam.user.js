@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.2
+// @version      1.4.3
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -767,7 +767,7 @@ var tnt = {
 
             $.each(tnt.data.storage.resources.city, function (index, value) {
                 table += '<tr>\
-                    <td class="tnt_city">' + index + '</td>\
+                    <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
                     <td class="tnt_wood">' + value.wood + '</td>\
                     <td class="tnt_wine">' + value.wine + '</td>\
                     <td class="tnt_marble">' + value.marble + '</td>\
@@ -796,7 +796,13 @@ var tnt = {
         playerId: function () { return $.cookie("ikariam").split("_")[0]; },
         islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
         cityId: function () { return bgViewData.currentCityId }, //$("#citySelect option:selected").attr("value").replace(/[^\d-]+/g, ""); },
-        cityName: function () { return $("#citySelect option:selected").text().split("] ")[1]; }, /* TODO: Need to change this to handle pages where the coordinates aren't shown. */
+        cityName: function (id) {
+            if (id) {
+                return ikariam.model.relatedCityData[id].name;
+            } else {
+                return $("#citySelect option:selected").text().split("] ")[1];
+            }
+        },
         tradeShips: {
             free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; },
             all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
