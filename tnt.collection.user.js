@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.31
+// @version      1.4.32
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -710,6 +710,7 @@ var tnt = {
     resource: {
         update: function () {
             tnt.data.storage.resources.city[tnt.get.cityId()] = {
+                producedTradegood: parseInt(tnt.get.producedTradegood()),
                 population: tnt.get.population(),
                 citizens: tnt.get.citizens(),
                 max: ikariam.model.maxResources.resource,
@@ -832,6 +833,9 @@ var tnt = {
         actionPoints: function () { return $("#value_maxActionPoints").text(); },
         population: function () { return ikariam.model.currentResources.population; },
         citizens: function () { return ikariam.model.currentResources.citizens; },
+        producedTradegood: function () { return ikariam.model.producedTradegood; },
+
+
         cityList: function () {
             get.tmp = { cityList: {} };
             $("#citySelect option").each(function () {
