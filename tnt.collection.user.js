@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.3
+// @version      1.4.4
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -798,7 +798,7 @@ var tnt = {
         cityId: function () { return bgViewData.currentCityId }, //$("#citySelect option:selected").attr("value").replace(/[^\d-]+/g, ""); },
         cityName: function (id) {
             if (id) {
-                return ikariam.model.relatedCityData[id].name;
+                return ikariam.model.relatedCityData["city_" + id].name;
             } else {
                 return $("#citySelect option:selected").text().split("] ")[1];
             }
