@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.5
+// @version      1.4.6
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -758,16 +758,16 @@ var tnt = {
             var table = '<table border="1" cellpadding="2">\
                 <tr>\
                     <th>City:</th>\
-                    <th><img src="/cdn/all/both/resources/icon_wood.png" width="32" height="26"> Wood:</th>\
-                    <th><img src="/cdn/all/both/resources/icon_wine.png" width="32" height="26"> Wine:</th>\
-                    <th><img src="/cdn/all/both/resources/icon_marble.png" width="32" height="26"> Marble:</th>\
-                    <th><img src="/cdn/all/both/resources/icon_crystal.png" width="32" height="26"> Crystal:</th>\
-                    <th><img src="/cdn/all/both/resources/icon_sulfur.png" width="32" height="26"> Sulfur:</th>\
+                    <th><img src="/cdn/all/both/resources/icon_wood.png" width="32" height="26"> <strong>Wood</strong></th>\
+                    <th><img src="/cdn/all/both/resources/icon_wine.png" width="32" height="26"> <strong>Wine</strong></th>\
+                    <th><img src="/cdn/all/both/resources/icon_marble.png" width="32" height="26"> <strong>Marble</strong></th>\
+                    <th><img src="/cdn/all/both/resources/icon_crystal.png" width="32" height="26"> <strong>Crystal</strong></th>\
+                    <th><img src="/cdn/all/both/resources/icon_sulfur.png" width="32" height="26"> <strong>Sulfur</strong></th>\
                 </tr>';
 
             $.each(tnt.data.storage.resources.city, function (index, value) {
                 table += '<tr>\
-                    <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
+                    <td class="tnt_city"><strong>' + tnt.get.cityName(index) + '</strong></td>\
                     <td class="tnt_wood">' + value.wood + '</td>\
                     <td class="tnt_wine">' + value.wine + '</td>\
                     <td class="tnt_marble">' + value.marble + '</td>\
@@ -778,12 +778,12 @@ var tnt = {
 
             // Add total row
             table += '<tr>\
-                <td class="tnt_total">Total</td>\
-                <td class="tnt_wood">' + tnt.data.storage.resources.total.wood + '</td>\
-                <td class="tnt_wine">' + tnt.data.storage.resources.total.wine + '</td>\
-                <td class="tnt_marble">' + tnt.data.storage.resources.total.marble + '</td>\
-                <td class="tnt_crystal">' + tnt.data.storage.resources.total.crystal + '</td>\
-                <td class="tnt_sulfur">' + tnt.data.storage.resources.total.sulfur + '</td>\
+                <td class="tnt_total"><strong>Total</strong></td>\
+                <td class="tnt_wood"><strong>' + tnt.data.storage.resources.total.wood + '</strong></td>\
+                <td class="tnt_wine"><strong>' + tnt.data.storage.resources.total.wine + '</strong></td>\
+                <td class="tnt_marble"><strong>' + tnt.data.storage.resources.total.marble + '</strong></td>\
+                <td class="tnt_crystal"><strong>' + tnt.data.storage.resources.total.crystal + '</strong></td>\
+                <td class="tnt_sulfur"><strong>' + tnt.data.storage.resources.total.sulfur + '</strong></td>\
             </tr>';
 
             table += '</table>';
