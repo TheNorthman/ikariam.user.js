@@ -1,9 +1,10 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.3.1
+// @version      1.4.0
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
+// @license      MIT
 // @include		 http*s*.ikariam.*/*
 // @exclude		 http*support*.ikariam.*/*
 // @require	     https://code.jquery.com/jquery-1.12.4.min.js
@@ -12,11 +13,83 @@
 // @grant GM_getValue
 // @grant GM_setValue
 // @grant GM_xmlhttpRequest
+// @downloadURL https://update.greasyfork.org/scripts/521349/TNT%20Collection.user.js
+// @updateURL https://update.greasyfork.org/scripts/521349/TNT%20Collection.meta.js
 // ==/UserScript==
 
 var ik = ikariam;
 var cc = ik.currentCity;
 // var re = cc.resources;
+
+// Select all units when pillaging
+function delay(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
+}
+
+// v3 (c) Yvonne P.
+function LocalStorageHandler(tag) {
+    var data = JSON.parse(localStorage.getItem(tag)) || {
+        storedKeys: {},
+    };
+    function unsetItem(k1) {
+        var s = {};
+        forEach(data.storedKeys, (_, k) => {
+            if (k1 !== k) {
+                s[k] = data.storedKeys[k];
+            }
+        });
+        if (data) {
+            data.storedKeys = s;
+        }
+        localStorage.setItem(tag, JSON.stringify(data));
+    }
+    function setItem(k) {
+        if (data) {
+            data.storedKeys[tag] = Date.now();
+            data.storedKeys[k] = Date.now();
+        }
+        localStorage.setItem(tag, JSON.stringify(data));
+    }
+    this.drop = function (key) {
+        key = tag + key;
+        localStorage.removeItem(key);
+        unsetItem(key);
+        return (typeof localStorage.getItem(key) == 'undefined');
+    };
+    this.save = function (key, val) {
+        key = tag + key;
+        localStorage.setItem(key, val);
+        setItem(key);
+        return (localStorage.getItem(key) == val);
+    };
+    this.load = function (key, dflt) {
+        key = tag + key;
+        var v = localStorage.getItem(key);
+        return (v !== null) ? v : dflt;
+    };
+    this.data = function () {
+        return JSON.parse(JSON.stringify(data));
+    };
+    this.clear = function (t) {
+        var b = true;
+        if (typeof t == 'string') {
+            var s = [t];
+            forEach(data.storedKeys, (_, k) => {
+                s.push(' "' + k + '"');
+            });
+            b = confirm(s.join("\n"));
+        }
+        if (b) {
+            forEach(data.storedKeys, (_, k) => {
+                localStorage.removeItem(k);
+            });
+            data = null;
+            return true;
+        }
+        return false;
+    };
+}
+const LS = new LocalStorageHandler('tnt_');
 
 var tnt = {
 
@@ -26,6 +99,11 @@ var tnt = {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
         updateUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/update.php",
         update: "http://lazy.rjj-net.dk/tnt/ikariam/hq/update"
+    },
+
+    console: {
+        log: console.log,
+        dir: console.dir
     },
 
     settings: {
@@ -68,8 +146,26 @@ var tnt = {
                 militaryAlert: false,
                 scientist: false,
                 diplomat: false
+            },
+            gold: 0,
+            resources: {
+                city: {},
+                wood: 0,
+                wine: 0,
+                marble: 0,
+                crystal: 0,
+                sulfur: 0,
             }
-        }
+        },
+
+        // gold: 0,
+        // resources: {
+        //     wood: 0,
+        //     wine: 0,
+        //     marble: 0,
+        //     crystal: 0,
+        //     sulfur: 0,
+        // }
     },
 
     sounds: {
@@ -92,10 +188,12 @@ var tnt = {
             // console.dir(tnt.data.test);
             // tnt.data.test.send("Hello");
             tnt.core.debug.log("TNT Collection v" + tnt.version + " - Init...");
-
-            // Storage
+            
+            // Init Storage as the first thing
             tnt.core.storage.init();
 
+            // Resource
+            tnt.resource.update();
 
             // Notification
             tnt.core.notification.init();
@@ -130,6 +228,7 @@ var tnt = {
             // tnt.test = $.JSON.parse(localStorage.getItem("tnt.test"));
             // tnt.test = $.parseJSON (data);
             // console.dir(tnt.test);
+
         },
 
         ajax: {
@@ -153,11 +252,11 @@ var tnt = {
         debug: {
 
             log: function (value, level = 1) {
-                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { console.log(value); }
+                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { tnt.console.log(value); }
             },
 
             dir: function (value, level = 1) {
-                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { console.dir(value); }
+                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { tnt.console.dir(value); }
             },
 
             timer: {
@@ -182,13 +281,20 @@ var tnt = {
                     return obj;
                 else
                     return tnt.core.utils.index(obj[is[0]], is.slice(1), value);
+            },
+
+            delay: function () {
+                return new Promise(resolve => setTimeout(resolve, time));
             }
         },
 
         storage: {
 
             init: function () {
-                tnt.data.storage = JSON.parse(GM_getValue("tntStorage", JSON.stringify(tnt.data.storage)));
+                // Merge storage
+                tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
+                console.dir(tnt.data.storage);
+                // tnt.data.storage = JSON.parse(GM_getValue("tntStorage", JSON.stringify(tnt.data.storage)));
             },
 
             get: function (group, name) {
@@ -198,6 +304,11 @@ var tnt = {
             set: function (group, name, value) {
                 tnt.data.storage[group][name] = value;
                 GM_setValue("tntStorage", JSON.stringify(tnt.data.storage));
+            },
+
+            save: function () {
+                localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage));
+                // GM_setValue("tntStorage", JSON.stringify(tnt.data.storage));
             }
         },
 
@@ -328,6 +439,9 @@ var tnt = {
 
                         // Check notifications
                         tnt.core.notification.check();
+
+                        // Collect resource data
+                        tnt.resource.update();
                     }
 
                     // updateBackgroundData
@@ -351,6 +465,12 @@ var tnt = {
                                 });
                                 console.log(totalCities);
                                 break
+                            case "city":
+                                break;
+                            case "plunder":
+                                // Select all units when pillaging
+                                delay(1000).then(() => $('#selectArmy .assignUnits .setMax').trigger("click"));
+                                break;
                         }
                     }
 
@@ -373,7 +493,7 @@ var tnt = {
                                     $('#sidebarWidget .indicator').last().trigger("click");
                                 }
                                 break;
-                                // TODO one of the contentBox01h dosn't work with the Embassy -> Allians dialog
+                            // TODO one of the contentBox01h dosn't work with the Embassy -> Allians dialog
                             case "tradeAdvisor":
                                 $("#tradeAdvisor").children('div.contentBox01h').eq(1).hide(); // Seen in tradeAdvisor
                                 break;
@@ -394,8 +514,15 @@ var tnt = {
                                 $('#sidebarWidget .indicator').eq(1).trigger("click");
                                 break;
                             case "merchantNavy":
-                                tnt.core.debug.log($('#merchantNavy .pulldown .btn'));
-                                $('#merchantNavy .pulldown .btn').trigger("click");
+                                // Show cargo content on the ship transport view
+                                setTimeout(function () {
+                                    pulldownAll();
+                                }, 250);
+                                break;
+                            case "deployment":
+                            case "plunder":
+                                // Select all units when moving army
+                                delay(1000).then(() => $('#selectArmy .assignUnits .setMax').trigger("click"));
                                 break;
                         }
                     }
@@ -543,9 +670,7 @@ var tnt = {
                 .premiumOffer,\
                 .expandable.resourceShop,\
                 .expandable.slot1,\
-                .mainContent div.center,\
-                #militaryAdvisor #militaryMovements + .contentBox01h,\
-                #transport #setPremiumTransports\
+                #transport .premiumTransporters\
                 {\
                     display:none!important;\
                     height:0!important;\
@@ -569,8 +694,13 @@ var tnt = {
         if (GM_getValue("islandShowCityLvl")) {
             tnt.core.debug.log("Show level for cities on island view", 5);
             $(".cityLocation").each(function () {
-                if (this.classList[2].replace(/[^\d-]+/g, "")) {
-                    $("#" + this.id + " > a").append('<span class="tntLvl" style="top:35px; left:25px;">' + this.classList[2].replace(/[^\d-]+/g, "") + '</span>');
+                // Extract the level number using a regular expression
+                var classList = $(this).attr('class');
+                var levelMatch = classList.match(/level(\d+)/);
+                if (levelMatch) {
+                    var levelNumber = levelMatch[1];
+                    // Append the level number to the corresponding element
+                    $("#" + this.id + " > a").append('<span class="tntLvl" style="top:35px; left:25px;">' + levelNumber + '</span>');
                 }
             });
         }
@@ -586,24 +716,90 @@ var tnt = {
 
     world: function () { },
 
+    resource: {
+        update: function () {
+            tnt.data.storage.resources.city[tnt.get.cityId()] = {
+                wood: tnt.get.resources.wood(),
+                wine: tnt.get.resources.wine(),
+                marble: tnt.get.resources.marble(),
+                crystal: tnt.get.resources.crystal(),
+                sulfur: tnt.get.resources.sulfur(),
+            };
+
+            var total = {
+                wood: 0,
+                wine: 0,
+                marble: 0,
+                crystal: 0,
+                sulfur: 0,
+            };
+
+            // Calculate the total resources
+            $.each(tnt.data.storage.resources.city, function (index, value) {
+                total.wood += value.wood;
+                total.wine += value.wine;
+                total.marble += value.marble;
+                total.crystal += value.crystal;
+                total.sulfur += value.sulfur;
+            });
+
+            tnt.data.storage.resources.total = total;
+
+            // Save storage
+            tnt.core.storage.save();
+
+            // Update template
+            tnt.resource.show();
+        },
+
+        show: function () {
+            $('body').append(tnt.template.resources);
+
+            var table = '<table border="1" cellpadding="2">\
+                <tr>\
+                    <th>City:</th>\
+                    <th><img src="/cdn/all/both/resources/icon_wood.png" width="32" height="26"> Wood:</th>\
+                    <th><img src="/cdn/all/both/resources/icon_wine.png" width="32" height="26"> Wine:</th>\
+                    <th><img src="/cdn/all/both/resources/icon_marble.png" width="32" height="26"> Marble:</th>\
+                    <th><img src="/cdn/all/both/resources/icon_crystal.png" width="32" height="26"> Crystal:</th>\
+                    <th><img src="/cdn/all/both/resources/icon_sulfur.png" width="32" height="26"> Sulfur:</th>\
+                </tr>';
+
+            $.each(tnt.data.storage.resources.city, function (index, value) {
+                table += '<tr>\
+                    <td class="tnt_city">' + index + '</td>\
+                    <td class="tnt_wood">' + value.wood + '</td>\
+                    <td class="tnt_wine">' + value.wine + '</td>\
+                    <td class="tnt_marble">' + value.marble + '</td>\
+                    <td class="tnt_crystal">' + value.crystal + '</td>\
+                    <td class="tnt_sulfur">' + value.sulfur + '</td>\
+                </tr>';
+            });
+
+            table += '</table>';
+
+            $('#tnt_info_resources').html(table);
+        }
+    },
+
     get: {
         playerId: function () { return $.cookie("ikariam").split("_")[0]; },
         islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
-        cityId: function () { return $("#citySelect option:selected").attr("value").replace(/[^\d-]+/g, ""); },
+        cityId: function () { return bgViewData.currentCityId }, //$("#citySelect option:selected").attr("value").replace(/[^\d-]+/g, ""); },
         cityName: function () { return $("#citySelect option:selected").text().split("] ")[1]; }, /* TODO: Need to change this to handle pages where the coordinates aren't shown. */
         tradeShips: {
             free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; },
             all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
         },
-        ambrosia: function () { return $("#globalResources .ambrosia a span:eq(1)").text().replace(/[^\d-]+/g, ""); },
-        gold: function () { return $("#globalResources .gold").attr("title").replace(/[^\d-]+/g, ""); },
+        ambrosia: function () { return ikariam.model.ambrosia; },
+        gold: function () { return ikariam.model.currentResources.gold; },
         maxCapacity: function () { return cc.maxCapacity.wood; },
         resources: {
-            wood: function () { return re.wood; },
-            wine: function () { return re.wine; },
-            marble: function () { return re.marble; },
-            crystal: function () { return re.crystal; },
-            sulfur: function () { return re.sulfur; }
+            wood: function () { return ikariam.model.currentResources.resource },
+            wine: function () { return ikariam.model.currentResources[1]; },
+            marble: function () { return ikariam.model.currentResources[2]; },
+            crystal: function () { return ikariam.model.currentResources[3]; },
+            sulfur: function () { return ikariam.model.currentResources[4]; }
         },
         actionPoints: function () { return $("#value_maxActionPoints").text(); },
         population: {
@@ -640,6 +836,10 @@ var tnt = {
                 totalScore: function (el) { return $(".cityinfo .name:eq(1)", el).text().replace(/[^\d-]+/g, ""); }
             }
         }
+    },
+
+    template: {
+        resources: '<div id="tnt_info_resources"></div>'
     }
 };
 
@@ -666,24 +866,19 @@ GM_addStyle("\
         display: inline-block;\
     }\
     .tnt_wood{\
-        top:19px;\
-        left:12px;\
+        text-align:right;\
     }\
     .tnt_marble{\
-        top:25px;\
-        left:30px;\
+        text-align:right;\
     }\
     .tnt_wine{\
-        top:15px;\
-        left:40px\
+        text-align:right;\
     }\
     .tnt_crystal{\
-        top:17px;\
-        left:18px;\
+        text-align:right;\
     }\
     .tnt_sulfur{\
-        top:20px;\
-        left:34px;\
+        text-align:right;\
     }\
     #mainview a:hover{\
         text-decoration:none;\
@@ -743,71 +938,14 @@ GM_addStyle("\
     .txtCenter{\
         text-align:center;\
     }\
+    #tnt_info_resources{\
+        position:fixed;\
+        bottom:20px;\
+        left:0px;\
+        width:auto;\
+        height:auto;\
+        background-color:#DBBE8C;\
+        z-index:100000000;\
+    }\
 ");
 // General styles - END
-
-
-// v3 (c) Yvonne P.
-function LocalStorageHandler(tag) {
-    var data = JSON.parse(localStorage.getItem(tag)) || {
-        storedKeys: {},
-    };
-    function unsetItem(k1) {
-        var s = {};
-        forEach(data.storedKeys, (_, k) => {
-            if (k1 !== k) {
-                s[k] = data.storedKeys[k];
-            }
-        });
-        if (data) {
-            data.storedKeys = s;
-        }
-        localStorage.setItem(tag, JSON.stringify(data));
-    }
-    function setItem(k) {
-        if (data) {
-            data.storedKeys[tag] = Date.now();
-            data.storedKeys[k] = Date.now();
-        }
-        localStorage.setItem(tag, JSON.stringify(data));
-    }
-    this.drop = function (key) {
-        key = tag + key;
-        localStorage.removeItem(key);
-        unsetItem(key);
-        return (typeof localStorage.getItem(key) == 'undefined');
-    };
-    this.save = function (key, val) {
-        key = tag + key;
-        localStorage.setItem(key, val);
-        setItem(key);
-        return (localStorage.getItem(key) == val);
-    };
-    this.load = function (key, dflt) {
-        key = tag + key;
-        var v = localStorage.getItem(key);
-        return (v !== null) ? v : dflt;
-    };
-    this.data = function () {
-        return JSON.parse(JSON.stringify(data));
-    };
-    this.clear = function (t) {
-        var b = true;
-        if (typeof t == 'string') {
-            var s = [t];
-            forEach(data.storedKeys, (_, k) => {
-                s.push(' "' + k + '"');
-            });
-            b = confirm(s.join("\n"));
-        }
-        if (b) {
-            forEach(data.storedKeys, (_, k) => {
-                localStorage.removeItem(k);
-            });
-            data = null;
-            return true;
-        }
-        return false;
-    };
-}
-const LS = new LocalStorageHandler('tnt_');
