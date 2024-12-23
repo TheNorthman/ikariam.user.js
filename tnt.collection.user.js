@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.39
+// @version      1.4.40
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -646,8 +646,8 @@ var tnt = {
 
         ikaTweaks: {
             init: function () {
-                tnt.data.ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_CityListing"));
-                console.dir(tnt.data.ikaTweaks);
+                tnt.data.ikaTweaks_CityListing = JSON.parse(localStorage.getItem("IkaTweaks_CityListing"));
+                console.dir(tnt.data.ikaTweaks_CityListing);
             }
         }
     },
