@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.70
+// @version      1.4.71
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -450,22 +450,22 @@ var tnt = {
                                 <a id="tntColUpgradeLink" href="" style="display:none;color:blue;font-size:12px;">Version <span id="tntColVersion"></span> is available. Click here to update now!</a>\
                             </div>\
                             <div>\
-                                <div style="float:left;width:50%;">\
+                                <div class="tnt_left" style="float:left;width:50%;">\
                                     <legend>All:</legend>\
                                     <input id="tntAllRemovePremiumOffers" type="checkbox"' + (GM_getValue("allRemovePremiumOffers") ? ' checked="checked"' : '') + ' /> Remove Premium Offers<br/>\
                                     <input id="tntAllRemoveFooterNavigation" type="checkbox"' + (GM_getValue("allRemoveFooterNavigation") ? ' checked="checked"' : '') + ' /> Remove footer navigation<br/>\
                                     <input id="tntAllChangeNavigationCoord" type="checkbox"' + (GM_getValue("allChangeNavigationCoord") ? ' checked="checked"' : '') + ' /> Make footer navigation coord input a number<br/>\
                                 </div>\
-                                <div style="float:left;width:50%;">\
+                                <div class="tnt_left" style="float:left;width:50%;">\
                                     <legend>Notifications:</legend>\
                                     <input id="tntNotificationAdvisors" type="checkbox"' + (GM_getValue("notificationAdvisors") ? ' checked="checked"' : '') + ' /> Show notifications from Advisors<br/>\
                                     <input id="tntNotificationSound" type="checkbox"' + (GM_getValue("notificationSound") ? ' checked="checked"' : '') + ' /> Play sound with notifications from Advisors<br/>\
                                 </div>\
-                                <div style="float:left;width:50%;">\
+                                <div class="tnt_left" style="float:left;width:50%;">\
                                     <legend>Islands:</legend>\
                                     <input id="tntIslandShowCityLvl" type="checkbox"' + (GM_getValue("islandShowCityLvl") ? ' checked="checked"' : '') + ' /> Show Town Levels on Islands<br/>\
                                 </div>\
-                                <div style="float:left;width:50%;">\
+                                <div class="tnt_left" style="float:left;width:50%;">\
                                     <legend>City:</legend>\
                                     <input id="tntCityRemoveFlyingShop" type="checkbox"' + (GM_getValue("cityRemoveFlyingShop") ? ' checked="checked"' : '') + ' /> Remove flying shop<br/>\
                                     <input id="tntCityShowResources" type="checkbox"' + (GM_getValue("cityShowResources") ? ' checked="checked"' : '') + ' /> Show resources<br/>\
@@ -477,7 +477,7 @@ var tnt = {
                                         <input id="tntCityShowResourcesSulfur" type="checkbox"' + (GM_getValue("cityShowResourcesSulfur") ? ' checked="checked"' : '') + ' /> Show Sulfur<br/>\
                                     </div>\
                                 </div>\
-                                <div style="float:left;width:50%;">\
+                                <div class="tnt_left" style="float:left;width:50%;">\
                                     <legend>World Map:</legend>\
                                 </div>\
                             </div>\
