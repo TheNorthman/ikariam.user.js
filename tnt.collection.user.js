@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.79
+// @version      1.4.80
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -734,9 +734,9 @@ var tnt = {
 
                 // Add city rows
                 // Convert object to an array of [key, value] pairs
-                var sortedEntries = Object.entries(tnt.data.storage.resources.city).sort((a, b) => a[1].producedTradegood - b[1].producedTradegood);
+                var sortedEntries = Object.entries(obj).sort((a, b) => a[1].producedTradegood - b[1].producedTradegood);
                 // Convert sorted array back to an object
-                var cities = Object.fromEntries(sortedEntries);
+                var cities = Object.fromEntries(sortedEntries);;
 console.dir(cities);
 
                 $.each(cities, function (cityID, value) {
