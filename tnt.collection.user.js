@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.76
+// @version      1.4.77
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -723,9 +723,9 @@ var tnt = {
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
                         <th class="tnt_center tnt_bold">City</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowPopulation") ? '' : ' style="display:none;"') + '>Population</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowCitizens") ? '' : ' style="display:none;"') + '>Citizens</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesWood") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
+                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesPopulation") ? '' : ' style="display:none;"') + '>Population</th>\
+                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>Citizens</th>\
+                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(1) + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(2) + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(3) + '</th>\
@@ -741,26 +741,26 @@ var tnt = {
                 $.each(cities, function (cityID, value) {
                     table += '<tr>\
                         <td class="tnt_city">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + (value.hasConstruction ? ' *' : '') + '</td>\
-                        <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
-                        <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + tnt.resource.checkMinMax(value, 0) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
-                        <td class="tnt_wine' + tnt.resource.checkMinMax(value, 1) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
-                        <td class="tnt_marble' + tnt.resource.checkMinMax(value, 2) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
-                        <td class="tnt_crystal' + tnt.resource.checkMinMax(value, 3) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
-                        <td class="tnt_sulfur' + tnt.resource.checkMinMax(value, 4) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.sulfur.toLocaleString() + '</td>\
+                        <td class="tnt_population"' + (GM_getValue("cityShowResourcesPopulation") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
+                        <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
+                        <td class="tnt_wood' + tnt.resource.checkMinMax(value, 0) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wine' + tnt.resource.checkMinMax(value, 1) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '>' + value.wine.toLocaleString() + '</td>\
+                        <td class="tnt_marble' + tnt.resource.checkMinMax(value, 2) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '>' + value.marble.toLocaleString() + '</td>\
+                        <td class="tnt_crystal' + tnt.resource.checkMinMax(value, 3) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + value.crystal.toLocaleString() + '</td>\
+                        <td class="tnt_sulfur' + tnt.resource.checkMinMax(value, 4) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + value.sulfur.toLocaleString() + '</td>\
                     </tr>';
                 });
 
                 // Add total row
                 table += '<tr>\
                     <td class="tnt_total">Total</td>\
-                    <td class="tnt_population">' + parseInt(tnt.data.storage.resources.total.population).toLocaleString() + '</td>\
-                    <td class="tnt_citizens">' + parseInt(tnt.data.storage.resources.total.citizens).toLocaleString() + '</td>\
-                    <td class="tnt_wood">' + tnt.data.storage.resources.total.wood.toLocaleString() + '</td>\
-                    <td class="tnt_wine">' + tnt.data.storage.resources.total.wine.toLocaleString() + '</td>\
-                    <td class="tnt_marble">' + tnt.data.storage.resources.total.marble.toLocaleString() + '</td>\
-                    <td class="tnt_crystal">' + tnt.data.storage.resources.total.crystal.toLocaleString() + '</td>\
-                    <td class="tnt_sulfur">' + tnt.data.storage.resources.total.sulfur.toLocaleString() + '</td>\
+                    <td class="tnt_population"' + (GM_getValue("cityShowResourcesPopulation") ? '' : ' style="display:none;"') + '>' + parseInt(tnt.data.storage.resources.total.population).toLocaleString() + '</td>\
+                    <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(tnt.data.storage.resources.total.citizens).toLocaleString() + '</td>\
+                    <td class="tnt_wood"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.data.storage.resources.total.wood.toLocaleString() + '</td>\
+                    <td class="tnt_wine"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '>' + tnt.data.storage.resources.total.wine.toLocaleString() + '</td>\
+                    <td class="tnt_marble"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '>' + tnt.data.storage.resources.total.marble.toLocaleString() + '</td>\
+                    <td class="tnt_crystal"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + tnt.data.storage.resources.total.crystal.toLocaleString() + '</td>\
+                    <td class="tnt_sulfur"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + tnt.data.storage.resources.total.sulfur.toLocaleString() + '</td>\
                 </tr>';
 
                 table += '</table>';
