@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.67
+// @version      1.4.68
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -469,6 +469,13 @@ var tnt = {
                                     <legend>City:</legend>\
                                     <input id="tntCityRemoveFlyingShop" type="checkbox"' + (GM_getValue("cityRemoveFlyingShop") ? ' checked="checked"' : '') + ' /> Remove flying shop<br/>\
                                     <input id="tntCityShowResources" type="checkbox"' + (GM_getValue("cityShowResources") ? ' checked="checked"' : '') + ' /> Show resources<br/>\
+                                    <div style="padding-left:20px;">\
+                                        <input id="tntCityShowResourcesWoods" type="checkbox"' + (GM_getValue("cityShowResourcesWoods") ? ' checked="checked"' : '') + ' /> Show wood<br/>\
+                                        <input id="tntCityShowResourcesWine" type="checkbox"' + (GM_getValue("cityShowResourcesWine") ? ' checked="checked"' : '') + ' /> Show Wine<br/>\
+                                        <input id="tntCityShowResourcesMarble" type="checkbox"' + (GM_getValue("cityShowResourcesMarble") ? ' checked="checked"' : '') + ' /> Show Marble<br/>\
+                                        <input id="tntCityShowResourcesCrystal" type="checkbox"' + (GM_getValue("cityShowResourcesCrystal") ? ' checked="checked"' : '') + ' /> Show Crystal<br/>\
+                                        <input id="tntCityShowResourcesSulfur" type="checkbox"' + (GM_getValue("cityShowResourcesSulfur") ? ' checked="checked"' : '') + ' /> Show Sulfur<br/>\
+                                    </div>\
                                 </div>\
                                 <div style="float:left;width:50%;">\
                                     <legend>World Map:</legend>\
@@ -503,15 +510,35 @@ var tnt = {
                 $("#tntIslandShowCityLvl").bind("change", function () {
                     GM_setValue("islandShowCityLvl", (GM_getValue("islandShowCityLvl") ? false : true));
                 });
+                // City options
                 $("#tntCityRemoveFlyingShop").bind("change", function () {
                     GM_setValue("cityRemoveFlyingShop", (GM_getValue("cityRemoveFlyingShop") ? false : true));
                 });
+                // Resources
                 $("#tntCityShowResources").bind("change", function () {
                     GM_setValue("cityShowResources", (GM_getValue("cityShowResources") ? false : true));
                 });
+                $("#tntCityShowResourcesWoods").bind("change", function () {
+                    GM_setValue("cityShowResourcesWoods", (GM_getValue("cityShowResourcesWoods") ? false : true));
+                });
+                $("#tntCityShowResourcesWine").bind("change", function () {
+                    GM_setValue("cityShowResourcesWine", (GM_getValue("cityShowResourcesWine") ? false : true));
+                });
+                $("#tntCityShowResourcesMarble").bind("change", function () {
+                    GM_setValue("cityShowResourcesMarble", (GM_getValue("cityShowResourcesMarble") ? false : true));
+                });
+                $("#tntCityShowResourcesCrystal").bind("change", function () {
+                    GM_setValue("cityShowResourcesCrystal", (GM_getValue("cityShowResourcesCrystal") ? false : true));
+                });
+                $("#tntCityShowResourcesSulfur").bind("change", function () {
+                    GM_setValue("cityShowResourcesSulfur", (GM_getValue("cityShowResourcesSulfur") ? false : true));
+                });
+
+                // Notification Advisor
                 $("#tntNotificationAdvisors").bind("change", function () {
                     GM_setValue("notificationAdvisors", (GM_getValue("notificationAdvisors") ? false : true));
                 });
+                // Notification Sound
                 $("#tntNotificationSound").bind("change", function () {
                     GM_setValue("notificationSound", !GM_getValue("notificationSound"));
                 });
