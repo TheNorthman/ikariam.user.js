@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.37
+// @version      1.4.38
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -206,7 +206,7 @@ var tnt = {
             // TODO Don't work. Try to append script tag witht the code and see if that will work
             // tnt.alrtSound.play();
 
-            var data = { "notification": { "cities": false, "military": false }, "dc": { "send": function () { alert("tnt"); } } };
+            // var data = { "notification": { "cities": false, "military": false }, "dc": { "send": function () { alert("tnt"); } } };
             // localStorage.setItem("tnt.test", JSON.stringify(data));
             // tnt.test = $.JSON.parse(localStorage.getItem("tnt.test"));
             // tnt.test = $.parseJSON (data);
@@ -646,7 +646,7 @@ var tnt = {
 
         ikaTweaks: {
             init: function () {
-                var ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_CityListing")) || {};
+                tnt.data.ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_CityListing"));
                 console.dir(ikaTweaks);
             }
         }
