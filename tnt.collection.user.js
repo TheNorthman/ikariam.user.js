@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.46
+// @version      1.4.47
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -17,80 +17,10 @@
 // @updateURL https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
 // ==/UserScript==
 
-var ik = ikariam;
-var cc = ik.currentCity;
-// var re = cc.resources;
-
-// Select all units when pillaging
+// Used to select all units when pillaging
 function delay(time) {
     return new Promise(resolve => setTimeout(resolve, time));
 }
-
-// v3 (c) Yvonne P.
-function LocalStorageHandler(tag) {
-    var data = JSON.parse(localStorage.getItem(tag)) || {
-        storedKeys: {},
-    };
-    function unsetItem(k1) {
-        var s = {};
-        forEach(data.storedKeys, (_, k) => {
-            if (k1 !== k) {
-                s[k] = data.storedKeys[k];
-            }
-        });
-        if (data) {
-            data.storedKeys = s;
-        }
-        localStorage.setItem(tag, JSON.stringify(data));
-    }
-    function setItem(k) {
-        if (data) {
-            data.storedKeys[tag] = Date.now();
-            data.storedKeys[k] = Date.now();
-        }
-        localStorage.setItem(tag, JSON.stringify(data));
-    }
-    this.drop = function (key) {
-        key = tag + key;
-        localStorage.removeItem(key);
-        unsetItem(key);
-        return (typeof localStorage.getItem(key) == 'undefined');
-    };
-    this.save = function (key, val) {
-        key = tag + key;
-        localStorage.setItem(key, val);
-        setItem(key);
-        return (localStorage.getItem(key) == val);
-    };
-    this.load = function (key, dflt) {
-        key = tag + key;
-        var v = localStorage.getItem(key);
-        return (v !== null) ? v : dflt;
-    };
-    this.data = function () {
-        return JSON.parse(JSON.stringify(data));
-    };
-    this.clear = function (t) {
-        var b = true;
-        if (typeof t == 'string') {
-            var s = [t];
-            forEach(data.storedKeys, (_, k) => {
-                s.push(' "' + k + '"');
-            });
-            b = confirm(s.join("\n"));
-        }
-        if (b) {
-            forEach(data.storedKeys, (_, k) => {
-                localStorage.removeItem(k);
-            });
-            data = null;
-            return true;
-        }
-        return false;
-    };
-}
-const LS = new LocalStorageHandler('ikaTweaks_CityListing');
-console.log('sortList:', LS.load('sortList'));
 
 var tnt = {
 
@@ -203,13 +133,6 @@ var tnt = {
 
             // TODO Don't work. Try to append script tag witht the code and see if that will work
             // tnt.alrtSound.play();
-
-            // var data = { "notification": { "cities": false, "military": false }, "dc": { "send": function () { alert("tnt"); } } };
-            // localStorage.setItem("tnt.test", JSON.stringify(data));
-            // tnt.test = $.JSON.parse(localStorage.getItem("tnt.test"));
-            // tnt.test = $.parseJSON (data);
-            // console.dir(tnt.test);
-
         },
 
         ajax: {
@@ -721,6 +644,7 @@ var tnt = {
                 marble: tnt.get.resources.marble(),
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
+                hasConstruction: tnt.has.construction(),
             };
 
             var total = {
@@ -771,7 +695,7 @@ var tnt = {
 
                 $.each(tnt.data.storage.resources.city, function (cityID, value) {
                     table += '<tr>\
-                        <td class="tnt_city">' + tnt.resource.getIcon(tnt.data.storage.resources.city[cityID].producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</td>\
+                        <td class="tnt_city">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + (value.hasConstruction ? ' *' : '') + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
                         <td class="tnt_wood' + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
@@ -838,7 +762,7 @@ var tnt = {
             all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
         },
         ambrosia: function () { return ikariam.model.ambrosia; },
-        gold: function () { return ikariam.model.currentResources.gold; },
+        gold: function () { return ikariam.model.gold; },
         maxCapacity: function () { return ikariam.model.maxResources.resource; },
         resources: {
             wood: function () { return ikariam.model.currentResources.resource },
@@ -882,6 +806,12 @@ var tnt = {
                 cityLevel: function (el) { return $(".cityinfo .citylevel", el).text().replace(/[^\d-]+/g, ""); },
                 totalScore: function (el) { return $(".cityinfo .name:eq(1)", el).text().replace(/[^\d-]+/g, ""); }
             }
+        }
+    },
+
+    has: {
+        construction: function (el) {
+            return $('.constructionSite').length > 0 ? true : false;
         }
     },
 
