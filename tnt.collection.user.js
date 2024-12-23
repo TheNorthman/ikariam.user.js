@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.92
+// @version      1.4.93
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -940,23 +940,23 @@ GM_addStyle("\
         border-collapse:collapse;\
     }\
     #tnt_resource_table td{\
-        border:1pxrgb(0, 0, 0) solid;\
+        border:1px #000000 solid;\
         padding:2px!important;\
         text-align:right;\
     }\
     #tnt_resource_table th{\
-        border:1pxrgb(0, 0, 0) solid;\
+        border:1px #000000 solid;\
         padding:2px!important;\
         text-align:center;\
     }\
     .storage_min{\
-        background-color:#FF000050;\
+        background-color: #FF000050;\
     }\
     .tnt_construction{\
-        background-color:#80404050;\
+        background-color: #80404050;\
     }\
     #tnt_resource_table tr.tnt_selected{\
-        border:2pxrgb(0, 0, 0) solid!important;\
+        border:2px #000000 solid!important;\
     }\
     .tnt_resource_icon{\
         vertical-align:middle;\
@@ -995,8 +995,8 @@ GM_addStyle("\
         width:620px;\
         border:1px #755931 solid;\
         border-top:none;\
-        background-color:#FEE8C3;\
-        //background:#DBBE8C url(/skin/layout/bg_stone.jpg) repeat scroll center top;\
+        background-color: #FEE8C3;\
+        //background: #DBBE8C url(/skin/layout/bg_stone.jpg) repeat scroll center top;\
         padding:10px 10px 0px 10px;\
     }\
     #tntOptions legend{\
@@ -1011,7 +1011,7 @@ GM_addStyle("\
         bottom:0px;\
         left:0px;\
         width:716px;\
-        background-color:#DBBE8C;\
+        background-color: #DBBE8C;\
         z-index:100000000;\
     }\
     #tntInfoWidget .accordionTitle {\
@@ -1049,7 +1049,7 @@ GM_addStyle("\
         left:0px;\
         width:auto;\
         height:auto;\
-        background-color:#DBBE8C;\
+        background-color: #DBBE8C;\
         z-index:100000000;\
     }\
 ");
