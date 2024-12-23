@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.13
+// @version      1.4.14
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -729,6 +729,9 @@ var tnt = {
                 marble: tnt.get.resources.marble(),
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
+                max: ikariam.model.maxResources.resource,
+                population: tnt.get.population(),
+                citizens: tnt.get.citizens(),
             };
 
             var total = {
@@ -796,6 +799,12 @@ var tnt = {
 
                 $('#tnt_info_resources').html(table);
             }
+        },
+
+        checkMax: function (cityID) {
+            if (GM_getValue("cityShowResources")) {
+                var max = ikariam.model.maxResources.resource;
+            }
         }
     },
 
@@ -825,10 +834,8 @@ var tnt = {
             sulfur: function () { return ikariam.model.currentResources[4]; }
         },
         actionPoints: function () { return $("#value_maxActionPoints").text(); },
-        population: {
-            free: function () { return $("#value_inhabitants").text().split(" ")[0]; },
-            all: function () { return $("#value_inhabitants").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
-        },
+        population: function () { return ikariam.model.currentResources.population; },
+        citizens: function () { return ikariam.model.currentResources.citizens; },
         cityList: function () {
             get.tmp = { cityList: {} };
             $("#citySelect option").each(function () {
