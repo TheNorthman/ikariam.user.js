@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.63
+// @version      1.4.64
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -732,36 +732,33 @@ var tnt = {
             if (GM_getValue("cityShowResources")) {
                 // var city = tnt.data.storage.resources.city[cityID];
                 var max = city.max;
+                var txt = '';
+
                 switch (resource) {
                     case 0:
                         // Wood
-                        if (city.wood > (max*.8) || city.wood < 100000) {
-                            return ' storage_danger';
-                        }
+                        if (city.wood > (max*.8)) { txt += ' storage_danger'; }
+                        if (city.wood < 100000) { txt += ' storage_min'; }
                         break;
                     case 1:
                         // Wine
-                        if (city.wine > (max*.8) || city.wine < 100000) {
-                            return ' storage_danger';
-                        }
+                        if (city.wine > (max*.8)) { txt += ' storage_danger'; }
+                        if (city.wine < 100000) { txt += ' storage_min'; }
                         break;
                     case 2:
                         // Marble
-                        if (city.marble > (max*.8) || city.marble < 50000) {
-                            return ' storage_danger';
-                        }
+                        if (city.marble > (max*.8)) { txt += ' storage_danger'; }
+                        if (city.marble < 50000) { txt += ' storage_min'; }
                         break;
                     case 3:
                         // Crystal
-                        if (city.crystal > (max*.8) || city.crystal < 50000) {
-                            return ' storage_danger';
-                        }
+                        if (city.crystal > (max*.8)) { txt += ' storage_danger'; }
+                        if (city.crystal < 50000) { txt += ' storage_min'; }
                         break;
                     case 4:
                         // Sulfur
-                        if (city.sulfur > (max*.8) || city.sulfur < 50000) {
-                            return ' storage_danger';
-                        }
+                        if (city.sulfur > (max*.8)) { txt += ' storage_danger'; }
+                        if (city.sulfur < 50000) { txt += ' storage_min'; }
                         break;
                 }
 
@@ -899,6 +896,9 @@ GM_addStyle("\
         border:1pxrgb(0, 0, 0) solid;\
         padding:2px 5px 2px 5px!important;\
         text-align:center;\
+    }\
+    .storage_min{\
+        background-color:#FF0000;\
     }\
     .tnt_resource_icon{\
         vertical-align:middle;\
