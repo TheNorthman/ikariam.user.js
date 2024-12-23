@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.15
+// @version      1.4.16
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -180,13 +180,6 @@ var tnt = {
     core: {
 
         init: function () {
-
-            // var data = JSON.parse(JSON.stringify('{ "work": true, "send": function (value) { tnt.core.debug.dir(tnt); } }'));
-            // console.dir(data);
-            // tnt.data.storage.dc = JSON.parse(data);
-            // console.dir(tnt.data.storage);
-            // console.dir(tnt.data.test);
-            // tnt.data.test.send("Hello");
             tnt.core.debug.log("TNT Collection v" + tnt.version + " - Init...");
 
             // Init Storage as the first thing
@@ -207,7 +200,7 @@ var tnt = {
             // Version check // TODO: JSON don't work
             // tnt.checkVersion();
 
-            // Info box // TODO: Needs a lot of work done on this
+            // Info box // TODO: Not Used
             // tnt.core.info.init();
 
             // Do ALL the items that needs to be done on every page
@@ -628,7 +621,7 @@ var tnt = {
         },
 
         info: {
-
+            // TODO: Not used!
             init: function () {
                 $('body').append('\
                     <ul id="tntInfoWidget">\
