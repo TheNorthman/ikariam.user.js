@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.28
+// @version      1.4.29
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -782,8 +782,8 @@ var tnt = {
                 // Add total row
                 table += '<tr>\
                     <td class="tnt_total">Total</td>\
-                    <td class="tnt_population">' + tnt.data.storage.resources.total.population.toLocaleString() + '</td>\
-                    <td class="tnt_citizens">' + tnt.data.storage.resources.total.citizens.toLocaleString() + '</td>\
+                    <td class="tnt_population">' + parseInt(tnt.data.storage.resources.total.population).toLocaleString() + '</td>\
+                    <td class="tnt_citizens">' + parseInt(tnt.data.storage.resources.total.citizens).toLocaleString() + '</td>\
                     <td class="tnt_wood">' + tnt.data.storage.resources.total.wood.toLocaleString() + '</td>\
                     <td class="tnt_wine">' + tnt.data.storage.resources.total.wine.toLocaleString() + '</td>\
                     <td class="tnt_marble">' + tnt.data.storage.resources.total.marble.toLocaleString() + '</td>\
