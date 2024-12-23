@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.52
+// @version      1.4.53
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -702,7 +702,7 @@ var tnt = {
                         <td class="tnt_city">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + (value.hasConstruction ? ' *' : '') + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wood' + (tnt.resources.checkMax(value.wood) ? ' storage_danger' : '') + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
                         <td class="tnt_wine' + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
                         <td class="tnt_marble' + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
                         <td class="tnt_crystal' + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
@@ -730,7 +730,35 @@ var tnt = {
 
         checkMax: function (cityID) {
             if (GM_getValue("cityShowResources")) {
-                var max = tnt.get.maxCapacity(cityID);
+                var max = tnt.data.resources[cityID].max;
+                switch (tnt.data.resources[cityID].producedTradegood) {
+                    case 1:
+                        // Wine
+                        if (tnt.data.resources[cityID].wine > (max*.9)) {
+                            return true;
+                        }
+                        break;
+                    case 2:
+                        // Marble
+                        if (tnt.data.resources[cityID].marble > (max*.9)) {
+                            return true;
+                        }
+                        break;
+                    case 3:
+                        // Crystal
+                        if (tnt.data.resources[cityID].crystal > (max*.9)) {
+                            return true;
+                        }
+                        break;
+                    case 4:
+                        // Sulfur
+                        if (tnt.data.resources[cityID].sulfur > (max*.9)) {
+                            return true;
+                        }
+                        break;
+                }
+
+                return false;
             }
         },
 
