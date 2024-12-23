@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.69
+// @version      1.4.70
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -469,7 +469,7 @@ var tnt = {
                                     <legend>City:</legend>\
                                     <input id="tntCityRemoveFlyingShop" type="checkbox"' + (GM_getValue("cityRemoveFlyingShop") ? ' checked="checked"' : '') + ' /> Remove flying shop<br/>\
                                     <input id="tntCityShowResources" type="checkbox"' + (GM_getValue("cityShowResources") ? ' checked="checked"' : '') + ' /> Show resources<br/>\
-                                    <div style="padding-left:20px;">\
+                                    <div class="tnt_left" style="padding-left:20px;">\
                                         <input id="tntCityShowResourcesWoods" type="checkbox"' + (GM_getValue("cityShowResourcesWoods") ? ' checked="checked"' : '') + ' /> Show wood<br/>\
                                         <input id="tntCityShowResourcesWine" type="checkbox"' + (GM_getValue("cityShowResourcesWine") ? ' checked="checked"' : '') + ' /> Show Wine<br/>\
                                         <input id="tntCityShowResourcesMarble" type="checkbox"' + (GM_getValue("cityShowResourcesMarble") ? ' checked="checked"' : '') + ' /> Show Marble<br/>\
@@ -913,6 +913,12 @@ GM_addStyle("\
     }\
     .tnt_center{\
         text-align:center;\
+    }\
+    .tnt_right{\
+        text-align:right;\
+    }\
+    .tnt_left{\
+        text-align:left;\
     }\
     .tnt_bold{\
         font-weight:bold;\
