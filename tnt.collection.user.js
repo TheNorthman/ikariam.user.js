@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.35
+// @version      1.4.36
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -153,15 +153,6 @@ var tnt = {
                 city: {}
             }
         },
-
-        // gold: 0,
-        // resources: {
-        //     wood: 0,
-        //     wine: 0,
-        //     marble: 0,
-        //     crystal: 0,
-        //     sulfur: 0,
-        // }
     },
 
     sounds: {
@@ -202,6 +193,8 @@ var tnt = {
             // Do ALL the items that needs to be done on every page
             tnt.all();
 
+            // Init cooperation with IkaTweaks
+            tnt.core.ikaTweaks.init();
             // Do the items regarding the current page
             switch ($("body").attr("id")) {
                 case "island": tnt.island(); break;
@@ -648,6 +641,11 @@ var tnt = {
                     }
                 }
             });
+        },
+
+        ikaTweaks: function () {
+            var ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_CityListing")) || {};
+            console.dir(ikaTweaks);
         }
     },
 
@@ -800,7 +798,7 @@ var tnt = {
 
         checkMax: function (cityID) {
             if (GM_getValue("cityShowResources")) {
-                var max = ikariam.model.maxResources.resource;
+                var max = tnt.get.maxCapacity(cityID);
             }
         },
 
@@ -835,7 +833,7 @@ var tnt = {
         },
         ambrosia: function () { return ikariam.model.ambrosia; },
         gold: function () { return ikariam.model.currentResources.gold; },
-        maxCapacity: function () { return cc.maxCapacity.wood; },
+        maxCapacity: function () { return ikariam.model.maxResources.resource; },
         resources: {
             wood: function () { return ikariam.model.currentResources.resource },
             wine: function () { return ikariam.model.currentResources[1]; },
