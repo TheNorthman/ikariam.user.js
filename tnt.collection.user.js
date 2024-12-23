@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.42
+// @version      1.4.43
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -761,22 +761,22 @@ var tnt = {
                         <th class="tnt_center tnt_bold">City</th>\
                         <th class="tnt_center">Population</th>\
                         <th class="tnt_center">Citizens</th>\
-                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
+                        <th class="tnt_center">' + tnt.resource.getIcon(0) + '</th>\
+                        <th class="tnt_center">' + tnt.resource.getIcon(1) + '</th>\
+                        <th class="tnt_center">' + tnt.resource.getIcon(2) + '</th>\
+                        <th class="tnt_center">' + tnt.resource.getIcon(3) + '</th>\
+                        <th class="tnt_center">' + tnt.resource.getIcon(4) + '</th>\
                     </tr>';
 
-                $.each(tnt.data.storage.resources.city, function (index, value) {
+                $.each(tnt.data.storage.resources.city, function (cityID, value) {
                     table += '<tr>\
-                        <td class="tnt_city">' + tnt.resource.getIcon(tnt.data.storage.resources.city[index].producedTradegood) + ' ' + tnt.get.cityName(index) + '</td>\
+                        <td class="tnt_city">' + tnt.resource.getIcon(tnt.data.storage.resources.city[cityID].producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
-                        <td class="tnt_wine">' + value.wine.toLocaleString() + '</td>\
-                        <td class="tnt_marble">' + value.marble.toLocaleString() + '</td>\
-                        <td class="tnt_crystal">' + value.crystal.toLocaleString() + '</td>\
+                        <td class="tnt_wood' + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '">' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wine' + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '">' + value.wine.toLocaleString() + '</td>\
+                        <td class="tnt_marble' + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '">' + value.marble.toLocaleString() + '</td>\
+                        <td class="tnt_crystal' + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '">' + value.crystal.toLocaleString() + '</td>\
                         <td class="tnt_sulfur">' + value.sulfur.toLocaleString() + '</td>\
                     </tr>';
                 });
@@ -807,6 +807,8 @@ var tnt = {
 
         getIcon: function (resource) {
             switch (resource) {
+                case 0:
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wood.png">';
                 case 1:
                     return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png">';
                 case 2:
