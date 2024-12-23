@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.23
+// @version      1.4.24
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -282,8 +282,6 @@ var tnt = {
             init: function () {
                 // Merge storage
                 tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
-                console.dir(tnt.data.storage);
-                // tnt.data.storage = JSON.parse(GM_getValue("tntStorage", JSON.stringify(tnt.data.storage)));
             },
 
             get: function (group, name) {
@@ -292,12 +290,11 @@ var tnt = {
 
             set: function (group, name, value) {
                 tnt.data.storage[group][name] = value;
-                GM_setValue("tntStorage", JSON.stringify(tnt.data.storage));
+                tnt.core.storage.save();
             },
 
             save: function () {
                 localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage));
-                // GM_setValue("tntStorage", JSON.stringify(tnt.data.storage));
             }
         },
 
