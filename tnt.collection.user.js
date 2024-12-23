@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.4
+// @version      1.4.5
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -188,7 +188,7 @@ var tnt = {
             // console.dir(tnt.data.test);
             // tnt.data.test.send("Hello");
             tnt.core.debug.log("TNT Collection v" + tnt.version + " - Init...");
-            
+
             // Init Storage as the first thing
             tnt.core.storage.init();
 
@@ -785,7 +785,7 @@ var tnt = {
                 <td class="tnt_crystal">' + tnt.data.storage.resources.total.crystal + '</td>\
                 <td class="tnt_sulfur">' + tnt.data.storage.resources.total.sulfur + '</td>\
             </tr>';
-            
+
             table += '</table>';
 
             $('#tnt_info_resources').html(table);
