@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.6
+// @version      1.4.7
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -768,22 +768,22 @@ var tnt = {
             $.each(tnt.data.storage.resources.city, function (index, value) {
                 table += '<tr>\
                     <td class="tnt_city"><strong>' + tnt.get.cityName(index) + '</strong></td>\
-                    <td class="tnt_wood">' + value.wood + '</td>\
-                    <td class="tnt_wine">' + value.wine + '</td>\
-                    <td class="tnt_marble">' + value.marble + '</td>\
-                    <td class="tnt_crystal">' + value.crystal + '</td>\
-                    <td class="tnt_sulfur">' + value.sulfur + '</td>\
+                    <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
+                    <td class="tnt_wine">' + value.wine.toLocaleString() + '</td>\
+                    <td class="tnt_marble">' + value.marble.toLocaleString() + '</td>\
+                    <td class="tnt_crystal">' + value.crystal.toLocaleString() + '</td>\
+                    <td class="tnt_sulfur">' + value.sulfur.toLocaleString() + '</td>\
                 </tr>';
             });
 
             // Add total row
             table += '<tr>\
                 <td class="tnt_total"><strong>Total</strong></td>\
-                <td class="tnt_wood"><strong>' + tnt.data.storage.resources.total.wood + '</strong></td>\
-                <td class="tnt_wine"><strong>' + tnt.data.storage.resources.total.wine + '</strong></td>\
-                <td class="tnt_marble"><strong>' + tnt.data.storage.resources.total.marble + '</strong></td>\
-                <td class="tnt_crystal"><strong>' + tnt.data.storage.resources.total.crystal + '</strong></td>\
-                <td class="tnt_sulfur"><strong>' + tnt.data.storage.resources.total.sulfur + '</strong></td>\
+                <td class="tnt_wood"><strong>' + tnt.data.storage.resources.total.wood.toLocaleString() + '</strong></td>\
+                <td class="tnt_wine"><strong>' + tnt.data.storage.resources.total.wine.toLocaleString() + '</strong></td>\
+                <td class="tnt_marble"><strong>' + tnt.data.storage.resources.total.marble.toLocaleString() + '</strong></td>\
+                <td class="tnt_crystal"><strong>' + tnt.data.storage.resources.total.crystal.toLocaleString() + '</strong></td>\
+                <td class="tnt_sulfur"><strong>' + tnt.data.storage.resources.total.sulfur.toLocaleString() + '</strong></td>\
             </tr>';
 
             table += '</table>';
