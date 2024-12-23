@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.34
+// @version      1.4.35
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -807,13 +807,13 @@ var tnt = {
         getIcon: function (resource) {
             switch (resource) {
                 case 1:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png" width="26" height="26">';
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png">';
                 case 2:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_marble.png" width="26" height="26">';
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_marble.png">';
                 case 3:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26">';
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_crystal.png">';
                 case 4:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26">';
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png">';
             }
         }
     },
