@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.20
+// @version      1.4.21
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -728,6 +728,8 @@ var tnt = {
             };
 
             var total = {
+                population: 0,
+                citizens: 0,
                 wood: 0,
                 wine: 0,
                 marble: 0,
@@ -737,6 +739,8 @@ var tnt = {
 
             // Calculate the total resources
             $.each(tnt.data.storage.resources.city, function (index, value) {
+                total.population += value.population;
+                total.citizens += value.citizens;
                 total.wood += value.wood;
                 total.wine += value.wine;
                 total.marble += value.marble;
@@ -759,14 +763,14 @@ var tnt = {
 
                 var table = '<table border="1" cellpadding="2">\
                     <tr>\
-                        <th>City</th>\
-                        <th>Population</th>\
-                        <th>Citizens</th>\
-                        <th><img src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
-                        <th><img src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
-                        <th><img src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
-                        <th><img src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
-                        <th><img src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
+                        <th class="tnt_center">City</th>\
+                        <th class="tnt_center">Population</th>\
+                        <th class="tnt_center">Citizens</th>\
+                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
                     </tr>';
 
                 $.each(tnt.data.storage.resources.city, function (index, value) {
@@ -891,6 +895,9 @@ GM_addStyle("\
         border-radius: 50%;\
         border: 1px solid #000;\
         display: inline-block;\
+    }\
+    .tnt_center{\
+        text-align:center;\
     }\
     .tnt_population{\
         text-align:right;\
