@@ -776,6 +776,16 @@ var tnt = {
                 </tr>';
             });
 
+            // Add total row
+            table += '<tr>\
+                <td class="tnt_total">Total</td>\
+                <td class="tnt_wood">' + tnt.data.storage.resources.total.wood + '</td>\
+                <td class="tnt_wine">' + tnt.data.storage.resources.total.wine + '</td>\
+                <td class="tnt_marble">' + tnt.data.storage.resources.total.marble + '</td>\
+                <td class="tnt_crystal">' + tnt.data.storage.resources.total.crystal + '</td>\
+                <td class="tnt_sulfur">' + tnt.data.storage.resources.total.sulfur + '</td>\
+            </tr>';
+            
             table += '</table>';
 
             $('#tnt_info_resources').html(table);
