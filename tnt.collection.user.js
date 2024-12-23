@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.55
+// @version      1.4.56
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -730,29 +730,30 @@ var tnt = {
 
         checkMax: function (cityID) {
             if (GM_getValue("cityShowResources")) {
-                var max = tnt.data.storage.resources[cityID].max;
-                switch (tnt.data.resources[cityID].producedTradegood) {
+                var city = tnt.data.storage.resources.city[cityID];
+                var max = city.max;
+                switch (city.producedTradegood) {
                     case 1:
                         // Wine
-                        if (tnt.data.resources[cityID].wine > (max*.9)) {
+                        if (city.wine > (max*.9)) {
                             return true;
                         }
                         break;
                     case 2:
                         // Marble
-                        if (tnt.data.resources[cityID].marble > (max*.9)) {
+                        if (city.marble > (max*.9)) {
                             return true;
                         }
                         break;
                     case 3:
                         // Crystal
-                        if (tnt.data.resources[cityID].crystal > (max*.9)) {
+                        if (city.crystal > (max*.9)) {
                             return true;
                         }
                         break;
                     case 4:
                         // Sulfur
-                        if (tnt.data.resources[cityID].sulfur > (max*.9)) {
+                        if (city.sulfur > (max*.9)) {
                             return true;
                         }
                         break;
