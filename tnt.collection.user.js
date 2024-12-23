@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.9
+// @version      1.4.10
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -564,6 +564,7 @@ var tnt = {
                                 <div style="float:left;width:50%;">\
                                     <legend>City:</legend>\
                                     <input id="tntCityRemoveFlyingShop" type="checkbox"' + (GM_getValue("cityRemoveFlyingShop") ? ' checked="checked"' : '') + ' /> Remove flying shop<br/>\
+                                    <input id="tntCityShowResources" type="checkbox"' + (GM_getValue("cityShowResources") ? ' checked="checked"' : '') + ' /> Show resources<br/>\
                                 </div>\
                                 <div style="float:left;width:50%;">\
                                     <legend>World Map:</legend>\
@@ -601,6 +602,9 @@ var tnt = {
                 $("#tntCityRemoveFlyingShop").bind("change", function () {
                     GM_setValue("cityRemoveFlyingShop", (GM_getValue("cityRemoveFlyingShop") ? false : true));
                 });
+                $("#tntCityShowResources").bind("change", function () {
+                    GM_setValue("cityShowResources", (GM_getValue("cityShowResources") ? false : true));
+                });
                 $("#tntNotificationAdvisors").bind("change", function () {
                     GM_setValue("notificationAdvisors", (GM_getValue("notificationAdvisors") ? false : true));
                 });
@@ -616,6 +620,7 @@ var tnt = {
                 GM_setValue("allChangeNavigationCoord", GM_getValue("allChangeNavigationCoord", true));
                 GM_setValue("islandShowCityLvl", GM_getValue("islandShowCityLvl", true));
                 GM_setValue("cityRemoveFlyingShop", GM_getValue("cityRemoveFlyingShop", true));
+                GM_setValue("cityShowResources", GM_getValue("cityShowResources", true));
                 GM_setValue("notificationAdvisors", GM_getValue("notificationAdvisors", true));
                 GM_setValue("notificationSound", GM_getValue("notificationSound", true));
                 GM_setValue("version", tnt.version);
