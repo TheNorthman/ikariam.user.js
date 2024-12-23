@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.29
+// @version      1.4.30
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -759,11 +759,11 @@ var tnt = {
                         <th class="tnt_center">City</th>\
                         <th class="tnt_center">Population</th>\
                         <th class="tnt_center">Citizens</th>\
-                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
-                        <th class="tnt_center"><img src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
+                        <th class="tnt_center"><img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
                     </tr>';
 
                 $.each(tnt.data.storage.resources.city, function (index, value) {
@@ -893,6 +893,12 @@ GM_addStyle("\
     }\
     .tnt_center{\
         text-align:center;\
+    }\
+    .tnt_resource_icon{\
+        vertical-align:middle;\
+        width:16px;\
+        height:18px;\
+        display:inline-block;\
     }\
     .tnt_population{\
         text-align:right;\
