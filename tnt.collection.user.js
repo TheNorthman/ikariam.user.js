@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.21
+// @version      1.4.22
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -147,14 +147,10 @@ var tnt = {
                 scientist: false,
                 diplomat: false
             },
+            ambrosia: 0,
             gold: 0,
             resources: {
-                city: {},
-                wood: 0,
-                wine: 0,
-                marble: 0,
-                crystal: 0,
-                sulfur: 0,
+                city: {}
             }
         },
 
@@ -717,14 +713,14 @@ var tnt = {
     resource: {
         update: function () {
             tnt.data.storage.resources.city[tnt.get.cityId()] = {
+                population: tnt.get.population(),
+                citizens: tnt.get.citizens(),
+                max: ikariam.model.maxResources.resource,
                 wood: tnt.get.resources.wood(),
                 wine: tnt.get.resources.wine(),
                 marble: tnt.get.resources.marble(),
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
-                max: ikariam.model.maxResources.resource,
-                population: tnt.get.population(),
-                citizens: tnt.get.citizens(),
             };
 
             var total = {
@@ -776,8 +772,8 @@ var tnt = {
                 $.each(tnt.data.storage.resources.city, function (index, value) {
                     table += '<tr>\
                         <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
-                        <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
-                        <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
+                        <td class="tnt_population">' + Math.round(value.population).toLocaleString() + '</td>\
+                        <td class="tnt_citizens">' + Math.round(value.citizens).toLocaleString() + '</td>\
                         <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
                         <td class="tnt_wine">' + value.wine.toLocaleString() + '</td>\
                         <td class="tnt_marble">' + value.marble.toLocaleString() + '</td>\
