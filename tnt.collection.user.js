@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.64
+// @version      1.4.65
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -762,7 +762,7 @@ var tnt = {
                         break;
                 }
 
-                return '';
+                return txt;
             }
         },
 
