@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.32
+// @version      1.4.33
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -769,7 +769,7 @@ var tnt = {
 
                 $.each(tnt.data.storage.resources.city, function (index, value) {
                     table += '<tr>\
-                        <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
+                        <td class="tnt_city">' + tnt.resource.getIcon(index) + ' ' + tnt.get.cityName(index) + '</td>\
                         <td class="tnt_population">' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens">' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
                         <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
@@ -801,6 +801,19 @@ var tnt = {
         checkMax: function (cityID) {
             if (GM_getValue("cityShowResources")) {
                 var max = ikariam.model.maxResources.resource;
+            }
+        },
+
+        getIcon: function (resource) {
+            switch (resource) {
+                case 1:
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png" width="26" height="26">';
+                case 2:
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_marble.png" width="26" height="26">';
+                case 3:
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26">';
+                case 4:
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26">';
             }
         }
     },
