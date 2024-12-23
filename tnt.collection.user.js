@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.10
+// @version      1.4.11
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -758,42 +758,44 @@ var tnt = {
         },
 
         show: function () {
-            $('body').append(tnt.template.resources);
+            if (!GM_getValue("cityShowResources")) {
+                $('body').append(tnt.template.resources);
 
-            var table = '<table border="1" cellpadding="2">\
-                <tr>\
-                    <th>City</th>\
-                    <th><img src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
-                    <th><img src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
-                    <th><img src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
-                    <th><img src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
-                    <th><img src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
-                </tr>';
+                var table = '<table border="1" cellpadding="2">\
+                    <tr>\
+                        <th>City</th>\
+                        <th><img src="/cdn/all/both/resources/icon_wood.png" width="26" height="26"></th>\
+                        <th><img src="/cdn/all/both/resources/icon_wine.png" width="26" height="26"></th>\
+                        <th><img src="/cdn/all/both/resources/icon_marble.png" width="26" height="26"></th>\
+                        <th><img src="/cdn/all/both/resources/icon_crystal.png" width="26" height="26"></th>\
+                        <th><img src="/cdn/all/both/resources/icon_sulfur.png" width="26" height="26"></th>\
+                    </tr>';
 
-            $.each(tnt.data.storage.resources.city, function (index, value) {
+                $.each(tnt.data.storage.resources.city, function (index, value) {
+                    table += '<tr>\
+                        <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
+                        <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
+                        <td class="tnt_wine">' + value.wine.toLocaleString() + '</td>\
+                        <td class="tnt_marble">' + value.marble.toLocaleString() + '</td>\
+                        <td class="tnt_crystal">' + value.crystal.toLocaleString() + '</td>\
+                        <td class="tnt_sulfur">' + value.sulfur.toLocaleString() + '</td>\
+                    </tr>';
+                });
+
+                // Add total row
                 table += '<tr>\
-                    <td class="tnt_city">' + tnt.get.cityName(index) + '</td>\
-                    <td class="tnt_wood">' + value.wood.toLocaleString() + '</td>\
-                    <td class="tnt_wine">' + value.wine.toLocaleString() + '</td>\
-                    <td class="tnt_marble">' + value.marble.toLocaleString() + '</td>\
-                    <td class="tnt_crystal">' + value.crystal.toLocaleString() + '</td>\
-                    <td class="tnt_sulfur">' + value.sulfur.toLocaleString() + '</td>\
+                    <td class="tnt_total">Total</td>\
+                    <td class="tnt_wood">' + tnt.data.storage.resources.total.wood.toLocaleString() + '</td>\
+                    <td class="tnt_wine">' + tnt.data.storage.resources.total.wine.toLocaleString() + '</td>\
+                    <td class="tnt_marble">' + tnt.data.storage.resources.total.marble.toLocaleString() + '</td>\
+                    <td class="tnt_crystal">' + tnt.data.storage.resources.total.crystal.toLocaleString() + '</td>\
+                    <td class="tnt_sulfur">' + tnt.data.storage.resources.total.sulfur.toLocaleString() + '</td>\
                 </tr>';
-            });
 
-            // Add total row
-            table += '<tr>\
-                <td class="tnt_total">Total</td>\
-                <td class="tnt_wood">' + tnt.data.storage.resources.total.wood.toLocaleString() + '</td>\
-                <td class="tnt_wine">' + tnt.data.storage.resources.total.wine.toLocaleString() + '</td>\
-                <td class="tnt_marble">' + tnt.data.storage.resources.total.marble.toLocaleString() + '</td>\
-                <td class="tnt_crystal">' + tnt.data.storage.resources.total.crystal.toLocaleString() + '</td>\
-                <td class="tnt_sulfur">' + tnt.data.storage.resources.total.sulfur.toLocaleString() + '</td>\
-            </tr>';
+                table += '</table>';
 
-            table += '</table>';
-
-            $('#tnt_info_resources').html(table);
+                $('#tnt_info_resources').html(table);
+            }
         }
     },
 
