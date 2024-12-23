@@ -13,8 +13,8 @@
 // @grant GM_getValue
 // @grant GM_setValue
 // @grant GM_xmlhttpRequest
-// @downloadURL https://update.greasyfork.org/scripts/521349/TNT%20Collection.user.js
-// @updateURL https://update.greasyfork.org/scripts/521349/TNT%20Collection.meta.js
+// @downloadURL https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
+// @updateURL https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
 // ==/UserScript==
 
 var ik = ikariam;
