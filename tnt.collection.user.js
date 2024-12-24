@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.119
+// @version      1.4.120
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.119", // GM_info.script.version,
+    version: "1.4.120", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -601,12 +601,6 @@ var tnt = {
                     }
                 }
             });
-        },
-
-        ikaTweaks: {
-            init: function () {
-                tnt.data.ikaTweaks_CityListing = JSON.parse(localStorage.getItem("IkaTweaks_CityListing"));
-            }
         }
     },
 
@@ -637,6 +631,14 @@ var tnt = {
         if (GM_getValue("allRemoveFooterNavigation")) {
             $('#footer').hide();
         }
+
+        // Set the mainbox coordinates
+        // if (GM_getValue("allSetMainboxCoord")) {
+            // tnt.core.debug.log("Adding allChangeNavigationCoord styles...", 5);
+            // GM_addStyle("#mainBox{top: 0px; left: 0px;}");
+            ikariam.model.mainbox_x = 608;
+            ikariam.model.mainbox_z = -124;
+        // }
     },
 
     island: function () {
