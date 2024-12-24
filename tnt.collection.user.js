@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.113
+// @version      1.4.114
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -782,19 +782,6 @@ var tnt = {
 
             return sortedList;
         },
-        // sortCities: function () {
-        //     var list = {};
-        //     $.each(tnt.data.storage.resources.city, function (cityID, value) {
-        //         list[cityID] = value.producedTradegood;
-        //     });
-
-        //     // Sort list by producedTradegood
-        //     sortedList = Object.keys(list).sort(function (a, b) {
-        //         return list[a] - list[b];
-        //     });
-
-        //     return sortedList;
-        // },
 
         checkMinMax: function (city, resource) {
             if (GM_getValue("cityShowResources")) {
@@ -847,7 +834,9 @@ var tnt = {
                 case 4:
                     return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png">';
                 case 'population':
-                    return '<img class="tnt_resource_icon" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png">';
+                    return '<img class="tnt_resource_icon" src="http://gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png">';
+                case 'citizens':
+                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_population.png">';
             }
         }
     },
