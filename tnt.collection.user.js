@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.108
+// @version      1.4.109
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -734,7 +734,6 @@ var tnt = {
                 // Add city rows
                 $.each(tnt.resource.sortCities(), function (index,cityID) {
                     var value = tnt.data.storage.resources.city[cityID];
-console.dir('show: ', value);
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
                         <td class="tnt_city' + (value.hasConstruction ? ' tnt_construction' : '') + '">\
                             <a href="/?view=city&cityId=' + cityID + '">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</a>\
@@ -772,16 +771,30 @@ console.dir('show: ', value);
             $.each(tnt.data.storage.resources.city, function (cityID, value) {
                 list[cityID] = value.producedTradegood;
             });
-console.dir('unsorted: ', list);
 
-            // Sort list by producedTradegood
+            // Define the custom order for producedTradegood
+            var order = { 2: 0, 1: 1, 3: 2, 4: 3 };
+
+            // Sort list by producedTradegood with custom order
             sortedList = Object.keys(list).sort(function (a, b) {
-                return list[a] - list[b];
+                return order[list[a]] - order[list[b]];
             });
 
-console.dir('sorted: ', sortedList);
             return sortedList;
         },
+        // sortCities: function () {
+        //     var list = {};
+        //     $.each(tnt.data.storage.resources.city, function (cityID, value) {
+        //         list[cityID] = value.producedTradegood;
+        //     });
+
+        //     // Sort list by producedTradegood
+        //     sortedList = Object.keys(list).sort(function (a, b) {
+        //         return list[a] - list[b];
+        //     });
+
+        //     return sortedList;
+        // },
 
         checkMinMax: function (city, resource) {
             if (GM_getValue("cityShowResources")) {
