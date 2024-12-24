@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.100
+// @version      1.4.101
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -743,7 +743,8 @@ var tnt = {
                 }, {});
                 console.dir(tnt.resource.sortCities());
 
-                $.each(cities, function (cityID, value) {
+                $.each(cities, function (cityID, producedTradegood) {
+                    var value = tnt.data.storage.resources.city[cityID];
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
                         <td class="tnt_city' + (value.hasConstruction ? ' tnt_construction' : '') + '">\
                             <a href="/?view=city&cityId=' + cityID + '">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</a>\
@@ -777,13 +778,19 @@ var tnt = {
         },
 
         sortCities: function () {
-            var cities = Object.keys(tnt.data.storage.resources.city).sort((a, b) => {
-                return tnt.data.storage.resources.city[b].producedTradegood - tnt.data.storage.resources.city[a].producedTradegood;
+            $.each(tnt.data.storage.resources.city, function (cityID, value) {
+                list[cityID] = value.producedTradegood;
+            });
+
+            // Sort list
+            list = Object.keys(list).sort((a, b) => {
+                return list[b] - list[a];
             }).reduce((acc, key) => {
                 acc[key] = tnt.data.storage.resources.city[key];
                 return acc;
             }, {});
-            return cities;
+
+            return list;
         },
 
         checkMinMax: function (city, resource) {
