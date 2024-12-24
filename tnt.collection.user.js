@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.107
+// @version      1.4.108
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -732,7 +732,7 @@ var tnt = {
                     </tr>';
 
                 // Add city rows
-                $.each(tnt.resource.sortCities(), function (cityID, producedTradegood) {
+                $.each(tnt.resource.sortCities(), function (index,cityID) {
                     var value = tnt.data.storage.resources.city[cityID];
 console.dir('show: ', value);
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
