@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.103
+// @version      1.4.104
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -733,16 +733,6 @@ var tnt = {
                     </tr>';
 
                 // Add city rows
-                // Convert object to an array of [key, value] pairs and sort it after the value producedTradegood
-                var obj = tnt.data.storage.resources.city;
-                var cities = Object.keys(obj).sort((a, b) => {
-                    return obj[a].producedTradegood - obj[b].producedTradegood;
-                }).reduce((acc, key) => {
-                    acc[key] = obj[key];
-                    return acc;
-                }, {});
-                console.dir(tnt.resource.sortCities());
-
                 $.each(tnt.resource.sortCities(), function (cityID, producedTradegood) {
                     var value = tnt.data.storage.resources.city[cityID];
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
@@ -784,14 +774,14 @@ var tnt = {
             });
 
             // Sort list
-            list = Object.keys(list).sort((a, b) => {
+            sortedList = Object.keys(list).sort((a, b) => {
                 return list[b] - list[a];
             }).reduce((acc, key) => {
                 acc[key] = tnt.data.storage.resources.city[key];
                 return acc;
             }, {});
 
-            return list;
+            return sortedList;
         },
 
         checkMinMax: function (city, resource) {
