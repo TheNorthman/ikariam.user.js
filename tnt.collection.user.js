@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.117
+// @version      1.4.118
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: GM_info.script.version,
+    version: 1.4.118, // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
