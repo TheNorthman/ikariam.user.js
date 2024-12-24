@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.115
+// @version      1.4.116
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -834,7 +834,7 @@ var tnt = {
                 case 4:
                     return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png">';
                 case 'population':
-                    return '<img class="tnt_resource_icon" src="http://gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png">';
+                    return '<img class="tnt_resource_icon" src="http://gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
                 case 'citizens':
                     return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_population.png">';
             }
