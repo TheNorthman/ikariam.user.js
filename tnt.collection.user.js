@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.120
+// @version      1.4.121
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.120", // GM_info.script.version,
+    version: "1.4.121", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -189,9 +189,56 @@ var tnt = {
 
             delay: function () {
                 return new Promise(resolve => setTimeout(resolve, time));
-            }
-        },
+            },
 
+            getGradientColor: function (value1, value2, color1, color2) {
+                // Defaults colors if not set
+                color1 = color1 || "#ff0000";
+                color2 = color2 || "#00FF00";
+
+                // Ensure value1 is not greater than value2
+                if (value1 > value2) {
+                    [value1, value2] = [value2, value1];
+                }
+
+                // Convert hex colors to RGB
+                function hexToRgb(hex) {
+                    const bigint = parseInt(hex.substring(1), 16);
+                    return {
+                        r: (bigint >> 16) & 255,
+                        g: (bigint >> 8) & 255,
+                        b: bigint & 255
+                    };
+                }
+
+                // Convert RGB back to hex
+                function rgbToHex(r, g, b) {
+                    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+                }
+
+                const color1Rgb = hexToRgb(color1);
+                const color2Rgb = hexToRgb(color2);
+                const ratio = value1 / value2;
+                const r = Math.round(color1Rgb.r * ratio + color2Rgb.r * (1 - ratio));
+                const g = Math.round(color1Rgb.g * ratio + color2Rgb.g * (1 - ratio));
+                const b = Math.round(color1Rgb.b * ratio + color2Rgb.b * (1 - ratio));
+
+                return rgbToHex(r, g, b);
+            },
+
+                        getHighestValue: function (key, obj) {
+                            let highest = Number.NEGATIVE_INFINITY;
+
+                            for (let city in obj) {
+                                if (obj[city][key] > highest) {
+                                    highest = obj[city][key];
+                                }
+                            }
+
+                            return highest;
+                        }
+
+        },
         storage: {
 
             init: function () {
@@ -352,7 +399,7 @@ var tnt = {
                     ajax.Responder.tntUpdateBackgroundData = ajax.Responder.updateBackgroundData;
                     ajax.Responder.updateBackgroundData = function (response) {
                         var view = $('body').attr('id');
-                        tnt.core.debug.log("updateBackgroundData (View: " + view + ")");
+                        tnt.core.debug.log("updateBackgroundData (View: " + view + ")", 3);
 
                         // Let Ikariam do its stuff
                         ajax.Responder.tntUpdateBackgroundData(response);
@@ -362,18 +409,21 @@ var tnt = {
 
                         switch (view) {
                             case "worldmap_iso":
-                                console.log($('div.islandTile div.cities'));
+                                tnt.core.debug.log($('worldmap_iso: div.islandTile div.cities'), 3);
                                 var totalCities = 0;
                                 $('div.islandTile div.cities').each(function () {
                                     totalCities += parseInt($(this).text());
                                 });
-                                console.log(totalCities);
+                                tnt.core.debug.log(totalCities, 3);
                                 break
                             case "city":
                                 break;
                             case "plunder":
                                 // Select all units when pillaging
                                 delay(1000).then(() => $('#selectArmy .assignUnits .setMax').trigger("click"));
+                                break;
+                            case 'tradeAdvisor':
+                                tnt.core.debug.log("tradeAdvisor", 3);
                                 break;
                         }
                     }
@@ -396,6 +446,7 @@ var tnt = {
                                 if (!ikariam.backgroundView.screen.data.isCapital && $('#sidebarWidget .indicator').length > 1) {
                                     $('#sidebarWidget .indicator').last().trigger("click");
                                 }
+                                tnt.
                                 break;
                             // TODO one of the contentBox01h dosn't work with the Embassy -> Allians dialog
                             case "tradeAdvisor":
@@ -631,14 +682,6 @@ var tnt = {
         if (GM_getValue("allRemoveFooterNavigation")) {
             $('#footer').hide();
         }
-
-        // Set the mainbox coordinates
-        // if (GM_getValue("allSetMainboxCoord")) {
-            // tnt.core.debug.log("Adding allChangeNavigationCoord styles...", 5);
-            // GM_addStyle("#mainBox{top: 0px; left: 0px;}");
-            ikariam.model.mainbox_x = 608;
-            ikariam.model.mainbox_z = -124;
-        // }
     },
 
     island: function () {
@@ -844,22 +887,19 @@ var tnt = {
     },
 
     get: {
-        playerId: function () { return $.cookie("ikariam").split("_")[0]; },
-        islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
-        cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "") }, //$("#citySelect option:selected").attr("value").replace(/[^\d-]+/g, ""); },
-        cityName: function (id) {
-            if (id) {
-                return ikariam.model.relatedCityData["city_" + id].name;
-            } else {
-                return $("#citySelect option:selected").text().split("] ")[1];
-            }
-        },
+        playerId: function () { return parseInt(ikariam.model.avatarId); },
+        // islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
+        cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "") },
+        cityName: function (id) { return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1]; },
         tradeShips: {
             free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; },
-            all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
+            // all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
         },
         ambrosia: function () { return ikariam.model.ambrosia; },
-        gold: function () { return ikariam.model.gold; },
+        gold: function () { return parseInt(ikariam.model.gold); },
+        godGoldResult: function () { return ikariam.model.godGoldResult; },
+        income: function () { return ikariam.model.income; },
+        hasAlly: function () { return ikariam.model.hasAlly; },
         maxCapacity: function () { return ikariam.model.maxResources.resource; },
         resources: {
             wood: function () { return ikariam.model.currentResources.resource },
@@ -868,7 +908,13 @@ var tnt = {
             crystal: function () { return ikariam.model.currentResources[3]; },
             sulfur: function () { return ikariam.model.currentResources[4]; }
         },
-        actionPoints: function () { return $("#value_maxActionPoints").text(); },
+        // data: {
+        //     townHall: function () { 
+        //         var townHall = {
+        //         };
+        //     },
+        // }.
+        // actionPoints: function () { return $("#value_maxActionPoints").text(); },
         population: function () { return ikariam.model.currentResources.population; },
         citizens: function () { return ikariam.model.currentResources.citizens; },
         producedTradegood: function () { return ikariam.model.producedTradegood; },
