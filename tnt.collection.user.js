@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.131
+// @version      1.4.132
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.131", // GM_info.script.version,
+    version: "1.4.132", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -712,6 +712,10 @@ var tnt = {
     world: function () { },
 
     resource: {
+        init: function () {
+            $('#tnt_info_resources .tnt_back').onclick(function () { tnt.resource.toggle(); });
+        },
+
         update: function () {
             tnt.data.storage.resources.city[tnt.get.cityId()] = {
                 producedTradegood: parseInt(tnt.get.producedTradegood()),
@@ -766,7 +770,7 @@ var tnt = {
                 // Make table and add it to div
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
-                        <th class="tnt_center tnt_bold"><span class="foreward" onclick="tnt.resource.toggle();"></span> City</th>\
+                        <th class="tnt_center tnt_bold"><span class="tnt_back"></span> City</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
@@ -1138,30 +1142,30 @@ GM_addStyle("\
     .tnt_bold{\
         font-weight:bold;\
     }\
-    #tnt_info_resources .back, #tnt_info_resources .foreward {\
+    #tnt_info_resources .tnt_back, #tnt_info_resources .tnt_foreward {\
         background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
         cursor: pointer;\
         display: block!important;\
         height: 18px;\
         width: 18px;\
     }\
-    #tnt_info_resources .back {\
+    #tnt_info_resources .tnt_back {\
         left: 2px;\
         position: absolute;\
         top: 2px;\
         background-position: -197px 0;\
     }\
-    #tnt_info_resources .back:hover {\
+    #tnt_info_resources .tnt_back:hover {\
         background-position: -197px -18px;\
     }\
-    #tnt_info_resources .foreward {\
+    #tnt_info_resources .tnt_foreward {\
         left: 2px;\
         position: absolute;\
         top: 2px;\
         background-position: -197px 0;\
         transform: rotate(180deg);\
     }\
-    #tnt_info_resources .foreward:hover {\
+    #tnt_info_resources .tnt_foreward:hover {\
         background-position: -197px -18px;\
     }\
 ");
