@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.121
+// @version      1.4.122
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.121", // GM_info.script.version,
+    version: "1.4.122", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -766,7 +766,7 @@ var tnt = {
                 // Make table and add it to div
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
-                        <th class="tnt_center tnt_bold">City</th>\
+                        <th class="tnt_center tnt_bold"><span class="back"></span> City</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
@@ -891,6 +891,9 @@ var tnt = {
         // islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
         cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "") },
         cityName: function (id) { return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1]; },
+        alliance: {
+            Id: function () { return parseInt(ikariam.model.avatarAllyId); },
+        },
         tradeShips: {
             free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; },
             // all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
@@ -899,8 +902,13 @@ var tnt = {
         gold: function () { return parseInt(ikariam.model.gold); },
         godGoldResult: function () { return ikariam.model.godGoldResult; },
         income: function () { return ikariam.model.income; },
+        upkeep: function () { return ikariam.model.upkeep; },
+        sciencetistsUpkeep: function () { return ikariam.model.sciencetistsUpkeep; },
         hasAlly: function () { return ikariam.model.hasAlly; },
+
+        isOwnCity: function () { return ikariam.model.isOwnCity; },
         maxCapacity: function () { return ikariam.model.maxResources.resource; },
+        wineSpending: function () { return ikariam.model.wineSpending; },
         resources: {
             wood: function () { return ikariam.model.currentResources.resource },
             wine: function () { return ikariam.model.currentResources[1]; },
@@ -918,7 +926,14 @@ var tnt = {
         population: function () { return ikariam.model.currentResources.population; },
         citizens: function () { return ikariam.model.currentResources.citizens; },
         producedTradegood: function () { return ikariam.model.producedTradegood; },
+        tradegoodProduction: function () { return ikariam.model.tradegoodProduction; },
+        resourceProduction: function () { return ikariam.model.resourceProduction; },
 
+        serverName: function () { return ikariam.model.serverName; },
+        serverTime: function () { return ikariam.model.serverTime; },
+        nextETA: function () { return ikariam.model.nextETA; },
+
+        
 
         cityList: function () {
             get.tmp = { cityList: {} };
@@ -1113,6 +1128,18 @@ GM_addStyle("\
     }\
     .tnt_bold{\
         font-weight:bold;\
+    }\
+    #tnt_info_resources .toggleMenu .minimize, #container .toggleMenu .close, #container .gopen, #container .gclose, #container .open, #container .close, #container .back {\
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
+        cursor: pointer;\
+        display: block;\
+        height: 18px;\
+        width: 18px;\
+    }\
+    #tnt_info_resources .back {\
+        left: 681px;\
+        position: relative;\
+        top: -21px;\
     }\
 ");
 // General styles - END
