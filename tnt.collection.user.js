@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.142
+// @version      1.4.143
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.142", // GM_info.script.version,
+    version: "1.4.143", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -772,7 +772,7 @@ var tnt = {
                 // Make table and add it to div
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
-                        <th class="tnt_center tnt_bold"><span class="tnt_back"></span> City</th>\
+                        <th class="tnt_center tnt_bold">City</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
@@ -990,7 +990,7 @@ var tnt = {
     },
 
     template: {
-        resources: '<div id="tnt_info_resources"></div>'
+        resources: '<span class="tnt_back"></span><div id="tnt_info_resources"></div>'
     }
 };
 
