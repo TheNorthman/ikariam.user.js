@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.156
+// @version      1.4.157
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.156", // GM_info.script.version,
+    version: "1.4.157", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -339,6 +339,7 @@ var tnt = {
 
                 // military advisor
                 if ($('#js_GlobalMenu_military').is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'military')) {
+                    console.log("military", $('a#js_GlobalMenu_military').css('background-image'));
                     tnt.core.notification.notifyMe(
                         "Ikariam",
                         "Your military advisor is trying to tell you something!",
