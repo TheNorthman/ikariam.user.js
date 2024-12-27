@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.155
+// @version      1.4.156
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.155", // GM_info.script.version,
+    version: "1.4.156", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -277,7 +277,7 @@ var tnt = {
                 // Play sound ?
                 if (GM_getValue("notificationSound", true)) {
                     tnt.core.debug.log('Play sound!', 5);
-                    tnt.sounds.snd.play();
+                    // tnt.sounds.snd.play();
                 }
 
                 // Do we have Notification
@@ -312,9 +312,9 @@ var tnt = {
             check: function () {
                 // cities advisor
                 if ($('#js_GlobalMenu_cities').is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'cities')) {
-                    if ($('a#js_GlobalMenu_cities').css('display') == 'block') {
-                        console.log("cities", $('a#js_GlobalMenu_cities').css('background-image'));
-                    }
+
+                    console.log("cities", $('a#js_GlobalMenu_cities').css('background-image'));
+
                     tnt.core.notification.notifyMe(
                         "Ikariam",
                         "Something happened in one of your towns!",
