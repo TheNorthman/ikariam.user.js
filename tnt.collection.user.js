@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.158
+// @version      1.4.159
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.158", // GM_info.script.version,
+    version: "1.4.159", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -311,16 +311,27 @@ var tnt = {
 
             check: function () {
                 // cities advisor
-                var normal = $('a#js_GlobalMenu_cities, a#js_GlobalMenu_citiesPremium')
-                if (normal.is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'cities')) {
+                if (!tnt.core.storage.get('notification', 'cities')) {
+                    var normal = $('li#advCities a.normalactive');
+                    var premium = $('li#advCities a.premiumactive');
+                    if (normal.is(".normalactive")) {
+                        var el = normal;
+                        var img = normal.css("background-image");
+                    } else {
+                        var el = premium;
+                        var img = premium.css("background-image");
+                    }
+                    console.dir(el);
+                    
+                    if (!$(el).data("notification") === true); {
+                        tnt.core.notification.notifyMe(
+                            "Ikariam",
+                            "Something happened in one of your towns!",
+                            img
+                        );
+                        $(el).data("notification", true);
+                    }
 
-                    console.dir("cities", $('li#advCities a'));
-
-                    tnt.core.notification.notifyMe(
-                        "Ikariam",
-                        "Something happened in one of your towns!",
-                        tnt.data.ikariam.url.notification.mayor_premium
-                    );
                     tnt.core.storage.set('notification', 'cities', true);
                 } else {
                     tnt.core.storage.set('notification', 'cities', false);
