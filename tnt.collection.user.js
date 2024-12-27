@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.157
+// @version      1.4.158
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.157", // GM_info.script.version,
+    version: "1.4.158", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -311,9 +311,10 @@ var tnt = {
 
             check: function () {
                 // cities advisor
-                if ($('#js_GlobalMenu_cities').is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'cities')) {
+                var normal = $('a#js_GlobalMenu_cities, a#js_GlobalMenu_citiesPremium')
+                if (normal.is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'cities')) {
 
-                    console.log("cities", $('a#js_GlobalMenu_cities').css('background-image'));
+                    console.dir("cities", $('li#advCities a'));
 
                     tnt.core.notification.notifyMe(
                         "Ikariam",
@@ -339,7 +340,9 @@ var tnt = {
 
                 // military advisor
                 if ($('#js_GlobalMenu_military').is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'military')) {
-                    console.log("military", $('a#js_GlobalMenu_military').css('background-image'));
+
+                    console.dir("military", $('li#advMilitary a'));
+
                     tnt.core.notification.notifyMe(
                         "Ikariam",
                         "Your military advisor is trying to tell you something!",
