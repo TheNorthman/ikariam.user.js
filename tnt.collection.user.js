@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.154
+// @version      1.4.155
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.154", // GM_info.script.version,
+    version: "1.4.155", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -312,8 +312,8 @@ var tnt = {
             check: function () {
                 // cities advisor
                 if ($('#js_GlobalMenu_cities').is(".normalactive, .premiumactive") && !tnt.core.storage.get('notification', 'cities')) {
-                    if ($('#js_GlobalMenu_cities').is(".normalactive").css('display') == 'block') {
-                        console.log("cities", $('#js_GlobalMenu_cities').is(".normalactive").css('background-image'));
+                    if ($('a#js_GlobalMenu_cities').css('display') == 'block') {
+                        console.log("cities", $('a#js_GlobalMenu_cities').css('background-image'));
                     }
                     tnt.core.notification.notifyMe(
                         "Ikariam",
@@ -900,7 +900,7 @@ var tnt = {
                 case 4:
                     return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png">';
                 case 'population':
-                    return '<img class="tnt_resource_icon" src="http://gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
+                    return '<img class="tnt_resource_icon" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
                 case 'citizens':
                     return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_population.png">';
             }
