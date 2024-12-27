@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.159
+// @version      1.4.160
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -24,7 +24,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.159", // GM_info.script.version,
+    version: "1.4.160", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -321,7 +321,7 @@ var tnt = {
                         var el = premium;
                         var img = premium.css("background-image");
                     }
-                    console.dir(el);
+                    console.dir('el: ' + el, ", img: " + img);
                     
                     if (!$(el).data("notification") === true); {
                         tnt.core.notification.notifyMe(
