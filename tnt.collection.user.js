@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.166
+// @version      1.4.167
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -23,7 +23,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.166", // GM_info.script.version,
+    version: "1.4.167", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -31,7 +31,10 @@ var tnt = {
         update: "http://lazy.rjj-net.dk/tnt/ikariam/hq/update"
     },
 
- 
+    console: {
+        log: console.log,
+        dir: console.dir
+    },
 
     settings: {
         dev: true,
@@ -153,14 +156,22 @@ var tnt = {
         debug: {
 
             log: function (value, level = 1) {
- 
+                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { tnt.console.log(value); }
+            },
+
             dir: function (value, level = 1) {
- 
+                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { tnt.console.dir(value); }
+            },
+
             timer: {
 
                 start: function (label) {
- 
+                    if (tnt.settings.debug.timerenable && tnt.settings.debug.enable) { console.time(label); }
+                },
+
                 end: function () {
+                    if (tnt.settings.debug.timerenable && tnt.settings.debug.enable) { console.timeEnd(label); }
+                }
             }
         },
 
@@ -235,7 +246,9 @@ var tnt = {
                 // Merge storage
                 tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
                 var ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_"));
-                tn
+                tnt.data.ikaTweaks = ikaTweaks ? ikaTweaks : {};
+                console.dir(tnt.data.ikaTweaks);
+            },
 
             get: function (group, name) {
                 return tnt.data.storage[group][name];
@@ -307,6 +320,8 @@ var tnt = {
                         var el = premium;
                         var img = premium.css("background-image");
                     }
+                    console.dir(el);
+                    console.dir("img: " + img);
                     
                     if (el && $(el).data("notification") !== true); {
                         tnt.core.notification.notifyMe(
@@ -734,6 +749,7 @@ var tnt = {
                 sulfur: tnt.get.resources.sulfur(),
                 hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : tnt.data.storage.resources.city[tnt.get.cityId()].hasConstruction,
             };
+
             var total = {
                 population: 0,
                 citizens: 0,
