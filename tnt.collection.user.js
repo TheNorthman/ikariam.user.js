@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.168
+// @version      1.4.169
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -23,7 +23,7 @@ function delay(time) {
 
 var tnt = {
 
-    version: "1.4.168", // GM_info.script.version,
+    version: "1.4.169", // GM_info.script.version,
 
     url: {
         versionUrl: "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php",
@@ -90,9 +90,7 @@ var tnt = {
         snd: new Audio("data:audio/mp3;base64,//twxAAAApgBJvQAACQeQig/N0AAMALwgABhhYOBj/9HKO//rP////+poeCChCTJxBRDqeKhViMBG5NphGYEhIOmsib8o0yAygkLQnmx8G9MQBk+Aclq7KI+AMUMBQIBggIBoAcA7CaD5wMkAEIQDgYhOAuEJwiC4NjYGSDAYQMAwIBtmfAzIAAKi50nyJnQMKJAUHiFAMWBEfA1HgYQGBjDIocDDBSfImg5fUAMMChcAAIA0AFJBiQUomOEWcTpXqRNyuzni4OQJ0AyoUScnCJmQhECFgBlzA1RmU99WKmK0HYICCcDMcBiX2QJpRsXlJJa121bJ3pmm6jXj06h9f//y4iXyQHLHGVSLoDjD8AsoAKDixmKCUySTU6yiVADRYNtiS////9NZmb////qUoxV78cARkYopP/7YMQDgA1JjWX9hQAhvzHr/ZS1pK7anGYiDqr1UxQhjpcCoh6idFnGnsvpvWPDT2NTnnDRmU182ANJTTUOuUNH7foYaN/eeQGETZ2rsT+hxEEklNf6Zkz2Kj5SRPup1aexy22dDjTjjTqLrnL72uyf///800WX5TvxyBrekwvel0KqDmNnTlcBF1RIqgtZWKNoSFvp20BJooqyMHJLNz31apKtL3tTLC5P+kZIore11qJYb1JP1spHr1omR6i2s1CANnNlt9FR/frXSb/TWyfqdR7mXfU+UnzrpP6C2Q/1v/1V/1VEfxa85QBIeSwnsbZLoIbvK1MSIB2b5D07Th1QKyxJ0f/7UMQOgA0ZjVXstVKhhyiqPaZBXJVVkle5lWbaK1b1a35iMhFSCeqwDhbbWgjsqq+qCyBEaxraxcIAmyDqgim+cC2wzJP9R831NkZb/Ne39+Rt/qSdP60N/7f9P+rSTlozFEDZ5VC+eLB4mUMHUUEIUEIkdwUEoEA5+wy3wwQYkGK7bY8reosf1rM0fzi0grn9Vq0jJNkT7KSdA2W9/pNzP0S6ztWkaBvJFzUuo2+tFv9aP/1f/R/6iK6Sn/NjDP/+tWqzACZVRBaLgCXt1vP/+1DEBoAMQY9J7Q5u4ZQx6D3GTWR6gOMcDa8HIS9IIcnunIasSf2mhmYpWwTjMrky4NW7JOEkUQFQGro6SKqHdA+ip2QU6/dFuUP/WgTYt5eTb+6SLJdJbOaoW/6//q/9//t/////6RQQSXAAA4ckDkukGyw01RHtOQEgdpAcA08jAA6OIH0ODAVnj6yNw4PwqQN9q2039dPdBjIbY+gPNTJFukgyTVF4wQU11XW//Kf/qUYiok43/Wt1sh7JIt/7P/6bf60P/r/////9ZZZY//tgxACADQmNQe4ybOF4saj9o0mVcQAVR2AFU6IfJ/3VfZkJfZuKAIHAIwOTDg5DDAstVxpaOx29PFPWyqVpSisfXwvboITo9EeBg0RVk+ya12VNi+z2u//zD/pGhKFkNCD6ls67p2XrX71TD2/1f/Rb/Wv/7/////+YlhaogBFiCIXryQapNO2uxIsxARyxIQrCKqzkwGdswguYFnWTCQhOE0k7KrS63nT5cCcsvWt0aLugPE4kpTTJ7+3WTf/UkdHSKRHNL697/+90////7/+r///////siaqKf6AOlIAkX0DpSGgeFRwqFVSWFL+nCpzQMCwdWtAsuh1UdjCzAWMzSWbW//tAxBUADcWPP6xxSelMoym9kbYU8rP4fzf8tXI7TQaCQ52/3VizlEqOMeaWtnI515irURH/YlFULkbhAcvnM1KbqYpIh3/6t/xeII//kxb///////i8oay9YoAewxkP6/MSWQ0kXUsBybaDU7bEKRhRwZBdy6jwypun5tl3oMmzbvf4yMwAdN1qUpJDQaWGxUpO13/9Rv/1OiXxihwIr9v/2////zz+v///5Ko4cwAFVQADK7T/+1DEBIAMuY0/7HJpKWux6H2pHhwbrhBrPFFxhBKMREeIBbDzGRCJzJFZc6hp6unct1cYfnZ1GdRQqRMp08O4BmxXPOtVSFJTnWMzpr5t/+r/zQmj4XPEgWl+vvXdnpG9L///6mf/Ut///////9ayBDUmQABVTIhZLointyNsykyIRRo0BgULXTQYFHX2ma0Aw1utZi3KLqoJTrqqdJzrGoI4KqcxWQ1jLqVQaEjND2t/1/9xxQAR8yj539e5d////7v/0///////9hq1SJQA//tQxAGADA2PQezySKFlHCf9tE2kBDQiFW/UJJbfRkYgEBMIoUYYsfMoI5cCSgMOdRX5NI6RayZdM8i1M1nTI0eg5gtEmAD7Sear0e60kTExVzXX/0P+pNMiozo7092/9mrUr///9aj/+r///////6jyJPIAAESAALp4xU+lk6TIkRQKTB4OGjA3Q4OZLnNZjVKHSwrBJ5mnY/kXIvgxBaBoBwEVJz2q1G6Bgz623QrSbqL//UaD7MR7FvP7etL1+eM2f+G/EP///xRCOHAABP/7UMQCAAt4uT3s8mkhdDGn/bHKFFUQBq+iKWo0tORDMAILzLsKwGbyd9KwYM2aT9hr8C09rTl2N2OV6bVnVI3PMkiOcBxes0fU+10CYL5dU7Vn222fzD/0yiVByCefpStmlNzf+T8h///8RkjihAANkMAf3xijxh5yS2xig20oMFQUImFLJ+EEDhlp0ZpodtYxK67NokopEkp1O2kbD7AhCdf/UiYFg0tu3s3yZ/8wIwWoRoQw9/V31d1K////Tf/V///////9zqYngAADRhD/+1DEAwAKdRk97HInIXexp72eQSQNa+YwzfxnZaQ1xawDriwSCxqOAKsFAxy6SvGJ+pU6+GjVCaKWa1v1prUdKABHQN1aq/lpAzf//6v/WZFIvv/7t69tD///5ih6P///oNlDEAAbIAC+fkFnTZVHFOyqIVAwKkhsbMB5khiRGWa/Uth6cv7qP/YsayxslW60c+6SSAB8Txotalb9ycmDIVdrdT6k//SWUhYTdP7X2X6qm9X//+tv9bf///////MaBYAAAzIQFOdIP+RvILA8//tQxAeADMGPN+4abuFnsWe9njUlWHjUx4mGKAOYMYJmipCgPUOcGGoBpps7BLQqKas5ffPSZ2RYUKAew6aJZYQSoWMTU+n/2WpjI9SMEGT/1oniSJx/1Wrf1VL+j//+p2/1///////+ozOLN4AAATUmJ6vsLW30YGDBDDhXgAQVRmZ0eMNIsNF7xS3OdwqZzH0kpq39KdNlpUj2cNQEmimtBzjJU3Y6kcLje3+2pf/1GBKDw//uhv////7/+r///////zMfNnAAAYMoDteAP//7UMQFAAqUvT3uPU1hXDGnvbYpdClsNLlBoCaSHAoDBowqYDqKjAQqVy/UZZq7b08XpKb3bVJYvlfzX+5r5kbgYES2O2mo3MH9P/20Mr/yAWgK4EJb0dR6z//////xITwAAKsxo298AcwdtiBacxAQZ2EDgsMhWBP/vAEFgAEM4E0qGZPdC1nnOvkSqdf+Z2Gm28DLrupU3GexeSf/1ZqLb/qVDMY/r/7p7a/////////////YsieQAAJnRiaTgD9wE1UqAwqDFjSDJb0w4Lz/+0DEDIAK2Y097j1LoT8XZ722NWT1AwEiKI0jVU6d6hZMC01GuN4T23zanrH+dNYzolflTcyyDrl79//0/+VJAMK/6/2RF/T////////////+XJ6AAA4YyHdeAM+vk24kMBy2+RERgYiAsAZbqiECAqSko9O2oghmPkH3inWt13besyRBQFjvrX9R9Ro3//qR/9bCyC+Ek7uncmAP//////k6XwADthG9vAGWnTWgmmFilgzAAf/7UMQJgAqguTus8ilhgRcmdZ7Q3Kwadp784CRHW5C5yB7FPT6fXdzGtzV2K60611JutAgQF6QV7JsV03z5w+Yl9C9X/9D/5gbC3kKY+dFdtf//////FBMAAFABP7QBhjLoZSGMItOY4hTDIFTDgzTi5MDDoES3yxXelsuxUiR01OmSdjbNrUlrUVSTBFPGUPajxut9RxJRozLpIqsvrTW8ze39ReGNImKOY25ePKE2v//////4omoFgAABZSIf9oAx6/jOzBAIMRiVQADEMIH/+1DEDAALnLs17iZNIdAx5SntKXyRgJYHdpCYWBCx4YlZARqBgnJzM24ytZml3+vUGnB/CDiRa6Bk19lmhmW1K02dVegp2agn7fMyYHOGE3FE7v//////6jZoAWATwoAZ3HxaM1UsAAEADIBAwMDsCgwiQyDUXCbMJ0AYHNQwMr1vopPzdyU9yz+9+8vksP73+pzOpKxUAdwaLGYXhUrySerZbwzgsFBgmjkeOyqUoa1DTppt1P/mjIGBO/9fddbV/////////////yIdLw2A//tgxAEADIWPK67RUqF9lyV1rs0cAvkAPGkBa5A7yL3GgARLJioMVgZMFl1MZogMDArEIDJotycGPTLQ3MVSyv1eR+s1j+Sb62YyHyI+Co4QoaPs/yomlXORc1zDW+bp/6sIMFRZ/p/p6f//+31f////////8oYFgADrAF6mALG4g+4MIGFbiIYZsuIwJ0JB+QeoYaAkC6tDfvJPyx0JXRyFJ3ZZoOdGuPT51aluEhgZ6BiU0Wmxs3sWVGtdNSbqSS3dXrW6n/yNICe75+P1o//////8SuUGgAK2ET1gAWe42mIgoBJemJwMY3ChjN5H9ZyYrCheFYzkhUc2ZVArHNr2lMt4//tAxBcADHmNLa4yjSGfsaX1wrcUgkb9nY6BKhogCpQFgBE0DAzMHZVbEaV6Oqp0VJWVVTW2/q9R4UYt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")
     },
 
-    images: {
-
-    },
+    images: {},
 
     core: {
 
@@ -247,7 +245,7 @@ var tnt = {
                 tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
                 var ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_"));
                 tnt.data.ikaTweaks = ikaTweaks ? ikaTweaks : {};
-                console.dir(tnt.data.ikaTweaks);
+                //console.dir(tnt.data.ikaTweaks);
             },
 
             get: function (group, name) {
@@ -272,7 +270,7 @@ var tnt = {
             },
 
             notifyMe: function (title, message, picture) {
-
+return;
                 // Play sound ?
                 if (GM_getValue("notificationSound", true)) {
                     tnt.core.debug.log('Play sound!', 5);
@@ -313,16 +311,17 @@ var tnt = {
                 if (!tnt.core.storage.get('notification', 'cities')) {
                     var normal = $('li#advCities a.normalactive');
                     var premium = $('li#advCities a.premiumactive');
+                    var el, img;
                     if (normal) {
-                        var el = normal;
-                        var img = normal.css("background-image");
+                        el = normal;
+                        img = normal.css("background-image");
                     } else if (premium) {
-                        var el = premium;
-                        var img = premium.css("background-image");
+                        el = premium;
+                        img = premium.css("background-image");
                     }
                     console.dir(el);
                     console.dir("img: " + img);
-                    
+
                     if (el && $(el).data("notification") !== true); {
                         tnt.core.notification.notifyMe(
                             "Ikariam",
@@ -685,7 +684,7 @@ var tnt = {
                 .premiumOffer,\
                 .expandable.resourceShop,\
                 .expandable.slot1,\
-                #transport .premiumTransporters\
+                #transport .premiumTransporters, #transport .buildingDescription\
                 {\
                     display:none!important;\
                     height:0!important;\
@@ -738,6 +737,8 @@ var tnt = {
 
         update: function () {
             tnt.data.storage.resources.city[tnt.get.cityId()] = {
+                cityLvl: tnt.get.cityLvl(),
+                cityIslandCoords: tnt.get.cityIslandCoords(),
                 producedTradegood: parseInt(tnt.get.producedTradegood()),
                 population: tnt.get.population(),
                 citizens: tnt.get.citizens(),
@@ -748,6 +749,7 @@ var tnt = {
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
                 hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : tnt.data.storage.resources.city[tnt.get.cityId()].hasConstruction,
+                tradegoodProduction: tnt.get.tradegoodProduction(),
             };
 
             var total = {
@@ -791,6 +793,7 @@ var tnt = {
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
                         <th class="tnt_center tnt_bold">City</th>\
+                        <th class="tnt_center tnt_bold">Lvl</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
@@ -804,16 +807,17 @@ var tnt = {
                 $.each(tnt.resource.sortCities(), function (index,cityID) {
                     var value = tnt.data.storage.resources.city[cityID];
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
-                        <td class="tnt_city tnt_left' + (value.hasConstruction ? ' tnt_construction' : '') + '">\
+                        <td class="tnt_city tnt_left' + (value.hasConstruction ? ' tnt_construction' : '') + '" title="' + value.cityIslandCoords + '">\
                             <a href="/?view=city&cityId=' + cityID + '">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</a>\
                         </td>\
+                        <td>' + (value.cityLvl ? value.cityLvl : '-') + '</td>\
                         <td class="tnt_population"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
                         <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + tnt.resource.checkMinMax(value, 0) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + value.wood.toLocaleString() + '</td>\
-                        <td class="tnt_wine' + tnt.resource.checkMinMax(value, 1) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '>' + value.wine.toLocaleString() + '</td>\
-                        <td class="tnt_marble' + tnt.resource.checkMinMax(value, 2) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '>' + value.marble.toLocaleString() + '</td>\
-                        <td class="tnt_crystal' + tnt.resource.checkMinMax(value, 3) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + value.crystal.toLocaleString() + '</td>\
-                        <td class="tnt_sulfur' + tnt.resource.checkMinMax(value, 4) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + value.sulfur.toLocaleString() + '</td>\
+                        <td class="tnt_wood' + tnt.resource.checkMinMax(value, 0) + (value.producedTradegood == 0 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '><span title="' +cityID+ '">' + value.wood.toLocaleString() + '<span></td>\
+                        <td class="tnt_wine' + tnt.resource.checkMinMax(value, 1) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '><span title="Test">' + value.wine.toLocaleString() + '<span></td>\
+                        <td class="tnt_marble' + tnt.resource.checkMinMax(value, 2) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '><span title="Test">' + value.marble.toLocaleString() + '<span></td>\
+                        <td class="tnt_crystal' + tnt.resource.checkMinMax(value, 3) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '><span title="Test">' + value.crystal.toLocaleString() + '<span></td>\
+                        <td class="tnt_sulfur' + tnt.resource.checkMinMax(value, 4) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '><span title="Test">' + value.sulfur.toLocaleString() + '<span></td>\
                     </tr>';
                 });
 
@@ -821,6 +825,7 @@ var tnt = {
                 var total = tnt.data.storage.resources.total;
                 table += '<tr>\
                     <td class="tnt_total">Total</td>\
+                    <td></td>\
                     <td class="tnt_population"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + parseInt(total.population).toLocaleString() + '</td>\
                     <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(total.citizens).toLocaleString() + '</td>\
                     <td class="tnt_wood"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + total.wood.toLocaleString() + '</td>\
@@ -857,7 +862,7 @@ var tnt = {
             var order = { 2: 0, 1: 1, 3: 2, 4: 3 };
 
             // Sort list by producedTradegood with custom order
-            sortedList = Object.keys(list).sort(function (a, b) {
+            var sortedList = Object.keys(list).sort(function (a, b) {
                 return order[list[a]] - order[list[b]];
             });
 
@@ -866,7 +871,7 @@ var tnt = {
 
         checkMinMax: function (city, resource) {
             if (GM_getValue("cityShowResources")) {
-                // var city = tnt.data.storage.resources.city[cityID];
+                //var city = tnt.data.storage.resources.city[cityID];
                 var max = city.max;
                 var txt = '';
 
@@ -905,19 +910,19 @@ var tnt = {
         getIcon: function (resource) {
             switch (resource) {
                 case 0:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wood.png">';
+                    return '<img class="tnt_resource_icon" title="Wood" src="/cdn/all/both/resources/icon_wood.png">';
                 case 1:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_wine.png">';
+                    return '<img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png">';
                 case 2:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_marble.png">';
+                    return '<img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png">';
                 case 3:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_crystal.png">';
+                    return '<img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png">';
                 case 4:
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_sulfur.png">';
+                    return '<img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png">';
                 case 'population':
-                    return '<img class="tnt_resource_icon" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
+                    return '<img class="tnt_resource_icon" title="Population" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
                 case 'citizens':
-                    return '<img class="tnt_resource_icon" src="/cdn/all/both/resources/icon_population.png">';
+                    return '<img class="tnt_resource_icon" title="Citizens" src="/cdn/all/both/resources/icon_population.png">';
             }
         }
     },
@@ -926,6 +931,8 @@ var tnt = {
         playerId: function () { return parseInt(ikariam.model.avatarId); },
         // islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
         cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "") },
+        cityLvl: function () { return $("#js_CityPosition0Level").text(); },
+        cityIslandCoords: function () { return $("#js_islandBreadCoords").text(); },
         cityName: function (id) { return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1]; },
         alliance: {
             Id: function () { return parseInt(ikariam.model.avatarAllyId); },
@@ -953,7 +960,7 @@ var tnt = {
             sulfur: function () { return ikariam.model.currentResources[4]; }
         },
         // data: {
-        //     townHall: function () { 
+        //     townHall: function () {
         //         var townHall = {
         //         };
         //     },
@@ -964,12 +971,10 @@ var tnt = {
         producedTradegood: function () { return ikariam.model.producedTradegood; },
         tradegoodProduction: function () { return ikariam.model.tradegoodProduction; },
         resourceProduction: function () { return ikariam.model.resourceProduction; },
-
+        realHour: function () { return ikariam.model.realHour; },
         serverName: function () { return ikariam.model.serverName; },
         serverTime: function () { return ikariam.model.serverTime; },
         nextETA: function () { return ikariam.model.nextETA; },
-
-        
 
         cityList: function () {
             get.tmp = { cityList: {} };
@@ -1014,7 +1019,10 @@ var tnt = {
     }
 };
 
-tnt.core.init();
+$(document).ready(function () {
+    //setTimeout(tnt.core.init, 1000);
+    tnt.core.init();
+});
 
 // General styles
 GM_addStyle("\
@@ -1103,8 +1111,7 @@ GM_addStyle("\
     #tntOptions legend{\
         font-weight:bold;\
     }\
-    .tntHide,\
-    #infocontainer .tntLvl, #actioncontainer .tntLvl{\
+    .tntHide, #infocontainer .tntLvl, #actioncontainer .tntLvl{\
         display:none;\
     }\
     #tntInfoWidget {\
