@@ -634,7 +634,34 @@ const tnt = {
             });
         },
         update() {
-            tnt.data.storage.resources.city[tnt.get.cityId()] = {
+            // --- Always update buildings for the current city if on city view ---
+            const cityId = tnt.get.cityId();
+            // Use a deep clone to avoid reference issues
+            const prev = $.extend(true, {}, tnt.data.storage.resources.city[cityId] || {});
+            let buildings = prev.buildings && Object.keys(prev.buildings).length > 0 ? $.extend(true, {}, prev.buildings) : {};
+
+            // If on city view, always extract buildings from DOM (even if empty)
+            if ($("body").attr("id") == "city") {
+                const buildingData = {};
+                for (let pos = 0; pos <= 16; pos++) {
+                    const $c = $("#position" + pos);
+                    if (!$c.length) continue;
+                    const $a = $c.find("a[id$='Link']");
+                    const type = $a.attr("href")?.match(/view=([a-zA-Z0-9]+)/)?.[1] || "";
+                    const level = $c.attr("class")?.match(/level(\d+)/)?.[1] || "";
+                    if (type && level) {
+                        if (!buildingData[type]) buildingData[type] = [];
+                        buildingData[type].push({
+                            level: parseInt(level, 10),
+                            position: pos,
+                            name: type
+                        });
+                    }
+                }
+                buildings = $.extend(true, {}, buildingData); // always overwrite for current city
+            }
+
+            tnt.data.storage.resources.city[cityId] = {
                 cityIslandCoords: tnt.get.cityIslandCoords(),
                 producedTradegood: parseInt(tnt.get.producedTradegood()),
                 population: tnt.get.population(),
@@ -645,17 +672,18 @@ const tnt = {
                 marble: tnt.get.resources.marble(),
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
-                hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : tnt.data.storage.resources.city[tnt.get.cityId()].hasConstruction,
+                hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : (prev.hasConstruction || false),
                 resourceProduction: tnt.get.resourceProduction(),
-                tradegoodProduction: tnt.get.tradegoodProduction()
+                tradegoodProduction: tnt.get.tradegoodProduction(),
+                buildings: buildings
             };
             if (tnt.get.cityLvl().length) {
-                tnt.data.storage.resources.city[tnt.get.cityId()].cityLvl = tnt.get.cityLvl();
-            } else if ($("body").attr("id") == "city" && tnt.data.storage.resources.city[tnt.get.cityId()].hasConstruction) {
-                tnt.data.storage.resources.city[tnt.get.cityId()].cityLvl = $('#js_CityPosition0Link').attr('title').replace(/[^\d-]+/g, "");
+                tnt.data.storage.resources.city[cityId].cityLvl = tnt.get.cityLvl();
+            } else if ($("body").attr("id") == "city" && tnt.data.storage.resources.city[cityId].hasConstruction) {
+                tnt.data.storage.resources.city[cityId].cityLvl = $('#js_CityPosition0Link').attr('title').replace(/[^\d-]+/g, "");
             } else {
-                tnt.data.storage.resources.city[tnt.get.cityId()].cityLvl = tnt.data.storage.resources.city[tnt.get.cityId()].cityLvl;
-            };
+                tnt.data.storage.resources.city[cityId].cityLvl = prev.cityLvl || tnt.data.storage.resources.city[cityId].cityLvl;
+            }
 
             var total = {
                 population: 0,
@@ -680,32 +708,27 @@ const tnt = {
 
             tnt.data.storage.resources.total = total;
 
-            // --- Collect building levels for each city ---
-            // Only update if on city view and building positions are available
-            if ($("body").attr("id") == "city" && typeof ikariam.model.cityBuildings === "object") {
-                const buildingData = {};
-                for (const pos in ikariam.model.cityBuildings) {
-                    const b = ikariam.model.cityBuildings[pos];
-                    if (b && b.building) {
-                        buildingData[b.building] = {
-                            level: b.level,
-                            position: pos,
-                            name: b.building
-                        };
-                    }
-                }
-                // Save to storage.resources.city[cityID].buildings
-                tnt.data.storage.resources.city[tnt.get.cityId()].buildings = buildingData;
-                // Save immediately after updating buildings
-                tnt.core.storage.save();
-            } else {
-                // If not in city view, keep previous buildings data if present
-                // Do not overwrite or remove it
-            }
-
             // Save storage (for all other resource/city changes)
             tnt.core.storage.save();
 
+            // Log all buildingData for all cities (show as JSON for easier inspection)
+            const allBuildings = {};
+            for (const cityId in tnt.data.storage.resources.city) {
+                if (
+                    tnt.data.storage.resources.city[cityId] &&
+                    tnt.data.storage.resources.city[cityId].buildings &&
+                    typeof tnt.data.storage.resources.city[cityId].buildings === "object" &&
+                    Object.keys(tnt.data.storage.resources.city[cityId].buildings).length > 0 // Only include if not empty
+                ) {
+                    allBuildings[cityId] = tnt.data.storage.resources.city[cityId].buildings;
+                }
+            }
+            // Only log if there is at least one city with building data
+            if (Object.keys(allBuildings).length > 0) {
+                console.log("TNT all buildingData for all cities:", JSON.stringify(allBuildings, null, 2));
+            } else {
+                console.log("TNT all buildingData for all cities: (no building data found)");
+            }
             // Update template
             tnt.resource.show();
         },
@@ -812,9 +835,12 @@ const tnt = {
 
                 var buildingTable = '<table id="tnt_building_table" border="1">\
                     <tr>\
-                        <th class="tnt_center tnt_bold">\
-                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="float:left;"></span>\
-                            <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources"></span> City\
+                        <th class="tnt_center tnt_bold" style="position:relative; text-align:center;">\
+                            <div style="position:relative; min-width:120px; text-align:center;">\
+                                <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="position:absolute; left:2px; top:2px;"></span>\
+                                <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources" style="position:absolute; right:2px; top:2px;"></span>\
+                                <span style="display:inline-block; text-align:center; min-width:60px;">City</span>\
+                            </div>\
                         </th>';
 
                 buildingColumns.forEach(function (b) {
@@ -830,15 +856,21 @@ const tnt = {
                 $.each(tnt.resource.sortCities(), function (index, cityID) {
                     var value = tnt.data.storage.resources.city[cityID];
                     buildingTable += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
-                        <td class="tnt_city tnt_left">' +
+                        <td class="tnt_city tnt_left" style="text-align:left;">' +
                         '<a onclick=\'$("#dropDown_js_citySelectContainer li[selectValue=\\"' + cityID + '\\"]").trigger("click"); return false;\'>' +
                         tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) +
                         '</a></td>';
                     // Print building levels for this city
                     var cityBuildings = value.buildings || {};
                     buildingColumns.forEach(function (col) {
-                        var b = cityBuildings[col.key];
-                        buildingTable += '<td class="tnt_building_level">' + (b && b.level ? b.level : '') + '</td>';
+                        var arr = cityBuildings[col.key];
+                        // Show highest level if multiple, or blank if none
+                        if (Array.isArray(arr) && arr.length > 0) {
+                            var maxLevel = Math.max.apply(null, arr.map(b => b.level));
+                            buildingTable += '<td class="tnt_building_level" style="text-align:center;">' + maxLevel + '</td>';
+                        } else {
+                            buildingTable += '<td class="tnt_building_level" style="text-align:center;"></td>';
+                        }
                     });
                     buildingTable += '</tr>';
                 });
@@ -917,29 +949,47 @@ const tnt = {
                 window.location.href = url.toString();
                 return;
             }
-            index++;
-            localStorage.setItem('tnt_city_update_index', index.toString());
-            if (index >= cityList.length) {
-                const startCityId = localStorage.getItem('tnt_city_update_start');
-                localStorage.removeItem('tnt_city_update_list');
-                localStorage.removeItem('tnt_city_update_index');
-                localStorage.removeItem('tnt_city_update_start');
-                if (startCityId && tnt.get.cityId() != startCityId) {
+            // Wait for buildings to be present before updating
+            tnt.waitForCityBuildings(() => {
+                tnt.resource.update();
+                index++;
+                localStorage.setItem('tnt_city_update_index', index.toString());
+                if (index >= cityList.length) {
+                    const startCityId = localStorage.getItem('tnt_city_update_start');
+                    localStorage.removeItem('tnt_city_update_list');
+                    localStorage.removeItem('tnt_city_update_index');
+                    localStorage.removeItem('tnt_city_update_start');
+                    if (startCityId && tnt.get.cityId() != startCityId) {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('view', 'city');
+                        url.searchParams.set('cityId', startCityId);
+                        window.location.href = url.toString();
+                    }
+                    return;
+                }
+                const nextCityId = cityList[index];
+                if (nextCityId && tnt.get.cityId() != nextCityId) {
                     const url = new URL(window.location.href);
                     url.searchParams.set('view', 'city');
-                    url.searchParams.set('cityId', startCityId);
+                    url.searchParams.set('cityId', nextCityId);
                     window.location.href = url.toString();
                 }
-                return;
-            }
-            const nextCityId = cityList[index];
-            if (nextCityId && tnt.get.cityId() != nextCityId) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('view', 'city');
-                url.searchParams.set('cityId', nextCityId);
-                window.location.href = url.toString();
-            }
+            });
         }
+    },
+    waitForCityBuildings: function (callback) {
+        // Only run on city view
+        if ($("body").attr("id") !== "city") return callback();
+        const cityPositions = () => $("div[id^='js_CityPosition']").length;
+        if (cityPositions()) return callback();
+        // Wait for buildings to appear
+        const observer = new MutationObserver(() => {
+            if (cityPositions()) {
+                observer.disconnect();
+                callback();
+            }
+        });
+        observer.observe(document.getElementById("mainview") || document.body, { childList: true, subtree: true });
     },
     get: {
         playerId: () => parseInt(ikariam.model.avatarId),
@@ -1073,7 +1123,6 @@ GM_addStyle(
         padding:2px!important;\
         text-align:center;\
     }\
-    /* Add building table style to match resource table */\
     #tnt_building_table{\
         border-collapse:collapse;\
         font: 12px Arial, Helvetica, sans-serif;\
@@ -1102,7 +1151,6 @@ GM_addStyle(
         height:16px;\
         display:inline-block;\
     }\
-    /* Make building icons bigger */\
     .tnt_building_icon {\
         width:36px !important;\
         height:32px !important;\
@@ -1216,8 +1264,6 @@ GM_addStyle(
         display: block!important;\
         height: 18px;\
         width: 18px;\
-    }\
-    #tnt_info_resources .tnt_refresh {\
         background-position: -179px 0;\
         background-color: #DBBE8C;\
     }\
@@ -1248,15 +1294,15 @@ GM_addStyle(
         vertical-align: middle;\
         float: right;\
         margin-left: 6px;\
+       \
         background-position: -179px 0;\
     }\
     .tnt_table_toggle_btn:hover { background-position: -179px -18px; }\
-    .tnt_city .tnt_panel_minimize_btn { float:left; margin-right:2px; }\
+    .tnt_city .tnt_panel_minimize_btn { float: left; margin-right: 2px; }\
     #tnt_info_resources.minimized {\
-        width: 20px !important;\
-        min-width: 20px !important;\
-        max-width: 20px !important;\
-        overflow: hidden !important;\
+        width: 20px!important;\
+        min-width: 20px!important;\
+        max-width: 20px!important;\
+        overflow: hidden!important;\
     }\
-"
-);
+");
