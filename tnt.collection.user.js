@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.175
+// @version      1.4.176
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -779,6 +779,12 @@ var tnt = {
             $('#tnt_info_resources .tnt_refresh').on('click', function () {
                 tnt.citySwitcher.updateAllCitiesResources();
             });
+            $('#tnt_toggle_table').off('click').on('click', function () {
+                var $buildings = $('#tnt_info_buildings_content');
+                var $btn = $(this);
+                $buildings.toggle();
+                $btn.toggleClass('active', $buildings.is(':visible'));
+            });
         },
 
         update: function () {
@@ -849,7 +855,9 @@ var tnt = {
                 // Make table and add it to div
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
-                        <th class="tnt_center tnt_bold">City</th>\
+                        <th class="tnt_center tnt_bold">\
+                            City <span id="tnt_toggle_table" class="tnt_toggle_table_btn" title="Show Buildings">\
+                        </span></th>\
                         <th class="tnt_center tnt_bold">Lvl</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
@@ -1162,6 +1170,7 @@ var tnt = {
         resources: '<div id="tnt_info_resources">\
                         <span class="tnt_back"></span>\
                         <div id="tnt_info_resources_content">\
+                        <div id="tnt_info_buildings_content" style="display:none;"></div>\
                     </div>'
     }
 };
@@ -1373,6 +1382,23 @@ GM_addStyle("\
     }\
     #tnt_info_resources .tnt_refresh:hover {\
         background-position: -179px -18px;\
+    }\
+    \
+    #tnt_info_resources .tnt_toggle_table_btn {\
+        display: inline-block;\
+        float: right;\
+        vertical-align: middle;\
+        margin-left: 6px;\
+        cursor: pointer;\
+        width: 18px;\
+        height: 18px;\
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat -161px 0;\
+    }\
+    #tnt_info_resources .tnt_toggle_table_btn.active {\
+        background-position: -143px 0;\
+    }\
+    #tnt_info_resources .tnt_toggle_table_btn:hover {\
+        background-position: -161px -18px;\
     }\
 ");
 // General styles - END
