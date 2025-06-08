@@ -5,78 +5,54 @@
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
 // @license      MIT
-// @include		 http*s*.ikariam.*/*
-// @exclude		 http*support*.ikariam.*/*
-// @require	     https://code.jquery.com/jquery-1.12.4.min.js
-// @grant GM_addStyle
-// @grant GM_getValue
-// @grant GM_setValue
-// @grant GM_log
-// @grant GM_xmlhttpRequest
-// @downloadURL https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
-// @updateURL https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
+// @include      http*s*.ikariam.*/*
+// @exclude      http*support*.ikariam.*/*
+// @require      https://code.jquery.com/jquery-1.12.4.min.js
+// @grant        GM_addStyle
+// @grant        GM_getValue
+// @grant        GM_setValue
+// @grant        GM_log
+// @grant        GM_xmlhttpRequest
+// @downloadURL  https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
+// @updateURL    https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
 // ==/UserScript==
 
-// Define constants for URLs
 const VERSION_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php";
 const UPDATE_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/update.php";
 const UPDATE_HQ_URL = "http://lazy.rjj-net.dk/tnt/ikariam/hq/update";
-
 let tnt_autoUpdateInterval = null;
 
-// Used to select all units when pillaging
-// function delay(time) {
-//     return new Promise(resolve => setTimeout(resolve, time));
-// }
-
-var tnt = {
-
+const tnt = {
     version: GM_info.script.version,
-
-    url: {
-        versionUrl: VERSION_URL,
-        updateUrl: UPDATE_URL,
-        update: UPDATE_HQ_URL
-    },
-
-    console: {
-        log: console.log,
-        dir: console.dir
-    },
-
+    url: { versionUrl: VERSION_URL, updateUrl: UPDATE_URL, update: UPDATE_HQ_URL },
+    console: { log: console.log, dir: console.dir },
     settings: {
         dev: true,
-        debug: {
-            enable: true,
-            level: 5,
-            timer: {
-                enable: true
-            }
-        }
+        debug: { enable: true, level: 5, timer: { enable: true } }
     },
-
     data: {
         test: {},
-
         ikariam: {
-            subDomain: location.toString().split('.')[0].split('//')[1],
-
+            subDomain: location.hostname.split('.')[0],
             url: {
-                notification: {
-                    defaultPicture: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/mayor_premium.png",
-                    mayor: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/mayor.png",
-                    mayor_premium: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/mayor_premium.png",
-                    general: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/general.png",
-                    general_premium: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/general_premium.png",
-                    general_alert: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/general_premium_alert.png",
-                    scientist: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/scientist.png",
-                    scientist_premium: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/scientist_premium.png",
-                    diplomat: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/diplomat.png",
-                    diplomat_premium: "https://" + location.toString().split('.')[0].split('//')[1] + ".ikariam.gameforge.com/cdn/all/both/layout/advisors/diplomat_premium.png"
-                }
+                notification: (() => {
+                    const sub = location.hostname.split('.')[0];
+                    const base = `https://${sub}.ikariam.gameforge.com/cdn/all/both/layout/advisors/`;
+                    return {
+                        defaultPicture: base + "mayor_premium.png",
+                        mayor: base + "mayor.png",
+                        mayor_premium: base + "mayor_premium.png",
+                        general: base + "general.png",
+                        general_premium: base + "general_premium.png",
+                        general_alert: base + "general_premium_alert.png",
+                        scientist: base + "scientist.png",
+                        scientist_premium: base + "scientist_premium.png",
+                        diplomat: base + "diplomat.png",
+                        diplomat_premium: base + "diplomat_premium.png"
+                    };
+                })()
             }
         },
-
         storage: {
             notification: {
                 cities: false,
@@ -90,259 +66,91 @@ var tnt = {
             resources: {
                 city: {}
             }
-        },
+        }
     },
-
-    images: {},
-
     core: {
-
-        init: function () {
-            tnt.core.debug.log("TNT Collection v" + tnt.version + " - Init...");
-
-            // Init Storage as the first thing
+        init() {
+            tnt.core.debug.log(`TNT Collection v${tnt.version} - Init...`);
             tnt.core.storage.init();
-
-            // Resource
             tnt.resource.update();
             tnt.resource.events();
-
-            // Notification
             tnt.core.notification.init();
-
-            // Events
             tnt.core.events.init();
-
-            // Options
             tnt.core.options.init();
-
-            // Version check // TODO: JSON don't work
-            // tnt.checkVersion();
-
-            // Info box // TODO: Not Used
-            // tnt.core.info.init();
-
-            // Do ALL the items that needs to be done on every page
             tnt.all();
-
-            // Do the items regarding the current page
             switch ($("body").attr("id")) {
                 case "island": tnt.island(); break;
                 case "city": tnt.city(); break;
                 case "worldmap_iso": tnt.world(); break;
             }
-
-
-            // Continue city switching if needed (for updateAllCitiesResources)
             if (localStorage.getItem('tnt_city_update_list')) {
-                setTimeout(() => {
-                    // Optionally call tnt.resource.update(); here if needed
-                    setTimeout(() => {
-                        tnt.citySwitcher.gotoNextCityForUpdate();
-                    }, 100);
-                }, 200);
+                setTimeout(() => setTimeout(() => tnt.citySwitcher.gotoNextCityForUpdate(), 100), 200);
             }
-
-            // --- Auto-update all city resources every hour ---
-            if (tnt_autoUpdateInterval) {
-                clearInterval(tnt_autoUpdateInterval);
-            }
-            tnt_autoUpdateInterval = setInterval(() => {
-                tnt.citySwitcher.updateAllCitiesResources();
-            }, 60 * 60 * 1000); // 1 hour in milliseconds
-
-            // TODO Don't work. Try to append script tag witht the code and see if that will work
-            // tnt.alrtSound.play();
+            if (tnt_autoUpdateInterval) clearInterval(tnt_autoUpdateInterval);
+            tnt_autoUpdateInterval = setInterval(() => tnt.citySwitcher.updateAllCitiesResources(), 3600000);
         },
-
         ajax: {
-            send: function (data, url = tnt.url.update, callback = null) {
+            send(data, url = tnt.url.update, callback = null) {
                 tnt.core.debug.log('Data length: ' + JSON.stringify(data).length, 3);
                 GM_xmlhttpRequest({
-                    url: url,
-                    method: 'POST',
+                    url, method: 'POST',
                     data: "data=" + encodeURIComponent(JSON.stringify(data)),
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    onload: function (response) {
-                        tnt.core.debug.dir(response.responseText, 5);
-                        if (callback) {
-                            callback();
-                        }
-                    }
+                    onload: resp => { tnt.core.debug.dir(resp.responseText, 5); if (callback) callback(); }
                 });
             }
         },
-
         debug: {
-
-            log: function (value, level = 1) {
-                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { GM_log(value); }
-            },
-
-            dir: function (value, level = 1) {
-                if (tnt.settings.debug.enable && tnt.settings.debug.level > level) { GM_dir(value); }
-            },
-
+            log(val, lvl = 1) { if (tnt.settings.debug.enable && tnt.settings.debug.level > lvl) GM_log(val); },
+            dir(val, lvl = 1) { if (tnt.settings.debug.enable && tnt.settings.debug.level > lvl) GM_dir(val); },
             timer: {
-
-                start: function (label) {
-                    if (tnt.settings.debug.timerenable && tnt.settings.debug.enable) { console.time(label); }
-                },
-
-                end: function (label) {
-                    if (tnt.settings.debug.timerenable && tnt.settings.debug.enable) { console.timeEnd(label); }
-                }
+                start(label) { if (tnt.settings.debug.timer.enable && tnt.settings.debug.enable) console.time(label); },
+                end(label) { if (tnt.settings.debug.timer.enable && tnt.settings.debug.enable) console.timeEnd(label); }
             }
         },
-
         utils: {
-            index: function (obj, path, value = undefined) {
-                if (typeof path === 'string') {
-                    return tnt.core.utils.index(obj, path.split('.'), value);
-                }
-
-                if (path.length === 1) {
-                    return value !== undefined ? (obj[path[0]] = value) : obj[path[0]];
-                }
-
+            index(obj, path, value) {
+                if (typeof path === 'string') return tnt.core.utils.index(obj, path.split('.'), value);
+                if (path.length === 1) return value !== undefined ? (obj[path[0]] = value) : obj[path[0]];
                 return tnt.core.utils.index(obj[path[0]], path.slice(1), value);
             },
-            index2: function (obj, is, value) {
-                if (typeof is == 'string') {
-                    return tnt.core.utils.index(obj, is.split('.'), value);
-                } else if (is.length == 1 && value !== undefined) {
-                    return obj[is[0]] = value;
-                } else if (is.length == 0) {
-                    return obj;
-                } else {
-                    return tnt.core.utils.index(obj[is[0]], is.slice(1), value);
-                }
+            delay: ms => new Promise(res => setTimeout(res, ms)),
+            getGradientColor(v1, v2, c1 = "#ff0000", c2 = "#00FF00") {
+                if (v1 > v2) [v1, v2] = [v2, v1];
+                const hexToRgb = hex => {
+                    const b = parseInt(hex.substring(1), 16);
+                    return { r: (b >> 16) & 255, g: (b >> 8) & 255, b: b & 255 };
+                };
+                const rgbToHex = (r, g, b) => "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+                const c1Rgb = hexToRgb(c1), c2Rgb = hexToRgb(c2), ratio = v1 / v2;
+                return rgbToHex(
+                    Math.round(c1Rgb.r * ratio + c2Rgb.r * (1 - ratio)),
+                    Math.round(c1Rgb.g * ratio + c2Rgb.g * (1 - ratio)),
+                    Math.round(c1Rgb.b * ratio + c2Rgb.b * (1 - ratio))
+                );
             },
-
-            delay: function (time) {
-                return new Promise(resolve => setTimeout(resolve, time));
-            },
-
-            getGradientColor: function (value1, value2, color1, color2) {
-                // Defaults colors if not set
-                color1 = color1 || "#ff0000";
-                color2 = color2 || "#00FF00";
-
-                // Ensure value1 is not greater than value2
-                if (value1 > value2) {
-                    [value1, value2] = [value2, value1];
-                }
-
-                // Convert hex colors to RGB
-                function hexToRgb(hex) {
-                    const bigint = parseInt(hex.substring(1), 16);
-                    return {
-                        r: (bigint >> 16) & 255,
-                        g: (bigint >> 8) & 255,
-                        b: bigint & 255
-                    };
-                }
-
-                // Convert RGB back to hex
-                function rgbToHex(r, g, b) {
-                    return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
-                }
-
-                const color1Rgb = hexToRgb(color1);
-                const color2Rgb = hexToRgb(color2);
-                const ratio = value1 / value2;
-                const r = Math.round(color1Rgb.r * ratio + color2Rgb.r * (1 - ratio));
-                const g = Math.round(color1Rgb.g * ratio + color2Rgb.g * (1 - ratio));
-                const b = Math.round(color1Rgb.b * ratio + color2Rgb.b * (1 - ratio));
-
-                return rgbToHex(r, g, b);
-            },
-
-                        getHighestValue: function (key, obj) {
-                            let highest = Number.NEGATIVE_INFINITY;
-
-                            for (let city in obj) {
-                                if (obj[city][key] > highest) {
-                                    highest = obj[city][key];
-                                }
-                            }
-
-                            return highest;
-                        }
-
-        },
-
-        storage: {
-
-            init: function () {
-                // Merge storage
-                tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
-                var ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_"));
-                tnt.data.ikaTweaks = ikaTweaks ? ikaTweaks : {};
-                //console.dir(tnt.data.ikaTweaks);
-            },
-
-            get: function (group, name) {
-                return tnt.data.storage[group][name];
-            },
-
-            set: function (group, name, value) {
-                tnt.data.storage[group][name] = value;
-                tnt.core.storage.save();
-            },
-
-            save: function () {
-                localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage));
+            getHighestValue(key, obj) {
+                let highest = -Infinity;
+                for (let city in obj) if (obj[city][key] > highest) highest = obj[city][key];
+                return highest;
             }
         },
-
+        storage: {
+            init() {
+                tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
+                tnt.data.ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_")) || {};
+            },
+            get(group, name) { return tnt.data.storage[group][name]; },
+            set(group, name, value) { tnt.data.storage[group][name] = value; tnt.core.storage.save(); },
+            save() { localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage)); }
+        },
         notification: {
-            init: function () {
-                if (Notification && Notification.permission !== "granted") {
-                    Notification.requestPermission();
-                }
-            },
-
-            notifyMe: function (title, message, picture) {
-                // TODO: Make it work again
+            init() { if (Notification && Notification.permission !== "granted") Notification.requestPermission(); },
+            notifyMe(title, message, picture) {
+                // Disabled for now
                 return;
-
-                // Play sound ?
-                if (GM_getValue("notificationSound", true)) {
-                    tnt.core.debug.log('Play sound!', 5);
-                    // tnt.sounds.snd.play();
-                }
-
-                // Do we have Notification
-                if (!Notification) {
-                    // TODO something to show in tntInfo when that is up  and running
-                    alert("This browser don't support desktop notifications. Update to a modern browser or disable the notifications.");
-                    return;
-                }
-
-                picture = picture ? picture : tnt.settings.notification.defaultPicture;
-
-                // ask for permission to speak
-                if (Notification.permission !== "granted") {
-                    Notification.requestPermission();
-                } else {
-                    var notification = new Notification(title, {
-                        // notification icon, should be replaced with the correct advisor later
-                        icon: picture,
-                        body: message,
-                    });
-                    // kill notifications 700 ms after their birth
-                    setTimeout(function () { notification.close(); }, 7000);
-                    // if user shows affection for notify, let notify do them a last service before it dies prematurely.
-                    notification.onclick = function () {
-                        window.open("http://" + tnt.data.ikariam.subDomain + ".ikariam.gameforge.com/index.php");
-                    }
-
-                    tnt.core.debug.log("Notification send: " + title, 3);
-                }
             },
-
-            check: function () {
+            check() {
                 // cities advisor
                 if (!tnt.core.storage.get('notification', 'cities')) {
                     var normal = $('li#advCities a.normalactive');
@@ -423,16 +231,10 @@ var tnt = {
                 }
             }
         },
-
         events: {
-
-            init: function () {
-                tnt.core.events.ikariam.override();
-            },
-
+            init() { tnt.core.events.ikariam.override(); },
             ikariam: {
-
-                override: function () {
+                override() {
 
                     // updateGlobalData
                     ajax.Responder.tntUpdateGlobalData = ajax.Responder.updateGlobalData;
@@ -539,13 +341,9 @@ var tnt = {
                 }
             }
         },
-
         options: {
-
-            init: function () {
-
-                if (GM_getValue("version") != tnt.version) { tnt.core.options.setup(); }
-
+            init() {
+                if (GM_getValue("version") != tnt.version) tnt.core.options.setup();
                 /* Add option link, option box and eventlisteners */
                 // $("#GF_toolbar ul").append('\
                 $('\
@@ -657,8 +455,7 @@ var tnt = {
                     GM_setValue("notificationSound", !GM_getValue("notificationSound"));
                 });
             },
-
-            setup: function () {
+            setup() {
                 /* Set/Upgrade default values */
                 GM_setValue("allRemovePremiumOffers", GM_getValue("allRemovePremiumOffers", true));
                 GM_setValue("allRemoveFooterNavigation", GM_getValue("allRemoveFooterNavigation", true));
@@ -671,10 +468,8 @@ var tnt = {
                 GM_setValue("version", tnt.version);
             }
         },
-
         info: {
-            // TODO: Not used!
-            init: function () {
+            init() {
                 $('body').append('\
                     <ul id="tntInfoWidget">\
                         <li class="accordionItem">\
@@ -692,8 +487,7 @@ var tnt = {
                 ');
             }
         },
-
-        checkVersion: function () {
+        checkVersion() {
             GM_xmlhttpRequest({
                 url: tnt.url.version,
                 method: 'POST',
@@ -709,65 +503,27 @@ var tnt = {
             });
         }
     },
-
-    all: function () {
-        // Remove premium offers
+    all() {
         if (GM_getValue("allRemovePremiumOffers")) {
-            tnt.core.debug.log("Adding allRemovePremiumOffers styles...", 5);
-            GM_addStyle("\
-                #premium_btn,\
-                .premiumOfferBox,\
-                .premiumOffer,\
-                .expandable.resourceShop,\
-                .expandable.slot1,\
-                #transport .premiumTransporters, #transport .buildingDescription\
-                {\
-                    display:none!important;\
-                    height:0!important;\
-                }\
-                #resource #setWorkers .content,\
-                #tradegood #setWorkers .content\
-                {min-height:180px;}\
-            ");
-
-            // Need to be done after loading event of dialogs to be finished
+            GM_addStyle("#premium_btn,.premiumOfferBox,.premiumOffer,.expandable.resourceShop,.expandable.slot1,#transport .premiumTransporters,#transport .buildingDescription{display:none!important;height:0!important;}#resource #setWorkers .content,#tradegood #setWorkers .content{min-height:180px;}");
             $("form#ambrosiaDonateForm").closest('li').hide();
         }
-
-        if (GM_getValue("allRemoveFooterNavigation")) {
-            $('#footer').hide();
-        }
+        if (GM_getValue("allRemoveFooterNavigation")) $('#footer').hide();
     },
-
-    island: function () {
-        // Show level for cities on Island
+    island() {
         if (GM_getValue("islandShowCityLvl")) {
-            tnt.core.debug.log("Show level for cities on island view", 5);
             $(".cityLocation").each(function () {
-                // Extract the level number using a regular expression
-                var classList = $(this).attr('class');
-                var levelMatch = classList.match(/level(\d+)/);
-                if (levelMatch) {
-                    var levelNumber = levelMatch[1];
-                    // Append the level number to the corresponding element
-                    $("#" + this.id + " > a").append('<span class="tntLvl" style="top:35px; left:25px;">' + levelNumber + '</span>');
-                }
+                var levelMatch = $(this).attr('class').match(/level(\d+)/);
+                if (levelMatch) $("#" + this.id + " > a").append('<span class="tntLvl" style="top:35px; left:25px;">' + levelMatch[1] + '</span>');
             });
         }
     },
-
-    city: function () {
-        // Remove Flying Shop
-        if (GM_getValue("cityRemoveFlyingShop")) {
-            tnt.core.debug.log("Remove flying shop on city view", 5);
-            GM_addStyle("#cityFlyingShopContainer{display:none;};");
-        }
+    city() {
+        if (GM_getValue("cityRemoveFlyingShop")) GM_addStyle("#cityFlyingShopContainer{display:none;};");
     },
-
-    world: function () { },
-
+    world() { },
     resource: {
-        events: function () {
+        events() {
             $('#tnt_info_resources .tnt_back').on('click', function () {
                 tnt.resource.toggle(this);
             });
@@ -814,77 +570,32 @@ var tnt = {
                 }
             });
 
-            // Simplified minimize panel logic
+            // Simplified minimize panel logic (fix: restore to the same table as before)
             $(document).off('click', '.tnt_panel_minimize_btn').on('click', '.tnt_panel_minimize_btn', function () {
                 var $panel = $('#tnt_info_resources');
                 var $btn = $(this);
+                // Remember which table is currently visible before minimizing
                 if ($btn.hasClass('tnt_back')) {
+                    $btn.data('wasBuildings', $('#tnt_info_buildings_content').is(':visible'));
                     $btn.removeClass('tnt_back').addClass('tnt_foreward');
-                    $panel.css({
-                        width: '20px',
-                        minWidth: '20px',
-                        maxWidth: '20px',
-                        overflow: 'hidden'
-                    });
-                    // Only hide the content, not set display:none (so the button stays visible)
-                    $panel.find('#tnt_info_resources_content, #tnt_info_buildings_content').css('visibility', 'hidden');
+                    $panel.addClass('minimized');
                 } else {
                     $btn.removeClass('tnt_foreward').addClass('tnt_back');
-                    $panel.css({
-                        width: '',
-                        minWidth: '',
-                        maxWidth: '',
-                        overflow: ''
-                    });
-                    $panel.find('#tnt_info_resources_content, #tnt_info_buildings_content').css('visibility', 'visible');
-                    // Show the correct table after reopening
-                    if ($('#tnt_toggle_table').hasClass('active')) {
+                    $panel.removeClass('minimized');
+                    // Restore the same table as before
+                    if ($btn.data('wasBuildings')) {
                         $('#tnt_info_buildings_content').show();
                         $('#tnt_info_resources_content').hide();
+                        $('#tnt_toggle_table').addClass('active');
                     } else {
                         $('#tnt_info_resources_content').show();
                         $('#tnt_info_buildings_content').hide();
+                        $('#tnt_toggle_table').removeClass('active');
                     }
                 }
             });
 
-            // Remove previous click handlers for panel toggle and add new
-            $(document).off('click', '.tnt_panel_minimize_btn').on('click', '.tnt_panel_minimize_btn', function () {
-                var $btn = $(this);
-                var $content = $('#tnt_info_resources_content');
-                var $buildings = $('#tnt_info_buildings_content');
-                var $resources = $('#tnt_resource_table').closest('div');
-                // If panel is open, close it
-                if ($btn.hasClass('tnt_back')) {
-                    $btn.removeClass('tnt_back').addClass('tnt_foreward');
-                    $content.css({
-                        width: '25px',
-                        overflow: 'hidden',
-                        minHeight: '30px',
-                        minWidth: '25px'
-                    });
-                    $buildings.hide();
-                    $resources.hide();
-                    // Keep the minimize button visible by ensuring it is not hidden
-                } else {
-                    // If panel is closed or not set, open it
-                    $btn.removeClass('tnt_foreward').addClass('tnt_back');
-                    $content.css({
-                        width: 'auto',
-                        overflow: 'auto',
-                        minHeight: '',
-                        minWidth: ''
-                    });
-                    // Show the correct table after reopening
-                    if ($('#tnt_toggle_table').hasClass('active')) {
-                        $buildings.show();
-                        $resources.hide();
-                    } else {
-                        $buildings.hide();
-                        $resources.show();
-                    }
-                }
-            });
+            // Remove any other minimize logic that sets display:none or visibility:hidden on content divs
 
             // Table toggle (right side, in table header)
             $(document).off('click', '.tnt_table_toggle_btn').on('click', '.tnt_table_toggle_btn', function () {
@@ -922,8 +633,7 @@ var tnt = {
                 tnt.citySwitcher.updateAllCitiesResources();
             });
         },
-
-        update: function () {
+        update() {
             tnt.data.storage.resources.city[tnt.get.cityId()] = {
                 cityIslandCoords: tnt.get.cityIslandCoords(),
                 producedTradegood: parseInt(tnt.get.producedTradegood()),
@@ -970,14 +680,36 @@ var tnt = {
 
             tnt.data.storage.resources.total = total;
 
-            // Save storage
+            // --- Collect building levels for each city ---
+            // Only update if on city view and building positions are available
+            if ($("body").attr("id") == "city" && typeof ikariam.model.cityBuildings === "object") {
+                const buildingData = {};
+                for (const pos in ikariam.model.cityBuildings) {
+                    const b = ikariam.model.cityBuildings[pos];
+                    if (b && b.building) {
+                        buildingData[b.building] = {
+                            level: b.level,
+                            position: pos,
+                            name: b.building
+                        };
+                    }
+                }
+                // Save to storage.resources.city[cityID].buildings
+                tnt.data.storage.resources.city[tnt.get.cityId()].buildings = buildingData;
+                // Save immediately after updating buildings
+                tnt.core.storage.save();
+            } else {
+                // If not in city view, keep previous buildings data if present
+                // Do not overwrite or remove it
+            }
+
+            // Save storage (for all other resource/city changes)
             tnt.core.storage.save();
 
             // Update template
             tnt.resource.show();
         },
-
-        show: function () {
+        show() {
             if (GM_getValue("cityShowResources") && $("body").attr("id") == "city") {
                 // Only append the widget if it doesn't exist
                 if ($('#tnt_info_resources').length === 0) {
@@ -1006,7 +738,7 @@ var tnt = {
                     </tr>';
 
                 // Add city rows (no panel/minimize button in city rows)
-                $.each(tnt.resource.sortCities(), function (index,cityID) {
+                $.each(tnt.resource.sortCities(), function (index, cityID) {
                     var value = tnt.data.storage.resources.city[cityID];
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
                         <td class="tnt_city tnt_left' + (value.hasConstruction ? ' tnt_construction' : '') + '" title="' + value.cityIslandCoords + '">\
@@ -1043,33 +775,39 @@ var tnt = {
 
                 // --- Building Table Structure ---
                 var buildingColumns = [
-                    { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png' },
-                    { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png' },
-                    { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png' },
-                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png' },
-                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png' },
-                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png' },
-                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png' },
-                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png' },
-                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png' },
-                    { key: 'dump', name: 'Dump', icon: '/cdn/all/both/img/city/dump_l.png' },
-                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png' },
-                    { key: 'tradingPost', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png' },
-                    { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png' },
-                    { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png' },
-                    { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png' }, // Fixed: wall.png
-                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png' },
-                    // Branch Office and Trading Post are the same building in Ikariam, so only one is needed.
-                    // { key: 'branchOffice', name: 'Branch Office', icon: '/cdn/all/both/img/city/branchoffice_l.png' },
-                    { key: 'safehouse', name: 'Safehouse', icon: '/cdn/all/both/img/city/safehouse_l.png' },
-                    { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png' },
-                    { key: 'forester', name: 'Forester', icon: '/cdn/all/both/img/city/forester_l.png' },
-                    { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png' },
-                    { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png' },
-                    { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png' },
-                    { key: 'alchemist', name: 'Alchemist', icon: '/cdn/all/both/img/city/alchemist_l.png' },
-                    { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png' }
-                    // Add more if needed
+                    { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png', buildingId: 0, helpId: 1 },
+                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
+                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
+                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
+                    { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png', buildingId: 11, helpId: 1 },
+                    { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
+                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
+                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
+                    { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
+                    { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
+                    { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
+                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
+                    { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
+                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
+                    { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
+                    { key: 'forester', name: 'Forester\'s House', icon: '/cdn/all/both/img/city/forester_l.png', buildingId: 18, helpId: 1 },
+                    { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png', buildingId: 20, helpId: 1 },
+                    { key: 'alchemist', name: 'Alchemist\'s Tower', icon: '/cdn/all/both/img/city/alchemist_l.png', buildingId: 22, helpId: 1 },
+                    { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png', buildingId: 21, helpId: 1 },
+                    { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png', buildingId: 19, helpId: 1 },
+                    { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png', buildingId: 23, helpId: 1 },
+                    { key: 'optician', name: 'Optician', icon: '/cdn/all/both/img/city/optician_l.png', buildingId: 25, helpId: 1 },
+                    { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png', buildingId: 27, helpId: 1 },
+                    { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
+                    { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
+                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
+                    { key: 'dump', name: 'Depot', icon: '/cdn/all/both/img/city/dump_l.png', buildingId: 29, helpId: 1 },
+                    { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
+                    { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 },
+                    { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
+                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
+                    { key: 'shrineOfOlympus', name: 'Gods’ Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
+                    { key: 'chronosForge', name: 'Chronos’ Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 }
                 ];
 
                 var buildingTable = '<table id="tnt_building_table" border="1">\
@@ -1080,115 +818,84 @@ var tnt = {
                         </th>';
 
                 buildingColumns.forEach(function (b) {
-                    buildingTable += '<th class="tnt_center tnt_bold"><img class="tnt_resource_icon tnt_building_icon" title="' + b.name + '" src="' + b.icon + '"></th>';
+                    buildingTable += '<th class="tnt_center tnt_bold">' +
+                        '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=' + b.buildingId + '&amp;helpId=' + b.helpId + '\');return false;" title="Learn more about ' + b.name + '...">' +
+                        '<img class="tnt_resource_icon tnt_building_icon" title="' + b.name + '" src="' + b.icon + '">' +
+                        '</a></th>';
                 });
 
                 buildingTable += '</tr>';
 
-                // Add city rows (no panel/minimize button in city rows)
+                // Add city rows (now with resource icon in first column)
                 $.each(tnt.resource.sortCities(), function (index, cityID) {
-                    buildingTable += '<tr>\
-                        <td class="tnt_city tnt_left">' + tnt.get.cityName(cityID) + '</td>';
-                    buildingColumns.forEach(function () {
-                        buildingTable += '<td class="tnt_building_level"></td>';
+                    var value = tnt.data.storage.resources.city[cityID];
+                    buildingTable += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
+                        <td class="tnt_city tnt_left">' +
+                        '<a onclick=\'$("#dropDown_js_citySelectContainer li[selectValue=\\"' + cityID + '\\"]").trigger("click"); return false;\'>' +
+                        tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) +
+                        '</a></td>';
+                    // Print building levels for this city
+                    var cityBuildings = value.buildings || {};
+                    buildingColumns.forEach(function (col) {
+                        var b = cityBuildings[col.key];
+                        buildingTable += '<td class="tnt_building_level">' + (b && b.level ? b.level : '') + '</td>';
                     });
                     buildingTable += '</tr>';
                 });
+
+                // Add total row (empty, for future use or visual consistency)
+                buildingTable += '<tr>\
+                    <td class="tnt_total">Total</td>';
+                buildingColumns.forEach(function () {
+                    buildingTable += '<td class="tnt_building_level"></td>';
+                });
+                buildingTable += '</tr>';
 
                 buildingTable += '</table>';
 
                 $('#tnt_info_buildings_content').html(buildingTable);
             }
         },
-
-        toggle: function (el) {
+        toggle(el) {
             // No longer used, logic moved to .tnt_toggle_panel_btn click handler
         },
-
-        sortCities: function () {
+        sortCities() {
             var list = {};
-            $.each(tnt.data.storage.resources.city, function (cityID, value) {
-                list[cityID] = value.producedTradegood;
-            });
-
-            // Define the custom order for producedTradegood
+            $.each(tnt.data.storage.resources.city, (cityID, value) => list[cityID] = value.producedTradegood);
             var order = { 2: 0, 1: 1, 3: 2, 4: 3 };
-
-            // Sort list by producedTradegood with custom order
-            var sortedList = Object.keys(list).sort(function (a, b) {
-                return order[list[a]] - order[list[b]];
-            });
-
-            return sortedList;
+            return Object.keys(list).sort((a, b) => order[list[a]] - order[list[b]]);
         },
-
-        checkMinMax: function (city, resource) {
-            if (GM_getValue("cityShowResources")) {
-                //var city = tnt.data.storage.resources.city[cityID];
-                var max = city.max;
-                var txt = '';
-
-                switch (resource) {
-                    case 0:
-                        // Wood
-                        if (city.wood > (max*.8)) { txt += ' storage_danger'; }
-                        if (city.wood < 100000) { txt += ' storage_min'; }
-                        break;
-                    case 1:
-                        // Wine
-                        if (city.wine > (max*.8)) { txt += ' storage_danger'; }
-                        if (city.wine < 100000) { txt += ' storage_min'; }
-                        break;
-                    case 2:
-                        // Marble
-                        if (city.marble > (max*.8)) { txt += ' storage_danger'; }
-                        if (city.marble < 50000) { txt += ' storage_min'; }
-                        break;
-                    case 3:
-                        // Crystal
-                        if (city.crystal > (max*.8)) { txt += ' storage_danger'; }
-                        if (city.crystal < 50000) { txt += ' storage_min'; }
-                        break;
-                    case 4:
-                        // Sulfur
-                        if (city.sulfur > (max*.8)) { txt += ' storage_danger'; }
-                        if (city.sulfur < 50000) { txt += ' storage_min'; }
-                        break;
-                }
-
-                return txt;
-            }
-        },
-
-        getIcon: function (resource) {
+        checkMinMax(city, resource) {
+            if (!GM_getValue("cityShowResources")) return '';
+            var max = city.max, txt = '';
             switch (resource) {
-                case 0:
-                    return '<img class="tnt_resource_icon" title="Wood" src="/cdn/all/both/resources/icon_wood.png">';
-                case 1:
-                    return '<img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png">';
-                case 2:
-                    return '<img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png">';
-                case 3:
-                    return '<img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png">';
-                case 4:
-                    return '<img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png">';
-                case 'population':
-                    return '<img class="tnt_resource_icon" title="Population" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
-                case 'citizens':
-                    return '<img class="tnt_resource_icon" title="Citizens" src="/cdn/all/both/resources/icon_population.png">';
+                case 0: if (city.wood > max * .8) txt += ' storage_danger'; if (city.wood < 100000) txt += ' storage_min'; break;
+                case 1: if (city.wine > max * .8) txt += ' storage_danger'; if (city.wine < 100000) txt += ' storage_min'; break;
+                case 2: if (city.marble > max * .8) txt += ' storage_danger'; if (city.marble < 50000) txt += ' storage_min'; break;
+                case 3: if (city.crystal > max * .8) txt += ' storage_danger'; if (city.crystal < 50000) txt += ' storage_min'; break;
+                case 4: if (city.sulfur > max * .8) txt += ' storage_danger'; if (city.sulfur < 50000) txt += ' storage_min'; break;
+            }
+            return txt;
+        },
+        getIcon(resource) {
+            switch (resource) {
+                case 0: return '<img class="tnt_resource_icon" title="Wood" src="/cdn/all/both/resources/icon_wood.png">';
+                case 1: return '<img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png">';
+                case 2: return '<img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png">';
+                case 3: return '<img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png">';
+                case 4: return '<img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png">';
+                case 'population': return '<img class="tnt_resource_icon" title="Population" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
+                case 'citizens': return '<img class="tnt_resource_icon" title="Citizens" src="/cdn/all/both/resources/icon_population.png">';
             }
         }
     },
-
     citySwitcher: {
-        updateAllCitiesResources: function () {
+        updateAllCitiesResources() {
             const cityList = Object.keys(tnt.get.cityList());
             if (!cityList.length) return;
             localStorage.setItem('tnt_city_update_list', JSON.stringify(cityList));
             localStorage.setItem('tnt_city_update_index', '0');
-            // Store the starting city ID
             localStorage.setItem('tnt_city_update_start', tnt.get.cityId());
-            // Immediately go to the first city (if not already there)
             if (cityList[0] !== tnt.get.cityId()) {
                 const url = new URL(window.location.href);
                 url.searchParams.set('view', 'city');
@@ -1198,14 +905,10 @@ var tnt = {
                 tnt.citySwitcher.gotoNextCityForUpdate();
             }
         },
-
-        gotoNextCityForUpdate: function () {
+        gotoNextCityForUpdate() {
             const cityList = JSON.parse(localStorage.getItem('tnt_city_update_list') || '[]');
             let index = parseInt(localStorage.getItem('tnt_city_update_index') || '0', 10);
-
             if (!cityList.length) return;
-
-            // If we're not on the correct city, switch to it and return
             const expectedCityId = cityList[index];
             if (tnt.get.cityId() != expectedCityId) {
                 const url = new URL(window.location.href);
@@ -1214,19 +917,13 @@ var tnt = {
                 window.location.href = url.toString();
                 return;
             }
-
-            // Update index for next city
             index++;
             localStorage.setItem('tnt_city_update_index', index.toString());
-
             if (index >= cityList.length) {
-                // Get the starting city ID
                 const startCityId = localStorage.getItem('tnt_city_update_start');
-                // Clean up
                 localStorage.removeItem('tnt_city_update_list');
                 localStorage.removeItem('tnt_city_update_index');
                 localStorage.removeItem('tnt_city_update_start');
-                // Go back to the starting city if available
                 if (startCityId && tnt.get.cityId() != startCityId) {
                     const url = new URL(window.location.href);
                     url.searchParams.set('view', 'city');
@@ -1235,8 +932,6 @@ var tnt = {
                 }
                 return;
             }
-
-            // Go to the next city
             const nextCityId = cityList[index];
             if (nextCityId && tnt.get.cityId() != nextCityId) {
                 const url = new URL(window.location.href);
@@ -1244,69 +939,42 @@ var tnt = {
                 url.searchParams.set('cityId', nextCityId);
                 window.location.href = url.toString();
             }
-        },
+        }
     },
-
     get: {
-        playerId: function () { return parseInt(ikariam.model.avatarId); },
-        // islandId: function () { return $("#changeCityForm .viewIsland a").attr("href").split("=")[2]; },
-        cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "") },
-        cityLvl: function () { return $("#js_CityPosition0Level").text(); },
-        cityIslandCoords: function () { return $("#js_islandBreadCoords").text(); },
-        cityName: function (id) { return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1]; },
-        alliance: {
-            Id: function () { return parseInt(ikariam.model.avatarAllyId); },
-        },
-        tradeShips: {
-            free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; },
-            // all: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[1].replace(/[^\d-]+/g, ""); }
-        },
-        ambrosia: function () { return ikariam.model.ambrosia; },
-        gold: function () { return parseInt(ikariam.model.gold); },
-        godGoldResult: function () { return ikariam.model.godGoldResult; },
-        income: function () { return ikariam.model.income; },
-        upkeep: function () { return ikariam.model.upkeep; },
-        sciencetistsUpkeep: function () { return ikariam.model.sciencetistsUpkeep; },
-        hasAlly: function () { return ikariam.model.hasAlly; },
-
-        isOwnCity: function () { return ikariam.model.isOwnCity; },
-        maxCapacity: function () { return ikariam.model.maxResources.resource; },
-        wineSpending: function () { return ikariam.model.wineSpending; },
+        playerId: () => parseInt(ikariam.model.avatarId),
+        cityId: () => ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, ""),
+        cityLvl: () => $("#js_CityPosition0Level").text(),
+        cityIslandCoords: () => $("#js_islandBreadCoords").text(),
+        cityName: id => id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1],
+        alliance: { Id: () => parseInt(ikariam.model.avatarAllyId) },
+        tradeShips: { free: () => $("#globalResources .transporters a span:eq(1)").text().split(" ")[0] },
+        ambrosia: () => ikariam.model.ambrosia,
+        gold: () => parseInt(ikariam.model.gold),
+        godGoldResult: () => ikariam.model.godGoldResult,
+        income: () => ikariam.model.income,
+        upkeep: () => ikariam.model.upkeep,
+        sciencetistsUpkeep: () => ikariam.model.sciencetistsUpkeep,
+        hasAlly: () => ikariam.model.hasAlly,
+        isOwnCity: () => ikariam.model.isOwnCity,
+        maxCapacity: () => ikariam.model.maxResources.resource,
+        wineSpending: () => ikariam.model.wineSpending,
         resources: {
-            wood: function () { return ikariam.model.currentResources.resource },
-            wine: function () { return ikariam.model.currentResources[1]; },
-            marble: function () { return ikariam.model.currentResources[2]; },
-            crystal: function () { return ikariam.model.currentResources[3]; },
-            sulfur: function () { return ikariam.model.currentResources[4]; }
+            wood: () => ikariam.model.currentResources.resource,
+            wine: () => ikariam.model.currentResources[1],
+            marble: () => ikariam.model.currentResources[2],
+            crystal: () => ikariam.model.currentResources[3],
+            sulfur: () => ikariam.model.currentResources[4]
         },
-        // data: {
-        //     townHall: function () {
-        //         var townHall = {
-        //         };
-        //     },
-        // }.
-        // actionPoints: function () { return $("#value_maxActionPoints").text(); },
-        population: function () { return ikariam.model.currentResources.population; },
-        citizens: function () { return ikariam.model.currentResources.citizens; },
-        producedTradegood: function () { return ikariam.model.producedTradegood; },
-        tradegoodProduction: function () { return ikariam.model.tradegoodProduction; },
-        resourceProduction: function () { return ikariam.model.resourceProduction; },
-        realHour: function () { return ikariam.model.realHour; },
-        serverName: function () { return ikariam.model.serverName; },
-        serverTime: function () { return ikariam.model.serverTime; },
-        nextETA: function () { return ikariam.model.nextETA; },
-
-        // cityList: function () {
-        //     get.tmp = { cityList: {} };
-        //     $("#citySelect option").each(function () {
-        //         var _v1 = $(this).attr("value");
-        //         get.tmp.cityList[_v1] = {
-        //             name: $(this).text().split("] ")[1],
-        //             coords: tnt.getXY($(this).text())
-        //         };
-        //     });
-        //     return get.tmp.cityList;
-        // },
+        population: () => ikariam.model.currentResources.population,
+        citizens: () => ikariam.model.currentResources.citizens,
+        producedTradegood: () => ikariam.model.producedTradegood,
+        tradegoodProduction: () => ikariam.model.tradegoodProduction,
+        resourceProduction: () => ikariam.model.resourceProduction,
+        realHour: () => ikariam.model.realHour,
+        serverName: () => ikariam.model.serverName,
+        serverTime: () => ikariam.model.serverTime,
+        nextETA: () => ikariam.model.nextETA,
         cityList: function () {
             const cityList = {};
             for (const key in ikariam.model.relatedCityData) {
@@ -1314,42 +982,37 @@ var tnt = {
                     const cityId = key.replace("city_", "");
                     cityList[cityId] = {
                         name: ikariam.model.relatedCityData[key].name,
-                        coordinates: ikariam.model.relatedCityData[key].coords // or .coordinates if that's the property
+                        coordinates: ikariam.model.relatedCityData[key].coords
                     };
                 }
             }
             return cityList;
         },
-
         p: {
             options: {
-                playerId: function () { return $("#options_debug table td:eq(0)").text().replace(/[^\d-]+/g, ""); },
-                playerName: function () { return $('#options_userData input[name="name"]').val(); }
+                playerId: () => $("#options_debug table td:eq(0)").text().replace(/[^\d-]+/g, ""),
+                playerName: () => $('#options_userData input[name="name"]').val()
             },
             island: {
                 islandId: function () {
                     var islandCoords = tnt.getXY($("#breadcrumbs span.island").text());
                     return tnt.data.map[islandCoords.x][islandCoords.y][0];
                 },
-                playerId: function (el) { return $(".cityinfo .owner a.messageSend", el).length ? parseInt($(".cityinfo .owner a.messageSend", el).attr("href").split("&")[1].split("=")[1]) : get.playerId(); },
-                playerName: function (el) { return $(".cityinfo .owner", el).text().split(" ")[1]; },
-                alliance: function (el) { return $(".cityinfo .ally a:eq(0)", el).text(); },
-                cityId: function (el) { return $("a:eq(0)", el).attr("id").replace(/[^\d-]+/g, ""); },
-                cityName: function (el) { return $(".cityinfo .name:eq(0)", el).text().split(": ")[1]; },
-                cityLevel: function (el) { return $(".cityinfo .citylevel", el).text().replace(/[^\d-]+/g, ""); },
-                totalScore: function (el) { return $(".cityinfo .name:eq(1)", el).text().replace(/[^\d-]+/g, ""); }
+                playerId: el => $(".cityinfo .owner a.messageSend", el).length ? parseInt($(".cityinfo .owner a.messageSend", el).attr("href").split("&")[1].split("=")[1]) : tnt.get.playerId(),
+                playerName: el => $(".cityinfo .owner", el).text().split(" ")[1],
+                alliance: el => $(".cityinfo .ally a:eq(0)", el).text(),
+                cityId: el => $("a:eq(0)", el).attr("id").replace(/[^\d-]+/g, ""),
+                cityName: el => $(".cityinfo .name:eq(0)", el).text().split(": ")[1],
+                cityLevel: el => $(".cityinfo .citylevel", el).text().replace(/[^\d-]+/g, ""),
+                totalScore: el => $(".cityinfo .name:eq(1)", el).text().replace(/[^\d-]+/g, "")
             }
         }
     },
-
     has: {
-        construction: function (el) {
-            return $('.constructionSite').length > 0 ? true : false;
-        }
+        construction: () => $('.constructionSite').length > 0
     },
-
     calc: {
-        production: function (cityID, hours) {
+        production(cityID, hours) {
             var city = tnt.data.storage.resources.city[cityID];
             if (city) {
                 return {
@@ -1361,23 +1024,13 @@ var tnt = {
                 };
             } else {
                 tnt.core.debug.log("City ID " + cityID + " not found in storage", 3);
-                return {
-                    wood: 0,
-                    wine: 0,
-                    marble: 0,
-                    crystal: 0,
-                    sulfur: 0
-                };
+                return { wood: 0, wine: 0, marble: 0, crystal: 0, sulfur: 0 };
             }
         }
     },
-
     view: {
-        city: function (cityID) {
-            $('div#dropDown_js_citySelectContainer li[selectValue="' + cityID + '"]').trigger('click');
-        }
+        city: cityID => $('div#dropDown_js_citySelectContainer li[selectValue="' + cityID + '"]').trigger('click')
     },
-
     template: {
         resources: '<div id="tnt_info_resources">\
                         <div id="tnt_info_resources_content"></div>\
@@ -1386,11 +1039,8 @@ var tnt = {
     }
 };
 
-$(document).ready(function () {
-    tnt.core.init();
-});
+$(document).ready(() => tnt.core.init());
 
-// General styles
 GM_addStyle(
     "/* Show level styles */\
     .tntLvl{\
@@ -1423,6 +1073,20 @@ GM_addStyle(
         padding:2px!important;\
         text-align:center;\
     }\
+    /* Add building table style to match resource table */\
+    #tnt_building_table{\
+        border-collapse:collapse;\
+        font: 12px Arial, Helvetica, sans-serif;\
+    }\
+    #tnt_building_table td{\
+        border:1px #000000 solid;\
+        padding:2px!important;\
+    }\
+    #tnt_building_table th{\
+        border:1px #000000 solid;\
+        padding:2px!important;\
+        text-align:center;\
+    }\
     .storage_min{\
         background-color: #FF000050;\
     }\
@@ -1437,6 +1101,11 @@ GM_addStyle(
         width:18px;\
         height:16px;\
         display:inline-block;\
+    }\
+    /* Make building icons bigger */\
+    .tnt_building_icon {\
+        width:36px !important;\
+        height:32px !important;\
     }\
     .tnt_population{ text-align:right; }\
     .tnt_citizens{ text-align:right; }\
