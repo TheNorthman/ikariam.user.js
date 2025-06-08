@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.4.174
+// @version      1.4.175
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -22,6 +22,7 @@ const VERSION_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.ph
 const UPDATE_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/update.php";
 const UPDATE_HQ_URL = "http://lazy.rjj-net.dk/tnt/ikariam/hq/update";
 
+let tnt_autoUpdateInterval = null;
 
 // Used to select all units when pillaging
 // function delay(time) {
@@ -146,6 +147,14 @@ var tnt = {
                     }, 100);
                 }, 200);
             }
+
+            // --- Auto-update all city resources every hour ---
+            if (tnt_autoUpdateInterval) {
+                clearInterval(tnt_autoUpdateInterval);
+            }
+            tnt_autoUpdateInterval = setInterval(() => {
+                tnt.citySwitcher.updateAllCitiesResources();
+            }, 60 * 60 * 1000); // 1 hour in milliseconds
             
             // TODO Don't work. Try to append script tag witht the code and see if that will work
             // tnt.alrtSound.play();
