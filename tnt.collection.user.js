@@ -93,11 +93,6 @@ var tnt = {
         },
     },
 
-    sounds: {
-        alertSound: new Audio("data:audio/mp3;base64,SUQzAwAAAAAAIVRYWFgAAAAXAAAARW5jb2RlZCBieQBMYXZmNTIuMTYuMP/7kGQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEluZm8AAAAPAAAACAAADrAAICAgICAgICAgICAgQEBAQEBAQEBAQEBAYGBgYGBgYGBgYGBgYICAgICAgICAgICAgKCgoKCgoKCgoKCgoKDAwMDAwMDAwMDAwMDg4ODg4ODg4ODg4ODg////////////////AAAAOUxBTUUzLjk5cgGqAAAAAAAAAAAUgCQElk4AAIAAAA6wvc1zzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP/7kGQAAAKyHsyVJMAAOAy3uqAUAFT9LU1Zt4AIukIiwwAgAAAA9HIgBAEAwgyaBAghk56oAwtO7JkyaeeIiIjP//EeyER/4iLu71jAwCFQIFDiwff4Jh/iAEAQ/UCAIBj/lwfB8Hw+CAIAgCADB8HwfSCAIOplz/0kwAADgAQYA/5znv//////5CEIT///v/yf5CfnIRuQn/n////kOc5znP/8jeggHADAMDh8Ph5/AAAAAYUp5aDYUTi1QAWFMPETMjUzsuArMZyNpdpzhQkN4CjB1E0a1CAN6BImTqNREhUBOI6RumQDCAomOhRLDyN4nogSoN5PrcxzsBYIy6WD9OQ87qBRokvznRrTaH4YmZFIYuUq3RVh6eByx4i6hHWfVr7tuLO8tua7lJATDjemKqNPuMmH7JW92rNXzyPMg4rJTvbwW9WM9osZia3K3///i1cP///4LnJ//////////v///9/9//a1f3+jfbl//fwhFFf3XYn/ryOUk43///6nI////5oYQjBEFVSgNgMavLKm6gKLJbs5loiEGlFGFP/7kmQMAEQ0Q1Y/aeACM0AIveCIAJFg+1JtJHbQwoAitBCJusgqIYmUAsoUCIhDIVAeLquwP4GuiiKRji+fby/u+wrGlicP7S/EGK+xNjEHdvHU7I7iqZ+0Ha5McNXOSnYUKPZDzxn1Kxv8f/feRHmbV1/jUCt/8avDh3iRIUFwckm5R4j+PiA8iPJnjhmbeJ4KEUWySNyhokkTEwXbeHnEKLbkJQPX/9n79H1UoaQa95V7dUV1uj9P//Sm2QXADEEjqWAKMAAAAGRRMFLIlxy7gHgI6KFAguWWAbEwIU3C0y44W/GrUHlcHIEAVQBzYGXjBcmPgAqAAxekACC4jvSOgbpMN5UYfLkNBYHmCKJGCYfJbBMVitHS0E7hFA4SMiVxAhHUZ0fE6MkW1EuudNt2ghIAYx05e+biCz57pWF7B1Egai14IZZAGYZ/////26AxGJAwiCK4xUVvUJOh9dlv/3f1vsU1ZnNoAm5pf2N/4mq//2DppS5gYUSGwyFSp0N1QOEJOPGxgSGdIDIIDEwUqC4gADFzQ2sbBRMUMZUATFj/+5JkEA/kiETUg3lMMC1gCN0EIm6RHQdUDWFyyL82IYAAm9k4BCJmyW7RjtwEQhixgRHgHwf8zJw4oQ8jVAYo9LktasuRHJtZyVCdyuGxQLKnZbiFCyOxCIVz0ycVlVXroBWYZfZEasAQkOGmyYNJDSEk85ianyVWnubGXqU4JV/v/qpJyjG15nlx3xq+7SSUYv59rJRpZHBJKkSQ1NSBCZrrHEvNSuAHfQxQuc9/7WKZ/axL7Ptf//0/9lS9K1tgUsOCAYVAUxPY6i9BEWBRckGNQcYHAQc/BCUIIJFI6mRPGrML3NvBNAcM6GOQwLBww5EkBm1RrYVZhw0inUa6qN5lhBGl/GQl0HQeVv3bi0iapMRCtVs50s8uwxc9KaY/LDI6ZBWu5FNusdOHVUl2+ifTa97/f39xDnW/mIq4/hyhKJjlobFruTjVv8+ln0PhirMBzZKH7z/Uj/Nl9F73nP03zNz9u+d+pCYXW3zjL3HTRxkTUYUcRA5XDARkhpgK3Q0EifsdESIAIQsicE3QU7PKYMMpnDIcRAYoBmSgJjSK//uSZBOORGVC1INsVjAlQBjNBCIAEGEPVmywWlDMtOIAEI75c4JAYEMFmxo2GRQv+YQYmjgqP4gDi1CF7c1mlAFNF6xAClYVDEHxTOmgAgBeDFeB4SNO6lwuER9+7NGv9kv2HZasHB8tHl/LyzaCDScvd/zCOk65r083ydtGJpv5CChh+/EWJ8RG9sAgAnAiBIUUk+/+r6//1eS/2//9qf/0f/vbbYtLTaCpIw9APgAeOrtOcdSZgPuOIC2nDoJeVnaBKUNKTyLrDycbLnCAY65DsWMqcDfDogkMwsEtOkz4WcYakQxhCc4AQCDhwaMj2zeCYNnNvu1CpGs5PLIz26sU2nFnReldZXF5VI03Sja9KD08nFlasI5zqlZE6eraVd/mDDkAXkIEMglhv///+z/R7/kg/368jL/l+Kczfnw///X///uy9jvIjgLfva+X9f/////LfhyOlOHT+6yFxrBxypQPaqwkzTqELKNCVVauvEFZZl7oq+y46cgAkKw61IEG9BUMDssTGR6YLnApdgTjtYQaRoZEXLaWgIkLYFXyGP/7kmQehxOBQdYDLBYiKyAYvAQiAA/NB1KtJLqItQBilACIAnpRTmEYUJT2Mum63n3r5jltfx6zDub3Pnt8pCodFQVRaDg1dpr376s2m9PLCiCiIJg3ufpAAtBgABCsIIpsTR1KZ3avT+n/zWoW3X76vs+n7P/1osuLi17QfcKuDgQBHhalIC2rNL3K4ay8jIDVAYlCVWr5UlEQsfd0cHhAURBjMl1fGPyA4oCFoQIV4IVzNCAvBqqwMBrXEZBZ6pn4m2HT67a1EtyUOHPwJaj8mpJRMjMVHtbrc05JIJ8/wcTOqIi9JpLLppVkoU+8+UO+qu+rj/dGMkUMA8o4e+kwmgchrIaup1a1M7vVb/U/70vujS77rz9A0Uf/K512jqf9+OUKwmMsBoYwoJBOAgAAQQQBAIeNkJLq1X4buThK+JAaVRV9XIUUcQqAspWWCqgMMbNZYHKsplAhUQ0C4FLeoTR0ZLIs0iCiwLBpkOm0Bpsk6+igBQakTlpvZbRptvG6OoqZ2ulbLLbyMudjLeUOhwwNxjsMX3G/ZH3/a1UaIDn/+5JkOgoDvUBVKykWJjPtGKwEIp5PUQVUbJh6UM2z4nQQCslnRlEYCbDAopmAPnNfM/8/LPN8v8/5f//+j9vK/9f/4v1////////+2zWs96o82VmVDzIYc56ZoEYLJTvRaZKEEQym+/KaClyS6qz3sEmIy+rSpGhzLotlD5G4G8KxsAUqXGEUFylUxqZJMEgMWbAVQUx3/XQ0F5IZ02SDoNlsXoeUtnOLbFEXPeZyydac5R4ySMgFRpZijAjMEkby8yvS9fsyJVr8bzaHFxIkF0O9NftowAAG2uAwICBf/96y9dX//f////tv7e/+/9W/b9vovRv//r/+1nnrkVMjMzVFIgmgHTwRdQIlAAyUDA5pbQ+V2HSjkOppxxr7OYFZdMwI9A0xjAbYgFQApwAAiFgGTFHBs6HHAs4sYN3CGhlg4GKSBhfQhAwCRMcZoXCkLmUQw2JlEvmlNNkqDmK5eeyLMkhNWWmbIoLdkGRQW7XuzKX+hbbdKr2UdmzXPrUgaVCgAAUC0UAADf//p//Tr////Sn////97//p/2////////uSZEwAA8VDVcViQAIyTXidoIgAW60vPvm9gABsgCODACAA///pbb89r0MikIjvGBqdRZ1ETgQAAAAAAAADhnMGRtyGYweHciRtAUcKNGGGgsPrDm7rAjBAgGLsJPmMhgqFFwVUzGQAyVyMGBDeZAGGJhxAb2jiVQZ8VmDQJEvGpRYFPTERBQUyUOL1DSuCQoaMDHhMlDkdDBwctGXoL5EIit1nLdV2gIcCCYcB1TszTtTe0+DjVmuSFsinTCVUGGs+aekMvGM3PjsPOSzGGX/k8itdaQuloUGu9ZjcFVuxavjjrs1jqzOSiP3pTupUqy6bpN3Zmr//VjjWZuig/v///8thqJz3////0s1dd/pU3/u6f////////+v2f//+XMfA6H/F1pN//hYSf/jzygAAYAAAImCEhz0feHViByqpZUsyg6zqBqru2XRcFL1IlLD5DUjhVONqVDYZyqGAhyqLqBdAIRxJEekhJ0sr1Wq2NBTqGoay0Yk891bf9rWrr+2/mvrX4tv1/9t+sF7aJQVBUGgaiUFn/lg5wad8SgqCo//7kmQ5D/OLLctnYeAAMMAYjeAIAIAAAaQAAAAgAAA0gAAABOt21ttt0CYKwoDQlBUFQVOlQViXxYGj3EQNA0e1A19YK1/EQNf/lf//5Y9wa//+CtVMQU1FMy45OS4zVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="),
-        snd: new Audio("data:audio/mp3;base64,//twxAAAApgBJvQAACQeQig/N0AAMALwgABhhYOBj/9HKO//rP////+poeCChCTJxBRDqeKhViMBG5NphGYEhIOmsib8o0yAygkLQnmx8G9MQBk+Aclq7KI+AMUMBQIBggIBoAcA7CaD5wMkAEIQDgYhOAuEJwiC4NjYGSDAYQMAwIBtmfAzIAAKi50nyJnQMKJAUHiFAMWBEfA1HgYQGBjDIocDDBSfImg5fUAMMChcAAIA0AFJBiQUomOEWcTpXqRNyuzni4OQJ0AyoUScnCJmQhECFgBlzA1RmU99WKmK0HYICCcDMcBiX2QJpRsXlJJa121bJ3pmm6jXj06h9f//y4iXyQHLHGVSLoDjD8AsoAKDixmKCUySTU6yiVADRYNtiS////9NZmb////qUoxV78cARkYopP/7YMQDgA1JjWX9hQAhvzHr/ZS1pK7anGYiDqr1UxQhjpcCoh6idFnGnsvpvWPDT2NTnnDRmU182ANJTTUOuUNH7foYaN/eeQGETZ2rsT+hxEEklNf6Zkz2Kj5SRPup1aexy22dDjTjjTqLrnL72uyf///800WX5TvxyBrekwvel0KqDmNnTlcBF1RIqgtZWKNoSFvp20BJooqyMHJLNz31apKtL3tTLC5P+kZIore11qJYb1JP1spHr1omR6i2s1CANnNlt9FR/frXSb/TWyfqdR7mXfU+UnzrpP6C2Q/1v/1V/1VEfxa85QBIeSwnsbZLoIbvK1MSIB2b5D07Th1QKyxJ0f/7UMQOgA0ZjVXstVKhhyiqPaZBXJVVkle5lWbaK1b1a35iMhFSCeqwDhbbWgjsqq+qCyBEaxraxcIAmyDqgim+cC2wzJP9R831NkZb/Ne39+Rt/qSdP60N/7f9P+rSTlozFEDZ5VC+eLB4mUMHUUEIUEIkdwUEoEA5+wy3wwQYkGK7bY8reosf1rM0fzi0grn9Vq0jJNkT7KSdA2W9/pNzP0S6ztWkaBvJFzUuo2+tFv9aP/1f/R/6iK6Sn/NjDP/+tWqzACZVRBaLgCXt1vP/+1DEBoAMQY9J7Q5u4ZQx6D3GTWR6gOMcDa8HIS9IIcnunIasSf2mhmYpWwTjMrky4NW7JOEkUQFQGro6SKqHdA+ip2QU6/dFuUP/WgTYt5eTb+6SLJdJbOaoW/6//q/9//t/////6RQQSXAAA4ckDkukGyw01RHtOQEgdpAcA08jAA6OIH0ODAVnj6yNw4PwqQN9q2039dPdBjIbY+gPNTJFukgyTVF4wQU11XW//Kf/qUYiok43/Wt1sh7JIt/7P/6bf60P/r/////9ZZZY//tgxACADQmNQe4ybOF4saj9o0mVcQAVR2AFU6IfJ/3VfZkJfZuKAIHAIwOTDg5DDAstVxpaOx29PFPWyqVpSisfXwvboITo9EeBg0RVk+ya12VNi+z2u//zD/pGhKFkNCD6ls67p2XrX71TD2/1f/Rb/Wv/7/////+YlhaogBFiCIXryQapNO2uxIsxARyxIQrCKqzkwGdswguYFnWTCQhOE0k7KrS63nT5cCcsvWt0aLugPE4kpTTJ7+3WTf/UkdHSKRHNL697/+90////7/+r///////siaqKf6AOlIAkX0DpSGgeFRwqFVSWFL+nCpzQMCwdWtAsuh1UdjCzAWMzSWbW//tAxBUADcWPP6xxSelMoym9kbYU8rP4fzf8tXI7TQaCQ52/3VizlEqOMeaWtnI515irURH/YlFULkbhAcvnM1KbqYpIh3/6t/xeII//kxb///////i8oay9YoAewxkP6/MSWQ0kXUsBybaDU7bEKRhRwZBdy6jwypun5tl3oMmzbvf4yMwAdN1qUpJDQaWGxUpO13/9Rv/1OiXxihwIr9v/2////zz+v///5Ko4cwAFVQADK7T/+1DEBIAMuY0/7HJpKWux6H2pHhwbrhBrPFFxhBKMREeIBbDzGRCJzJFZc6hp6unct1cYfnZ1GdRQqRMp08O4BmxXPOtVSFJTnWMzpr5t/+r/zQmj4XPEgWl+vvXdnpG9L///6mf/Ut///////9ayBDUmQABVTIhZLointyNsykyIRRo0BgULXTQYFHX2ma0Aw1utZi3KLqoJTrqqdJzrGoI4KqcxWQ1jLqVQaEjND2t/1/9xxQAR8yj539e5d////7v/0///////9hq1SJQA//tQxAGADA2PQezySKFlHCf9tE2kBDQiFW/UJJbfRkYgEBMIoUYYsfMoI5cCSgMOdRX5NI6RayZdM8i1M1nTI0eg5gtEmAD7Sear0e60kTExVzXX/0P+pNMiozo7092/9mrUr///9aj/+r///////6jyJPIAAESAALp4xU+lk6TIkRQKTB4OGjA3Q4OZLnNZjVKHSwrBJ5mnY/kXIvgxBaBoBwEVJz2q1G6Bgz623QrSbqL//UaD7MR7FvP7etL1+eM2f+G/EP///xRCOHAABP/7UMQCAAt4uT3s8mkhdDGn/bHKFFUQBq+iKWo0tORDMAILzLsKwGbyd9KwYM2aT9hr8C09rTl2N2OV6bVnVI3PMkiOcBxes0fU+10CYL5dU7Vn222fzD/0yiVByCefpStmlNzf+T8h///8RkjihAANkMAf3xijxh5yS2xig20oMFQUImFLJ+EEDhlp0ZpodtYxK67NokopEkp1O2kbD7AhCdf/UiYFg0tu3s3yZ/8wIwWoRoQw9/V31d1K////Tf/V///////9zqYngAADRhD/+1DEAwAKdRk97HInIXexp72eQSQNa+YwzfxnZaQ1xawDriwSCxqOAKsFAxy6SvGJ+pU6+GjVCaKWa1v1prUdKABHQN1aq/lpAzf//6v/WZFIvv/7t69tD///5ih6P///oNlDEAAbIAC+fkFnTZVHFOyqIVAwKkhsbMB5khiRGWa/Uth6cv7qP/YsayxslW60c+6SSAB8Txotalb9ycmDIVdrdT6k//SWUhYTdP7X2X6qm9X//+tv9bf///////MaBYAAAzIQFOdIP+RvILA8//tQxAeADMGPN+4abuFnsWe9njUlWHjUx4mGKAOYMYJmipCgPUOcGGoBpps7BLQqKas5ffPSZ2RYUKAew6aJZYQSoWMTU+n/2WpjI9SMEGT/1oniSJx/1Wrf1VL+j//+p2/1///////+ozOLN4AAATUmJ6vsLW30YGDBDDhXgAQVRmZ0eMNIsNF7xS3OdwqZzH0kpq39KdNlpUj2cNQEmimtBzjJU3Y6kcLje3+2pf/1GBKDw//uhv////7/+r///////zMfNnAAAYMoDteAP//7UMQFAAqUvT3uPU1hXDGnvbYpdClsNLlBoCaSHAoDBowqYDqKjAQqVy/UZZq7b08XpKb3bVJYvlfzX+5r5kbgYES2O2mo3MH9P/20Mr/yAWgK4EJb0dR6z//////xITwAAKsxo298AcwdtiBacxAQZ2EDgsMhWBP/vAEFgAEM4E0qGZPdC1nnOvkSqdf+Z2Gm28DLrupU3GexeSf/1ZqLb/qVDMY/r/7p7a/////////////YsieQAAJnRiaTgD9wE1UqAwqDFjSDJb0w4Lz/+0DEDIAK2Y097j1LoT8XZ722NWT1AwEiKI0jVU6d6hZMC01GuN4T23zanrH+dNYzolflTcyyDrl79//0/+VJAMK/6/2RF/T////////////+XJ6AAA4YyHdeAM+vk24kMBy2+RERgYiAsAZbqiECAqSko9O2oghmPkH3inWt13besyRBQFjvrX9R9Ro3//qR/9bCyC+Ek7uncmAP//////k6XwADthG9vAGWnTWgmmFilgzAAf/7UMQJgAqguTus8ilhgRcmdZ7Q3Kwadp784CRHW5C5yB7FPT6fXdzGtzV2K60611JutAgQF6QV7JsV03z5w+Yl9C9X/9D/5gbC3kKY+dFdtf//////FBMAAFABP7QBhjLoZSGMItOY4hTDIFTDgzTi5MDDoES3yxXelsuxUiR01OmSdjbNrUlrUVSTBFPGUPajxut9RxJRozLpIqsvrTW8ze39ReGNImKOY25ePKE2v//////4omoFgAABZSIf9oAx6/jOzBAIMRiVQADEMIH/+1DEDAALnLs17iZNIdAx5SntKXyRgJYHdpCYWBCx4YlZARqBgnJzM24ytZml3+vUGnB/CDiRa6Bk19lmhmW1K02dVegp2agn7fMyYHOGE3FE7v//////6jZoAWATwoAZ3HxaM1UsAAEADIBAwMDsCgwiQyDUXCbMJ0AYHNQwMr1vopPzdyU9yz+9+8vksP73+pzOpKxUAdwaLGYXhUrySerZbwzgsFBgmjkeOyqUoa1DTppt1P/mjIGBO/9fddbV/////////////yIdLw2A//tgxAEADIWPK67RUqF9lyV1rs0cAvkAPGkBa5A7yL3GgARLJioMVgZMFl1MZogMDArEIDJotycGPTLQ3MVSyv1eR+s1j+Sb62YyHyI+Co4QoaPs/yomlXORc1zDW+bp/6sIMFRZ/p/p6f//+31f////////8oYFgADrAF6mALG4g+4MIGFbiIYZsuIwJ0JB+QeoYaAkC6tDfvJPyx0JXRyFJ3ZZoOdGuPT51aluEhgZ6BiU0Wmxs3sWVGtdNSbqSS3dXrW6n/yNICe75+P1o//////8SuUGgAK2ET1gAWe42mIgoBJemJwMY3ChjN5H9ZyYrCheFYzkhUc2ZVArHNr2lMt4//tAxBcADHmNLa4yjSGfsaX1wrcUgkb9nY6BKhogCpQFgBE0DAzMHZVbEaV6Oqp0VJWVVTW2/q9R4UYt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")
-    },
-
     images: {},
 
     core: {
@@ -155,7 +150,7 @@ var tnt = {
             tnt_autoUpdateInterval = setInterval(() => {
                 tnt.citySwitcher.updateAllCitiesResources();
             }, 60 * 60 * 1000); // 1 hour in milliseconds
-            
+
             // TODO Don't work. Try to append script tag witht the code and see if that will work
             // tnt.alrtSound.play();
         },
@@ -779,11 +774,152 @@ var tnt = {
             $('#tnt_info_resources .tnt_refresh').on('click', function () {
                 tnt.citySwitcher.updateAllCitiesResources();
             });
+
+            // Remove previous click handlers to avoid duplicates
             $('#tnt_toggle_table').off('click').on('click', function () {
+                // Toggle between resource and building tables
                 var $buildings = $('#tnt_info_buildings_content');
+                var $resources = $('#tnt_resource_table').closest('div'); // resource table is inside #tnt_info_resources_content
                 var $btn = $(this);
-                $buildings.toggle();
-                $btn.toggleClass('active', $buildings.is(':visible'));
+
+                if ($buildings.is(':visible')) {
+                    $buildings.hide();
+                    $resources.show();
+                    $btn.removeClass('active');
+                } else {
+                    $resources.hide();
+                    $buildings.show();
+                    $btn.addClass('active');
+                }
+            });
+
+            // Also bind the toggle button in the building table (since it is re-rendered)
+            $(document).on('click', '#tnt_building_table #tnt_toggle_table', function () {
+                var $buildings = $('#tnt_info_buildings_content');
+                var $resources = $('#tnt_resource_table').closest('div');
+                var $btn = $(this);
+
+                if ($resources.is(':visible')) {
+                    $resources.hide();
+                    $buildings.show();
+                    $btn.addClass('active');
+                    // Fix: Show the minimize button in the building table header
+                    $('#tnt_panel_minimize_btn_building_header').show();
+                } else {
+                    $buildings.hide();
+                    $resources.show();
+                    $btn.removeClass('active');
+                    // Fix: Show the minimize button in the resource table header
+                    $('#tnt_panel_minimize_btn_header').show();
+                }
+            });
+
+            // Simplified minimize panel logic
+            $(document).off('click', '.tnt_panel_minimize_btn').on('click', '.tnt_panel_minimize_btn', function () {
+                var $panel = $('#tnt_info_resources');
+                var $btn = $(this);
+                if ($btn.hasClass('tnt_back')) {
+                    $btn.removeClass('tnt_back').addClass('tnt_foreward');
+                    $panel.css({
+                        width: '20px',
+                        minWidth: '20px',
+                        maxWidth: '20px',
+                        overflow: 'hidden'
+                    });
+                    // Only hide the content, not set display:none (so the button stays visible)
+                    $panel.find('#tnt_info_resources_content, #tnt_info_buildings_content').css('visibility', 'hidden');
+                } else {
+                    $btn.removeClass('tnt_foreward').addClass('tnt_back');
+                    $panel.css({
+                        width: '',
+                        minWidth: '',
+                        maxWidth: '',
+                        overflow: ''
+                    });
+                    $panel.find('#tnt_info_resources_content, #tnt_info_buildings_content').css('visibility', 'visible');
+                    // Show the correct table after reopening
+                    if ($('#tnt_toggle_table').hasClass('active')) {
+                        $('#tnt_info_buildings_content').show();
+                        $('#tnt_info_resources_content').hide();
+                    } else {
+                        $('#tnt_info_resources_content').show();
+                        $('#tnt_info_buildings_content').hide();
+                    }
+                }
+            });
+
+            // Remove previous click handlers for panel toggle and add new
+            $(document).off('click', '.tnt_panel_minimize_btn').on('click', '.tnt_panel_minimize_btn', function () {
+                var $btn = $(this);
+                var $content = $('#tnt_info_resources_content');
+                var $buildings = $('#tnt_info_buildings_content');
+                var $resources = $('#tnt_resource_table').closest('div');
+                // If panel is open, close it
+                if ($btn.hasClass('tnt_back')) {
+                    $btn.removeClass('tnt_back').addClass('tnt_foreward');
+                    $content.css({
+                        width: '25px',
+                        overflow: 'hidden',
+                        minHeight: '30px',
+                        minWidth: '25px'
+                    });
+                    $buildings.hide();
+                    $resources.hide();
+                    // Keep the minimize button visible by ensuring it is not hidden
+                } else {
+                    // If panel is closed or not set, open it
+                    $btn.removeClass('tnt_foreward').addClass('tnt_back');
+                    $content.css({
+                        width: 'auto',
+                        overflow: 'auto',
+                        minHeight: '',
+                        minWidth: ''
+                    });
+                    // Show the correct table after reopening
+                    if ($('#tnt_toggle_table').hasClass('active')) {
+                        $buildings.show();
+                        $resources.hide();
+                    } else {
+                        $buildings.hide();
+                        $resources.show();
+                    }
+                }
+            });
+
+            // Table toggle (right side, in table header)
+            $(document).off('click', '.tnt_table_toggle_btn').on('click', '.tnt_table_toggle_btn', function () {
+                var $buildings = $('#tnt_info_buildings_content');
+                var $resources = $('#tnt_resource_table').closest('div');
+                var $btn = $(this);
+
+                if ($buildings.is(':visible')) {
+                    $buildings.hide();
+                    $resources.show();
+                } else {
+                    $resources.hide();
+                    $buildings.show();
+                    $btn.addClass('active');
+                }
+            });
+
+            // Always set correct class for toggle button after render
+            // REMOVE this block: it incorrectly adds tnt_back/tnt_foreward to the toggle button
+            /*
+            setTimeout(function () {
+                var $btn = $('.tnt_table_toggle_btn');
+                var $content = $('#tnt_info_resources_content');
+                if ($btn.length) {
+                    if ($content.width() <= 30) {
+                        $btn.removeClass('tnt_back').addClass('tnt_foreward');
+                    } else {
+                        $btn.removeClass('tnt_foreward').addClass('tnt_back');
+                    }
+                }
+            }, 0);
+            */
+            // Refresh button
+            $('#tnt_info_resources .tnt_refresh').on('click', function () {
+                tnt.citySwitcher.updateAllCitiesResources();
             });
         },
 
@@ -843,21 +979,22 @@ var tnt = {
 
         show: function () {
             if (GM_getValue("cityShowResources") && $("body").attr("id") == "city") {
-                // Insert table div if not exists
+                // Only append the widget if it doesn't exist
                 if ($('#tnt_info_resources').length === 0) {
-                    $('body').append(tnt.template.resources);
+                    $('body').append(
+                        tnt.template.resources.replace('<span class="tnt_panel_minimize_btn tnt_back"></span>', '')
+                    );
                 }
-                // Insert update cities div if not exists
-                // if ($('#tnt_info_updateCities').length === 0) {
-                    // $('body').append(tnt.template.updateCities);                    
-                // }
 
-                // Make table and add it to div
+                $('#tnt_info_resources_content').empty();
+
+                // Only one set of buttons in the header cell
                 var table = '<table id="tnt_resource_table" border="1">\
                     <tr>\
-                        <th class="tnt_center tnt_bold">\
-                            City <span id="tnt_toggle_table" class="tnt_toggle_table_btn" title="Show Buildings">\
-                        </span></th>\
+                        <th class="tnt_center tnt_bold" style="position:relative;">\
+                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="float:left;"></span>\
+                            City <span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>\
+                        </th>\
                         <th class="tnt_center tnt_bold">Lvl</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
@@ -868,12 +1005,12 @@ var tnt = {
                         <th class="tnt_center"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(4) + '</th>\
                     </tr>';
 
-                // Add city rows
+                // Add city rows (no panel/minimize button in city rows)
                 $.each(tnt.resource.sortCities(), function (index,cityID) {
                     var value = tnt.data.storage.resources.city[cityID];
                     table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
                         <td class="tnt_city tnt_left' + (value.hasConstruction ? ' tnt_construction' : '') + '" title="' + value.cityIslandCoords + '">\
-                            <a onclick="$(\'#dropDown_js_citySelectContainer li[selectValue=\"" + cityID + "\"]\').trigger(\'click\'); return false;">' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</a>\
+                            <a onclick=\'$("#dropDown_js_citySelectContainer li[selectValue=\\"' + cityID + '\\"]").trigger("click"); return false;\'>' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</a>\
                         </td>\
                         <td>' + (value.cityLvl ? value.cityLvl : '-') + '</td>\
                         <td class="tnt_population"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
@@ -889,7 +1026,9 @@ var tnt = {
                 // Add total row
                 var total = tnt.data.storage.resources.total;
                 table += '<tr>\
-                    <td class="tnt_total">Total</td>\
+                    <td class="tnt_total">\
+                        Total\
+                    </td>\
                     <td><span class="tnt_refresh"></span></td>\
                     <td class="tnt_population"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + parseInt(total.population).toLocaleString() + '</td>\
                     <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(total.citizens).toLocaleString() + '</td>\
@@ -899,22 +1038,71 @@ var tnt = {
                     <td class="tnt_crystal"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + total.crystal.toLocaleString() + '</td>\
                     <td class="tnt_sulfur"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + total.sulfur.toLocaleString() + '</td>\
                 </tr>';
-
                 table += '</table>';
-
                 $('#tnt_info_resources_content').html(table);
+
+                // --- Building Table Structure ---
+                var buildingColumns = [
+                    { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png' },
+                    { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png' },
+                    { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png' },
+                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png' },
+                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png' },
+                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png' },
+                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png' },
+                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png' },
+                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png' },
+                    { key: 'dump', name: 'Dump', icon: '/cdn/all/both/img/city/dump_l.png' },
+                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png' },
+                    { key: 'tradingPost', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png' },
+                    { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png' },
+                    { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png' },
+                    { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png' }, // Fixed: wall.png
+                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png' },
+                    // Branch Office and Trading Post are the same building in Ikariam, so only one is needed.
+                    // { key: 'branchOffice', name: 'Branch Office', icon: '/cdn/all/both/img/city/branchoffice_l.png' },
+                    { key: 'safehouse', name: 'Safehouse', icon: '/cdn/all/both/img/city/safehouse_l.png' },
+                    { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png' },
+                    { key: 'forester', name: 'Forester', icon: '/cdn/all/both/img/city/forester_l.png' },
+                    { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png' },
+                    { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png' },
+                    { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png' },
+                    { key: 'alchemist', name: 'Alchemist', icon: '/cdn/all/both/img/city/alchemist_l.png' },
+                    { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png' }
+                    // Add more if needed
+                ];
+
+                var buildingTable = '<table id="tnt_building_table" border="1">\
+                    <tr>\
+                        <th class="tnt_center tnt_bold">\
+                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="float:left;"></span>\
+                            <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources"></span> City\
+                        </th>';
+
+                buildingColumns.forEach(function (b) {
+                    buildingTable += '<th class="tnt_center tnt_bold"><img class="tnt_resource_icon tnt_building_icon" title="' + b.name + '" src="' + b.icon + '"></th>';
+                });
+
+                buildingTable += '</tr>';
+
+                // Add city rows (no panel/minimize button in city rows)
+                $.each(tnt.resource.sortCities(), function (index, cityID) {
+                    buildingTable += '<tr>\
+                        <td class="tnt_city tnt_left">' + tnt.get.cityName(cityID) + '</td>';
+                    buildingColumns.forEach(function () {
+                        buildingTable += '<td class="tnt_building_level"></td>';
+                    });
+                    buildingTable += '</tr>';
+                });
+
+                buildingTable += '</table>';
+
+                $('#tnt_info_buildings_content').html(buildingTable);
             }
         },
 
         toggle: function (el) {
-            if ($(el).hasClass("tnt_back")) {
-                $(el).removeClass("tnt_back").addClass("tnt_foreward");
-                $('#tnt_info_resources_content').css('width', '25px').css('overflow', 'hidden');
-            } else {
-                $(el).removeClass("tnt_foreward").addClass("tnt_back");
-                $('#tnt_info_resources_content').css('width', 'auto').css('overflow', 'auto');
-                tnt.resource.update();
-            }
+            // No longer used, logic moved to .tnt_toggle_panel_btn click handler
         },
 
         sortCities: function () {
@@ -995,17 +1183,42 @@ var tnt = {
     citySwitcher: {
         updateAllCitiesResources: function () {
             const cityList = Object.keys(tnt.get.cityList());
+            if (!cityList.length) return;
             localStorage.setItem('tnt_city_update_list', JSON.stringify(cityList));
             localStorage.setItem('tnt_city_update_index', '0');
             // Store the starting city ID
             localStorage.setItem('tnt_city_update_start', tnt.get.cityId());
-            tnt.citySwitcher.gotoNextCityForUpdate();
+            // Immediately go to the first city (if not already there)
+            if (cityList[0] !== tnt.get.cityId()) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('view', 'city');
+                url.searchParams.set('cityId', cityList[0]);
+                window.location.href = url.toString();
+            } else {
+                tnt.citySwitcher.gotoNextCityForUpdate();
+            }
         },
 
         gotoNextCityForUpdate: function () {
             const cityList = JSON.parse(localStorage.getItem('tnt_city_update_list') || '[]');
             let index = parseInt(localStorage.getItem('tnt_city_update_index') || '0', 10);
-        
+
+            if (!cityList.length) return;
+
+            // If we're not on the correct city, switch to it and return
+            const expectedCityId = cityList[index];
+            if (tnt.get.cityId() != expectedCityId) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('view', 'city');
+                url.searchParams.set('cityId', expectedCityId);
+                window.location.href = url.toString();
+                return;
+            }
+
+            // Update index for next city
+            index++;
+            localStorage.setItem('tnt_city_update_index', index.toString());
+
             if (index >= cityList.length) {
                 // Get the starting city ID
                 const startCityId = localStorage.getItem('tnt_city_update_start');
@@ -1014,7 +1227,7 @@ var tnt = {
                 localStorage.removeItem('tnt_city_update_index');
                 localStorage.removeItem('tnt_city_update_start');
                 // Go back to the starting city if available
-                if (startCityId) {
+                if (startCityId && tnt.get.cityId() != startCityId) {
                     const url = new URL(window.location.href);
                     url.searchParams.set('view', 'city');
                     url.searchParams.set('cityId', startCityId);
@@ -1022,16 +1235,15 @@ var tnt = {
                 }
                 return;
             }
-        
-            const cityId = cityList[index];
-            localStorage.setItem('tnt_city_update_index', (index + 1).toString());
-        
-            // Build new URL for the city
-            const url = new URL(window.location.href);
-            url.searchParams.set('view', 'city');
-            url.searchParams.set('cityId', cityId);
-        
-            window.location.href = url.toString();
+
+            // Go to the next city
+            const nextCityId = cityList[index];
+            if (nextCityId && tnt.get.cityId() != nextCityId) {
+                const url = new URL(window.location.href);
+                url.searchParams.set('view', 'city');
+                url.searchParams.set('cityId', nextCityId);
+                window.location.href = url.toString();
+            }
         },
     },
 
@@ -1168,8 +1380,7 @@ var tnt = {
 
     template: {
         resources: '<div id="tnt_info_resources">\
-                        <span class="tnt_back"></span>\
-                        <div id="tnt_info_resources_content">\
+                        <div id="tnt_info_resources_content"></div>\
                         <div id="tnt_info_buildings_content" style="display:none;"></div>\
                     </div>'
     }
@@ -1180,8 +1391,8 @@ $(document).ready(function () {
 });
 
 // General styles
-GM_addStyle("\
-    /* Show level styles */\
+GM_addStyle(
+    "/* Show level styles */\
     .tntLvl{\
         position:relative;\
         top:10px;\
@@ -1206,7 +1417,6 @@ GM_addStyle("\
     #tnt_resource_table td{\
         border:1px #000000 solid;\
         padding:2px!important;\
-        // text-align:right;\
     }\
     #tnt_resource_table th{\
         border:1px #000000 solid;\
@@ -1228,30 +1438,14 @@ GM_addStyle("\
         height:16px;\
         display:inline-block;\
     }\
-    .tnt_population{\
-        text-align:right;\
-    }\
-    .tnt_citizens{\
-        text-align:right;\
-    }\
-    .tnt_wood{\
-        text-align:right;\
-    }\
-    .tnt_marble{\
-        text-align:right;\
-    }\
-    .tnt_wine{\
-        text-align:right;\
-    }\
-    .tnt_crystal{\
-        text-align:right;\
-    }\
-    .tnt_sulfur{\
-        text-align:right;\
-    }\
-    #mainview a:hover{\
-        text-decoration:none;\
-    }\
+    .tnt_population{ text-align:right; }\
+    .tnt_citizens{ text-align:right; }\
+    .tnt_wood{ text-align:right; }\
+    .tnt_marble{ text-align:right; }\
+    .tnt_wine{ text-align:right; }\
+    .tnt_crystal{ text-align:right; }\
+    .tnt_sulfur{ text-align:right; }\
+    #mainview a:hover{ text-decoration:none; }\
     #tntOptions {\
         position:absolute;\
         top:40px;\
@@ -1260,15 +1454,10 @@ GM_addStyle("\
         border:1px #755931 solid;\
         border-top:none;\
         background-color: #FEE8C3;\
-        //background: #DBBE8C url(/skin/layout/bg_stone.jpg) repeat scroll center top;\
         padding:10px 10px 0px 10px;\
     }\
-    #tntOptions legend{\
-        font-weight:bold;\
-    }\
-    .tntHide, #infocontainer .tntLvl, #actioncontainer .tntLvl{\
-        display:none;\
-    }\
+    #tntOptions legend{ font-weight:bold; }\
+    .tntHide, #infocontainer .tntLvl, #actioncontainer .tntLvl{ display:none; }\
     #tntInfoWidget {\
         position:fixed;\
         bottom:0px;\
@@ -1303,24 +1492,11 @@ GM_addStyle("\
         width: 24px;\
         z-index: 100000;\
     }\
-    .txtCenter{\
-        text-align:center;\
-    }\
-    .tnt_center{\
-        text-align:center;\
-        white-space:nowrap;\
-    }\
-    .tnt_right{\
-        text-align:right;\
-        white-space:nowrap;\
-    }\
-    .tnt_left{\
-        text-align:left;\
-        white-space:nowrap;\
-    }\
-    .tnt_bold{\
-        font-weight:bold;\
-    }\
+    .txtCenter{ text-align:center; }\
+    .tnt_center{ text-align:center; white-space:nowrap; }\
+    .tnt_right{ text-align:right; white-space:nowrap; }\
+    .tnt_left{ text-align:left; white-space:nowrap; }\
+    .tnt_bold{ font-weight:bold; }\
     #tnt_info_resources{\
         position:fixed;\
         bottom:20px;\
@@ -1356,7 +1532,6 @@ GM_addStyle("\
     #tnt_info_resources .tnt_foreward:hover {\
         background-position: -197px -18px;\
     }\
-    \
     #tnt_info_updateCities {\
         position:fixed;\
         bottom:20px;\
@@ -1370,35 +1545,49 @@ GM_addStyle("\
         background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
         cursor: pointer;\
         display: block!important;\
-        height: 18px;\  \
+        height: 18px;\
         width: 18px;\
     }\
     #tnt_info_resources .tnt_refresh {\
-        //left: 30px;\
-        //position: absolute;\
-        //bottom: 2px;\
         background-position: -179px 0;\
         background-color: #DBBE8C;\
     }\
     #tnt_info_resources .tnt_refresh:hover {\
         background-position: -179px -18px;\
     }\
-    \
-    #tnt_info_resources .tnt_toggle_table_btn {\
-        display: inline-block;\
-        float: right;\
-        vertical-align: middle;\
-        margin-left: 6px;\
+    .tnt_panel_minimize_btn {\
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
         cursor: pointer;\
-        width: 18px;\
+        display: block!important;\
         height: 18px;\
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat -161px 0;\
+        width: 18px;\
+        position: absolute;\
+        left: 2px;\
+        top: 2px;\
+        z-index: 10;\
     }\
-    #tnt_info_resources .tnt_toggle_table_btn.active {\
-        background-position: -143px 0;\
+    .tnt_panel_minimize_btn.tnt_back { background-position: -197px 0; }\
+    .tnt_panel_minimize_btn.tnt_back:hover { background-position: -197px -18px; }\
+    .tnt_panel_minimize_btn.tnt_foreward { background-position: -197px 0; transform: rotate(180deg); top: 3px; }\
+    .tnt_panel_minimize_btn.tnt_foreward:hover { background-position: -197px -18px; }\
+    .tnt_table_toggle_btn {\
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
+        cursor: pointer;\
+        display: inline-block;\
+        height: 18px;\
+        width: 18px;\
+        vertical-align: middle;\
+        float: right;\
+        margin-left: 6px;\
+        background-position: -179px 0;\
     }\
-    #tnt_info_resources .tnt_toggle_table_btn:hover {\
-        background-position: -161px -18px;\
+    .tnt_table_toggle_btn:hover { background-position: -179px -18px; }\
+    .tnt_city .tnt_panel_minimize_btn { float:left; margin-right:2px; }\
+    #tnt_info_resources.minimized {\
+        width: 20px !important;\
+        min-width: 20px !important;\
+        max-width: 20px !important;\
+        overflow: hidden !important;\
     }\
-");
-// General styles - END
+"
+);
