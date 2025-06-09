@@ -1,0 +1,216 @@
+GET
+https://s53-us.ikariam.gameforge.com/?view=city&oldBackgroundView=city&mainbox_x=614&mainbox_y=0&mainbox_z=-122&sidebar_x=70&sidebar_y=0&sidebar_z=197&containerWidth=1751px&containerHeight=918px&worldviewWidth=1751px&worldviewHeight=872px&cityTop=-208px&cityLeft=-1633px&cityRight=&cityWorldviewScale=0.8999999999999999&cityId=14487
+[HTTP/1.1 200 OK 1685ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/skin/compiled-ltr-common_1.css?rev=65601
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/skin/compiled-ltr-common_0.css?rev=65601
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://gf3.geo.gfsrv.net/cdn21/ce917ae81e87900347d0b78105f6ee.css
+[HTTP/2 200 OK 0ms]
+
+GET
+https://gf3.geo.gfsrv.net/cdn87/1206d4a949b7b0645bf294f2c32a3c.css
+[HTTP/2 200 OK 0ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/skin/compiled-us-city.css?rev=65601
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://pixelzirkus.gameforge.com/static/js/pz.js
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://consent.gameforge.com/cookiebanner.js
+[HTTP/2 200  0ms]
+
+Cookie banner version 0.18.2 loaded cookiebanner.js:15:10665
+Initial consent: 
+Object { preferences: true, statistics: true, marketing: true, necessary: true }
+cookiebanner.js:15:12630
+GET
+https://gf1.geo.gfsrv.net/cdncf/2fbbf84281d9ecbffb4993203d543b.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf2.geo.gfsrv.net/cdndc/702ce31a83731a17f60e23c96fe944.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdnf8/8c866bf8336a550c2e48e0d9bed1ab.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdn33/05041b1dffc2ada01dd1f54417f300.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf3.geo.gfsrv.net/cdn21/2d571100067c78c4bd9dc7253350cb.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdn33/05041b1dffc2ada01dd1f54417f300.js
+[HTTP/2 200  0ms]
+
+injected: TNT Collection v1.5.1 - Init... content.js:9:1280
+injected: Found building: buildingimg level 0 at position 0Img content.js:9:1280
+injected: Found building: invisible level 0 at position 0Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 0CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 0SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 0Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 1Img content.js:9:1280
+injected: Found building: portLoadingIcon level 0 at position 1PortCountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 1Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 1CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 1SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 1Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 2Img content.js:9:1280
+injected: Found building: portLoadingIcon level 0 at position 2PortCountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 2Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 2CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 2SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 2Scroll content.js:9:1280
+GET
+https://s53-us.ikariam.gameforge.com/apple-touch-icon-precomposed.png
+[HTTP/1.1 200 OK 0ms]
+
+injected: Found building: green level 0 at position 2ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 3Img content.js:9:1280
+injected: Found building: invisible level 0 at position 3Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 3CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 3SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 3Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 4Img content.js:9:1280
+injected: Found building: invisible level 0 at position 4Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 4CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 4SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 4Scroll content.js:9:1280
+injected: Found building: green level 0 at position 4ScrollName content.js:9:1280
+GET
+https://gf1.geo.gfsrv.net/cdn03/c931195193f8b4a2d6efea089cf3c4.ico
+[HTTP/2 200  0ms]
+
+injected: Found building: buildingimg level 0 at position 5Img content.js:9:1280
+injected: Found building: invisible level 0 at position 5Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 5CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 5SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 5Scroll content.js:9:1280
+injected: Found building: green level 0 at position 5ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 6Img content.js:9:1280
+injected: Found building: invisible level 0 at position 6Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 6CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 6SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 6Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 7Img content.js:9:1280
+injected: Found building: invisible level 0 at position 7Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 7CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 7SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 7Scroll content.js:9:1280
+injected: Found building: green level 0 at position 7ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 8Img content.js:9:1280
+injected: Found building: invisible level 0 at position 8Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 8CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 8SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 8Scroll content.js:9:1280
+injected: Found building: green level 0 at position 8ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 9Img content.js:9:1280
+injected: Found building: invisible level 0 at position 9Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 9CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 9SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 9Scroll content.js:9:1280
+injected: Found building: green level 0 at position 9ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 10Img content.js:9:1280
+injected: Found building: invisible level 0 at position 10Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 10CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 10SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 10Scroll content.js:9:1280
+injected: Found building: green level 0 at position 10ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 11Img content.js:9:1280
+injected: Found building: invisible level 0 at position 11Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 11CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 11SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 11Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 12Img content.js:9:1280
+injected: Found building: invisible level 0 at position 12Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 12CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 12SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 12Scroll content.js:9:1280
+injected: Found building: green level 0 at position 12ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 13Img content.js:9:1280
+injected: Found building: invisible level 0 at position 13Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 13CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 13SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 13Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 14Img content.js:9:1280
+injected: Found building: invisible level 0 at position 14Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 14CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 14SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 14Scroll content.js:9:1280
+injected: Found building: green level 0 at position 14ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 15Img content.js:9:1280
+injected: Found building: invisible level 0 at position 15Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 15CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 15SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 15Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 16Img content.js:9:1280
+injected: Found building: invisible level 0 at position 16Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 16CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 16SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 16Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 17Img content.js:9:1280
+injected: Found building: invisible level 0 at position 17Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 17CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 17SpeedupButton content.js:9:1280
+injected: Found building: invisible level 0 at position 17Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 18Img content.js:9:1280
+injected: Found building: invisible level 0 at position 18Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 18CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 18SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 18Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 19Img content.js:9:1280
+injected: Found building: invisible level 0 at position 19Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 19CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 19SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 19Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 20Img content.js:9:1280
+injected: Found building: invisible level 0 at position 20Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 20CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 20SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 20Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 21Img content.js:9:1280
+injected: Found building: invisible level 0 at position 21Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 21CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 21SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 21Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 22Img content.js:9:1280
+injected: Found building: invisible level 0 at position 22Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 22CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 22SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 22Scroll content.js:9:1280
+injected: Found building: buildingimg level 0 at position 23Img content.js:9:1280
+injected: Found building: invisible level 0 at position 23Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 23CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 23SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 23Scroll content.js:9:1280
+injected: Found building: green level 0 at position 23ScrollName content.js:9:1280
+injected: Found building: buildingimg level 0 at position 24Img content.js:9:1280
+injected: Found building: invisible level 0 at position 24Countdown content.js:9:1280
+injected: Found building: buildingUpgradeIcon level 0 at position 24CountdownText content.js:9:1280
+injected: Found building: invisible level 0 at position 24SpeedupButton content.js:9:1280
+injected: Found building: cityScroll level 0 at position 24Scroll content.js:9:1280
+injected: Scanning for military units... content.js:9:1280
+injected: Stored data for city 14487: content.js:9:1280
+injected: 
+Object { cityIslandCoords: " [32:7]", producedTradegood: 2, population: 2670, citizens: 731, max: 3893001, wood: 39779, wine: 11305, marble: 80919, crystal: 315925, sulfur: 26790, … }
+content.js:9:1280
+The Web Console logging API (console.log, console.info, console.warn, console.error) has been disabled by a script on this page.
+GET
+https://gf2.geo.gfsrv.net/cdn18/e4d50db7dbe44924c7085a3c335842.png
+[HTTP/2 200  0ms]
+

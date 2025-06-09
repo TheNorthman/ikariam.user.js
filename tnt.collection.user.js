@@ -22,6 +22,15 @@ const UPDATE_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/update.php"
 const UPDATE_HQ_URL = "http://lazy.rjj-net.dk/tnt/ikariam/hq/update";
 let tnt_autoUpdateInterval = null;
 
+const validBuildingTypes = [
+    'townHall', 'palace', 'palaceColony', 'warehouse', 'wall', 'barracks',
+    'shipyard', 'port', 'academy', 'museum', 'temple', 'embassy', 'branchOffice',
+    'workshop', 'safehouse', 'carpentering', 'architect', 'vineyard', 'optician',
+    'fireworker', 'forester', 'stonemason', 'winegrower', 'glassblowing', 'alchemist',
+    'dump', 'tavern', 'blackMarket', 'pirateFortress', 'marineChartArchive',
+    'dockyard', 'shrineOfOlympus', 'chronosForge'
+];
+
 const tnt = {
     version: GM_info.script.version,
     url: { versionUrl: VERSION_URL, updateUrl: UPDATE_URL, update: UPDATE_HQ_URL },
@@ -64,30 +73,130 @@ const tnt = {
             ambrosia: 0,
             gold: 0,
             resources: {
-                city: {}
+                city: {}, // Each city will now have: buildings, military: {units, ships, movements}
             }
         }
     },
     core: {
+        waitForElements: function (selector, callback, timeout = 10000) {
+            const startTime = Date.now();
+            let waitForLoad = true;
+
+            const checkElements = () => {
+                // First wait for #locations to appear
+                const $locations = $('#locations');
+                if (!$locations.length) {
+                    if (Date.now() - startTime > timeout) {
+                        tnt.core.debug.log(`Timeout waiting for #locations`, 1);
+                        callback(null);
+                        return;
+                    }
+                    setTimeout(checkElements, 200);
+                    return;
+                }
+
+                // Then wait for loading to complete
+                if (waitForLoad && $locations.hasClass('loading')) {
+                    if (Date.now() - startTime > timeout) {
+                        tnt.core.debug.log(`Timeout waiting for #locations loading to complete`, 1);
+                        callback(null);
+                        return;
+                    }
+                    setTimeout(checkElements, 200);
+                    return;
+                }
+                waitForLoad = false;
+
+                // Finally check for the actual elements
+                const elements = $(selector);
+                if (elements.length > 0) {
+                    // Add extra delay for elements to finish rendering
+                    setTimeout(() => callback(elements), 500);
+                    return;
+                }
+
+                if (Date.now() - startTime > timeout) {
+                    tnt.core.debug.log(`Timeout waiting for elements: ${selector}`, 1);
+                    // Try one last time with js_CityPosition* selector
+                    const positions = $('div[id^="js_CityPosition"]');
+                    if (positions.length > 0) {
+                        setTimeout(() => callback(positions), 500);
+                    } else {
+                        callback(null);
+                    }
+                    return;
+                }
+
+                setTimeout(checkElements, 200);
+            };
+
+            checkElements();
+        },
+
         init() {
             tnt.core.debug.log(`TNT Collection v${tnt.version} - Init...`);
-            tnt.core.storage.init();
-            tnt.resource.update();
-            tnt.resource.events();
-            tnt.core.notification.init();
-            tnt.core.events.init();
-            tnt.core.options.init();
-            tnt.all();
-            switch ($("body").attr("id")) {
-                case "island": tnt.island(); break;
-                case "city": tnt.city(); break;
-                case "worldmap_iso": tnt.world(); break;
+
+            // Add debug flag to track reloads
+            window.TNT_RELOAD_DEBUG = true;
+            window.TNT_LAST_RELOAD = Date.now();
+            tnt.core.debug.log('Init called at: ' + new Date().toISOString());
+
+            // Check if we're in a reload loop
+            const lastReload = parseInt(localStorage.getItem('tnt_debug_last_reload') || '0');
+            const now = Date.now();
+            if (now - lastReload < 5000) {
+                tnt.core.debug.log('WARNING: Rapid reloads detected!');
+                // Clear any pending update state
+                localStorage.removeItem('tnt_city_update_list');
+                localStorage.removeItem('tnt_city_update_index');
+                localStorage.removeItem('tnt_city_update_start');
+                localStorage.removeItem('tnt_city_update_lastReload');
+                // Exit early
+                return;
             }
-            if (localStorage.getItem('tnt_city_update_list')) {
-                setTimeout(() => setTimeout(() => tnt.citySwitcher.gotoNextCityForUpdate(), 100), 200);
-            }
-            if (tnt_autoUpdateInterval) clearInterval(tnt_autoUpdateInterval);
-            tnt_autoUpdateInterval = setInterval(() => tnt.citySwitcher.updateAllCitiesResources(), 3600000);
+            localStorage.setItem('tnt_debug_last_reload', now.toString());
+
+            // Wait for page load before continuing initialization
+            tnt.core.waitForElements('#locations', ($locations) => {
+                if (!$locations) {
+                    tnt.core.debug.log('Failed to find #locations element', 1);
+                    return;
+                }
+
+                // Continue with rest of init after locations are loaded
+                tnt.core.storage.init();
+                tnt.resource.update();
+                tnt.core.notification.init();
+                tnt.core.events.init();
+                tnt.core.options.init();
+                tnt.all();
+
+                switch ($("body").attr("id")) {
+                    case "island": tnt.island(); break;
+                    case "city": tnt.city(); break;
+                    case "worldmap_iso": tnt.world(); break;
+                }
+
+                // Only continue updates if explicitly requested
+                const forceUpdate = localStorage.getItem('tnt_force_update');
+                if (forceUpdate) {
+                    localStorage.removeItem('tnt_force_update');
+                    if (localStorage.getItem('tnt_city_update_list')) {
+                        setTimeout(() => tnt.citySwitcher.gotoNextCityForUpdate(), 1000);
+                    }
+                }
+
+                // Remove existing interval if any
+                if (tnt_autoUpdateInterval) {
+                    clearInterval(tnt_autoUpdateInterval);
+                    tnt_autoUpdateInterval = null;
+                }
+
+                // Only start auto-update interval if enabled in options
+                if (GM_getValue("cityAutoUpdate", false)) {
+                    tnt_autoUpdateInterval = setInterval(() => tnt.citySwitcher.updateAllCitiesResources(), 3600000);
+                }
+            });
         },
         ajax: {
             send(data, url = tnt.url.update, callback = null) {
@@ -338,12 +447,41 @@ const tnt = {
                                 break;
                         }
                     }
+
+                    // Add military data collection to view changes
+                    ajax.Responder.tntUpdateView = ajax.Responder.updateView;
+                    ajax.Responder.updateView = function (response) {
+                        const view = ikariam.templateView.id;
+
+                        // Let Ikariam handle the update
+                        ajax.Responder.tntUpdateView(response);
+
+                        // Collect military data after view updates
+                        if (view === 'militaryAdvisor' || view === 'townHall' || view === 'port') {
+                            tnt.resource.update();
+                        }
+                    };
+
+                    // Add handler for city changes in military view
+                    $(document).on('click', '#js_citySelectContainer li', function () {
+                        setTimeout(() => tnt.resource.update(), 500);
+                    });
                 }
             }
         },
         options: {
             init() {
                 if (GM_getValue("version") != tnt.version) tnt.core.options.setup();
+
+                // Add to options UI
+                const cityOptions = `
+                    <div class="tnt_left" style="padding-left:20px;">
+                        <legend>Cities:</legend>
+                        <input id="tntCityAutoUpdate" type="checkbox"${GM_getValue("cityAutoUpdate") ? ' checked="checked"' : ''} /> Enable hourly auto-updates<br/>
+                    </div>
+                `;
+                $("#tntOptions > div").append(cityOptions);
+
                 /* Add option link, option box and eventlisteners */
                 // $("#GF_toolbar ul").append('\
                 $('\
@@ -465,6 +603,7 @@ const tnt = {
                 GM_setValue("cityShowResources", GM_getValue("cityShowResources", true));
                 GM_setValue("notificationAdvisors", GM_getValue("notificationAdvisors", true));
                 GM_setValue("notificationSound", GM_getValue("notificationSound", true));
+                GM_setValue("cityAutoUpdate", GM_getValue("cityAutoUpdate", false));
                 GM_setValue("version", tnt.version);
             }
         },
@@ -503,6 +642,14 @@ const tnt = {
             });
         }
     },
+    template: {
+        resources: `
+            <div id="tnt_info_resources">
+                <div id="tnt_info_resources_content"></div>
+                <div id="tnt_info_buildings_content" style="display:none;"></div>
+            </div>
+        `
+    },
     all() {
         if (GM_getValue("allRemovePremiumOffers")) {
             GM_addStyle("#premium_btn,.premiumOfferBox,.premiumOffer,.expandable.resourceShop,.expandable.slot1,#transport .premiumTransporters,#transport .buildingDescription{display:none!important;height:0!important;}#resource #setWorkers .content,#tradegood #setWorkers .content{min-height:180px;}");
@@ -523,194 +670,22 @@ const tnt = {
     },
     world() { },
     resource: {
-        events() {
-            $('#tnt_info_resources .tnt_back').on('click', function () {
-                tnt.resource.toggle(this);
-            });
-            $('#tnt_info_resources .tnt_refresh').on('click', function () {
-                tnt.citySwitcher.updateAllCitiesResources();
-            });
-
-            // Remove previous click handlers to avoid duplicates
-            $('#tnt_toggle_table').off('click').on('click', function () {
-                // Toggle between resource and building tables
-                var $buildings = $('#tnt_info_buildings_content');
-                var $resources = $('#tnt_resource_table').closest('div'); // resource table is inside #tnt_info_resources_content
-                var $btn = $(this);
-
-                if ($buildings.is(':visible')) {
-                    $buildings.hide();
-                    $resources.show();
-                    $btn.removeClass('active');
-                } else {
-                    $resources.hide();
-                    $buildings.show();
-                    $btn.addClass('active');
-                }
-            });
-
-            // Also bind the toggle button in the building table (since it is re-rendered)
-            $(document).on('click', '#tnt_building_table #tnt_toggle_table', function () {
-                var $buildings = $('#tnt_info_buildings_content');
-                var $resources = $('#tnt_resource_table').closest('div');
-                var $btn = $(this);
-
-                if ($resources.is(':visible')) {
-                    $resources.hide();
-                    $buildings.show();
-                    $btn.addClass('active');
-                    // Fix: Show the minimize button in the building table header
-                    $('#tnt_panel_minimize_btn_building_header').show();
-                } else {
-                    $buildings.hide();
-                    $resources.show();
-                    $btn.removeClass('active');
-                    // Fix: Show the minimize button in the resource table header
-                    $('#tnt_panel_minimize_btn_header').show();
-                }
-            });
-
-            // Simplified minimize panel logic (fix: restore to the same table as before)
-            $(document).off('click', '.tnt_panel_minimize_btn').on('click', '.tnt_panel_minimize_btn', function () {
-                var $panel = $('#tnt_info_resources');
-                var $btn = $(this);
-                // Remember which table is currently visible before minimizing
-                if ($btn.hasClass('tnt_back')) {
-                    $btn.data('wasBuildings', $('#tnt_info_buildings_content').is(':visible'));
-                    $btn.removeClass('tnt_back').addClass('tnt_foreward');
-                    $panel.addClass('minimized');
-                } else {
-                    $btn.removeClass('tnt_foreward').addClass('tnt_back');
-                    $panel.removeClass('minimized');
-                    // Restore the same table as before
-                    if ($btn.data('wasBuildings')) {
-                        $('#tnt_info_buildings_content').show();
-                        $('#tnt_info_resources_content').hide();
-                        $('#tnt_toggle_table').addClass('active');
-                    } else {
-                        $('#tnt_info_resources_content').show();
-                        $('#tnt_info_buildings_content').hide();
-                        $('#tnt_toggle_table').removeClass('active');
-                    }
-                }
-            });
-
-            // Remove any other minimize logic that sets display:none or visibility:hidden on content divs
-
-            // Table toggle (right side, in table header)
-            $(document).off('click', '.tnt_table_toggle_btn').on('click', '.tnt_table_toggle_btn', function () {
-                var $buildings = $('#tnt_info_buildings_content');
-                var $resources = $('#tnt_resource_table').closest('div');
-                var $btn = $(this);
-
-                if ($buildings.is(':visible')) {
-                    $buildings.hide();
-                    $resources.show();
-                } else {
-                    $resources.hide();
-                    $buildings.show();
-                    $btn.addClass('active');
-                }
-            });
-
-            // Always set correct class for toggle button after render
-            // REMOVE this block: it incorrectly adds tnt_back/tnt_foreward to the toggle button
-            /*
-            setTimeout(function () {
-                var $btn = $('.tnt_table_toggle_btn');
-                var $content = $('#tnt_info_resources_content');
-                if ($btn.length) {
-                    if ($content.width() <= 30) {
-                        $btn.removeClass('tnt_back').addClass('tnt_foreward');
-                    } else {
-                        $btn.removeClass('tnt_foreward').addClass('tnt_back');
-                    }
-                }
-            }, 0);
-            */
-            // Refresh button
-            $('#tnt_info_resources .tnt_refresh').on('click', function () {
-                tnt.citySwitcher.updateAllCitiesResources();
-            });
-        },
         update() {
             const cityId = tnt.get.cityId();
-            console.log(`TNT updating buildings for city ${cityId}`);
-
             const prev = $.extend(true, {}, tnt.data.storage.resources.city[cityId] || {});
-            let buildings = prev.buildings && Object.keys(prev.buildings).length > 0 ? $.extend(true, {}, prev.buildings) : {};
 
-            if ($("body").attr("id") == "city") {
-                console.log("TNT scanning city view for buildings...");
-                const buildingData = {};
+            // Initialize city data with military property
+            const military = {
+                units: {},
+                ships: {},
+                movements: []
+            };
 
-                // Scan all positions 0-24 for buildings
-                const positions = [...Array(25).keys()];
-                for (let pos of positions) {
-                    // Try both selector patterns since the game uses different IDs
-                    const $c = $("#position" + pos).length ? $("#position" + pos) : $("#js_CityPosition" + pos);
-                    if (!$c.length) {
-                        console.log(`TNT position ${pos}: no building found`);
-                        continue;
-                    }
-
-                    // Debug building element
-                    console.log(`TNT position ${pos} classes:`, $c.attr("class"));
-
-                    // Try multiple methods to detect building type
-                    let type = "";
-                    const $a = $c.find("a[id$='Link']");
-
-                    // Method 1: From link href
-                    const href = $a.attr("href");
-                    type = href?.match(/view=([a-zA-Z0-9]+)/)?.[1] || "";
-                    console.log(`TNT position ${pos} link href:`, href, "extracted type:", type);
-
-                    // Method 2: From building class 
-                    if (!type) {
-                        const classes = $c.attr("class");
-                        const buildingClass = classes?.match(/building\s+([a-zA-Z0-9]+)/)?.[1];
-                        if (buildingClass) {
-                            type = buildingClass;
-                            console.log(`TNT position ${pos} found type from class:`, type);
-                        }
-                    }
-
-                    // Method 3: Check for special buildings via classes
-                    if (!type) {
-                        if ($c.hasClass("palace")) {
-                            type = "palace";
-                            console.log(`TNT position ${pos} detected palace from class`);
-                        }
-                        else if ($c.hasClass("palaceColony")) {
-                            type = "palaceColony";
-                            console.log(`TNT position ${pos} detected governor from class`);
-                        }
-                    }
-
-                    const level = $c.attr("class")?.match(/level(\d+)/)?.[1] || "";
-                    console.log(`TNT position ${pos} level:`, level);
-
-                    if (!type || !level) {
-                        console.log(`TNT position ${pos} skipped - no type/level found`);
-                        continue;
-                    }
-
-                    // Add building to data
-                    if (!buildingData[type]) buildingData[type] = [];
-                    buildingData[type].push({
-                        level: parseInt(level, 10),
-                        position: pos,
-                        name: type
-                    });
-                    console.log(`TNT successfully added ${type} at position ${pos} level ${level}`);
-                }
-
-                console.log("TNT collected building data:", JSON.stringify(buildingData, null, 2));
-                buildings = $.extend(true, {}, buildingData);
-            }
-
-            tnt.data.storage.resources.city[cityId] = {
+            // Initialize city data
+            const cityData = {
+                ...prev,
+                military, // Add missing comma here
+                buildings: {},
                 cityIslandCoords: tnt.get.cityIslandCoords(),
                 producedTradegood: parseInt(tnt.get.producedTradegood()),
                 population: tnt.get.population(),
@@ -724,60 +699,142 @@ const tnt = {
                 hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : (prev.hasConstruction || false),
                 resourceProduction: tnt.get.resourceProduction(),
                 tradegoodProduction: tnt.get.tradegoodProduction(),
-                buildings: buildings
+                lastUpdate: Date.now()
             };
-            if (tnt.get.cityLvl().length) {
-                tnt.data.storage.resources.city[cityId].cityLvl = tnt.get.cityLvl();
-            } else if ($("body").attr("id") == "city" && tnt.data.storage.resources.city[cityId].hasConstruction) {
-                tnt.data.storage.resources.city[cityId].cityLvl = $('#js_CityPosition0Link').attr('title').replace(/[^\d-]+/g, "");
+
+            // Extract building data when in city view
+            if ($("body").attr("id") === "city") {
+                const detectBuildings = () => {
+                    // Wait for locations container and loading to complete
+                    const $locations = $('#locations');
+                    if (!$locations.length || $locations.hasClass('loading')) {
+                        setTimeout(detectBuildings, 500);
+                        return;
+                    }
+
+                    // Get all building positions using both selectors to ensure compatibility
+                    const $positions = $('div[id^="position"].building, div[id^="js_CityPosition"].building');
+                    const foundBuildings = {};
+
+                    $positions.each(function () {
+                        const $pos = $(this);
+                        const posId = $pos.attr('id');
+                        if (!posId) return;
+
+                        // Get position number from either format (position0 or js_CityPosition0)
+                        const position = posId.match(/\d+$/)?.[0];
+                        if (!position) return;
+
+                        const classes = ($pos.attr('class') || '').split(/\s+/);
+
+                        // Find building type from class list
+                        const buildingType = classes.find(c => validBuildingTypes.includes(c));
+                        if (!buildingType) return;
+
+                        // Get level from level class (e.g. "level23")
+                        const levelMatch = classes.find(c => c.startsWith('level'))?.match(/\d+$/);
+                        const level = levelMatch ? parseInt(levelMatch[0]) : 0;
+                        if (!level) return;
+
+                        // Store building data
+                        foundBuildings[buildingType] = foundBuildings[buildingType] || [];
+                        foundBuildings[buildingType].push({
+                            position,
+                            level,
+                            name: buildingType
+                        });
+                    });
+
+                    if (Object.keys(foundBuildings).length > 0) {
+                        cityData.buildings = foundBuildings;
+                        tnt.data.storage.resources.city[cityId] = cityData;
+                        tnt.core.storage.save();
+                        tnt.resource.show();
+                    } else if (prev.buildings && Object.keys(prev.buildings).length > 0) {
+                        cityData.buildings = prev.buildings;
+                        tnt.data.storage.resources.city[cityId] = cityData;
+                        tnt.core.storage.save();
+                        tnt.resource.show();
+                    }
+                };
+
+                detectBuildings();
             } else {
-                tnt.data.storage.resources.city[cityId].cityLvl = prev.cityLvl || tnt.data.storage.resources.city[cityId].cityLvl;
+                // Use previous building data for non-city views
+                cityData.buildings = prev.buildings || {};
+                tnt.data.storage.resources.city[cityId] = cityData;
+                tnt.core.storage.save();
+                tnt.resource.show();
             }
 
-            var total = {
-                population: 0,
-                citizens: 0,
-                wood: 0,
-                wine: 0,
-                marble: 0,
-                crystal: 0,
-                sulfur: 0,
-            };
+            tnt.core.debug.log('Scanning for military units...', 3);
 
-            // Calculate the total resources
-            $.each(tnt.data.storage.resources.city, function (index, value) {
-                total.population += value.population;
-                total.citizens += value.citizens;
-                total.wood += value.wood;
-                total.wine += value.wine;
-                total.marble += value.marble;
-                total.crystal += value.crystal;
-                total.sulfur += value.sulfur;
-            });
+            // Scan for units in cityMilitary view
+            if ($('#tabUnits').length) {
+                $('#tabUnits .militaryList').each(function () {
+                    const $table = $(this);
+                    const $headers = $table.find('tr.title_img_row th:not(:first)');
+                    const $counts = $table.find('tr.count td:not(:first)');
 
-            tnt.data.storage.resources.total = total;
+                    $headers.each(function (index) {
+                        const $div = $(this).find('div.army');
+                        if ($div.length) {
+                            const tooltip = $div.find('.tooltip').text().trim();
+                            const unitClass = $div.attr('class');
+                            const unitMatch = unitClass?.match(/s(\d+)/);
+                            if (unitMatch) {
+                                const unitId = `unit${unitMatch[1]}`;
+                                const count = parseInt($counts.eq(index).text()) || 0;
+                                if (count > 0) {
+                                    cityData.military.units[unitId] = count; // Fix property access
+                                    tnt.core.debug.log(`Found ${count} ${unitId} (${tooltip})`, 3);
+                                }
+                            }
+                        }
+                    });
+                });
+            }
 
-            // Save storage (for all other resource/city changes)
+            // Scan for ships in cityMilitary view
+            if ($('#tabShips').length) {
+                $('#tabShips .militaryList').each(function () {
+                    const $table = $(this);
+                    const $headers = $table.find('tr.title_img_row th:not(:first)');
+                    const $counts = $table.find('tr.count td:not(:first)');
+
+                    $headers.each(function (index) {
+                        const $div = $(this).find('div.fleet');
+                        if ($div.length) {
+                            const tooltip = $div.find('.tooltip').text().trim();
+                            const shipClass = $div.attr('class');
+                            const shipMatch = shipClass?.match(/s(\d+)/);
+                            if (shipMatch) {
+                                const shipId = `ship${shipMatch[1]}`;
+                                const count = parseInt($counts.eq(index).text()) || 0;
+                                if (count > 0) {
+                                    cityData.military.ships[shipId] = count;
+                                    tnt.core.debug.log(`Found ${count} ${shipId} (${tooltip})`, 3);
+                                }
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Store all data in one update
+            cityData.lastUpdate = Date.now();
+
+            // Update storage
+            tnt.data.storage.resources.city[cityId] = cityData;
+
+            // Force save to localStorage immediately
             tnt.core.storage.save();
 
-            // Log all buildingData for all cities (show as JSON for easier inspection)
-            const allBuildings = {};
-            for (const cityId in tnt.data.storage.resources.city) {
-                if (
-                    tnt.data.storage.resources.city[cityId] &&
-                    tnt.data.storage.resources.city[cityId].buildings &&
-                    typeof tnt.data.storage.resources.city[cityId].buildings === "object" &&
-                    Object.keys(tnt.data.storage.resources.city[cityId].buildings).length > 0 // Only include if not empty
-                ) {
-                    allBuildings[cityId] = tnt.data.storage.resources.city[cityId].buildings;
-                }
-            }
-            // Only log if there is at least one city with building data
-            if (Object.keys(allBuildings).length > 0) {
-                console.log("TNT all buildingData for all cities:", JSON.stringify(allBuildings, null, 2));
-            } else {
-                console.log("TNT all buildingData for all cities: (no building data found)");
-            }
+            // Verify storage
+            const stored = JSON.parse(localStorage.getItem("tnt_storage"));
+            tnt.core.debug.log('Stored data for city ' + cityId + ':', 3);
+            tnt.core.debug.log(stored.resources.city[cityId], 3);
+
             // Update template
             tnt.resource.show();
         },
@@ -880,7 +937,7 @@ const tnt = {
                     { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
                     { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
 
-                    // Culture & Research  
+                    // Culture & Research
                     { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
                     { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
                     { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
@@ -899,18 +956,14 @@ const tnt = {
 
                 // Determine which building columns are used in any city
                 var usedColumns = buildingColumns.filter(function (col) {
-                    // Special handling: treat 'palace' and 'palaceColony' as a single column
+                    const cities = Object.values(tnt.data.storage.resources.city);
                     if (col.key === 'palace' || col.key === 'palaceColony') {
-                        return Object.values(tnt.data.storage.resources.city).some(function (city) {
-                            return (
-                                (city.buildings && Array.isArray(city.buildings['palace']) && city.buildings['palace'].length > 0) ||
-                                (city.buildings && Array.isArray(city.buildings['palaceColony']) && city.buildings['palaceColony'].length > 0)
-                            );
-                        });
+                        return cities.some(city =>
+                            (city.buildings?.['palace']?.length > 0) ||
+                            (city.buildings?.['palaceColony']?.length > 0)
+                        );
                     }
-                    return Object.values(tnt.data.storage.resources.city).some(function (city) {
-                        return city.buildings && Array.isArray(city.buildings[col.key]) && city.buildings[col.key].length > 0;
-                    });
+                    return cities.some(city => city.buildings?.[col.key]?.length > 0);
                 });
 
                 // Merge palace/palaceColony into a single column for display
@@ -1014,6 +1067,42 @@ const tnt = {
                 buildingTable += '</table>';
 
                 $('#tnt_info_buildings_content').html(buildingTable);
+
+                // Add handlers after tables are created
+                // Panel minimize/maximize
+                $('.tnt_panel_minimize_btn').off('click').on('click', function () {
+                    const $panel = $('#tnt_info_resources');
+                    const $btn = $(this);
+
+                    if ($panel.hasClass('minimized')) {
+                        $panel.removeClass('minimized');
+                        $btn.removeClass('tnt_foreward').addClass('tnt_back');
+                    } else {
+                        $panel.addClass('minimized');
+                        $btn.removeClass('tnt_back').addClass('tnt_foreward');
+                    }
+                });
+
+                // Toggle between resources/buildings tables
+                $('.tnt_table_toggle_btn').off('click').on('click', function () {
+                    const $resourceContent = $('#tnt_info_resources_content');
+                    const $buildingContent = $('#tnt_info_buildings_content');
+
+                    if ($resourceContent.is(':visible')) {
+                        $resourceContent.hide();
+                        $buildingContent.show();
+                        $(this).addClass('active');
+                    } else {
+                        $buildingContent.hide();
+                        $resourceContent.show();
+                        $(this).removeClass('active');
+                    }
+                });
+
+                // Refresh button in totals row
+                $('.tnt_refresh').off('click').on('click', function () {
+                    tnt.citySwitcher.updateAllCitiesResources();
+                });
             }
         },
         toggle(el) {
@@ -1051,108 +1140,323 @@ const tnt = {
     },
     citySwitcher: {
         updateAllCitiesResources() {
-            const cityList = Object.keys(tnt.get.cityList());
-            if (!cityList.length) return;
-            localStorage.setItem('tnt_city_update_list', JSON.stringify(cityList));
-            localStorage.setItem('tnt_city_update_index', '0');
-            localStorage.setItem('tnt_city_update_start', tnt.get.cityId());
-            if (cityList[0] !== tnt.get.cityId()) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('view', 'city');
-                url.searchParams.set('cityId', cityList[0]);
-                window.location.href = url.toString();
-            } else {
-                tnt.citySwitcher.gotoNextCityForUpdate();
-            }
-        },
-        gotoNextCityForUpdate() {
-            const cityList = JSON.parse(localStorage.getItem('tnt_city_update_list') || '[]');
-            let index = parseInt(localStorage.getItem('tnt_city_update_index') || '0', 10);
-            if (!cityList.length) return;
-            const expectedCityId = cityList[index];
-            if (tnt.get.cityId() != expectedCityId) {
-                const url = new URL(window.location.href);
-                url.searchParams.set('view', 'city');
-                url.searchParams.set('cityId', expectedCityId);
-                window.location.href = url.toString();
-                return;
-            }
-            // Wait for buildings to be present before updating
-            tnt.waitForCityBuildings(() => {
-                tnt.resource.update();
-                index++;
-                localStorage.setItem('tnt_city_update_index', index.toString());
-                if (index >= cityList.length) {
-                    const startCityId = localStorage.getItem('tnt_city_update_start');
-                    localStorage.removeItem('tnt_city_update_list');
-                    localStorage.removeItem('tnt_city_update_index');
-                    localStorage.removeItem('tnt_city_update_start');
-                    if (startCityId && tnt.get.cityId() != startCityId) {
-                        const url = new URL(window.location.href);
-                        url.searchParams.set('view', 'city');
-                        url.searchParams.set('cityId', startCityId);
-                        window.location.href = url.toString();
-                    }
+            // Check for existing update process
+            const updateState = this.getUpdateState();
+            if (updateState.inProgress) {
+                const now = Date.now();
+                const staleTimeout = 300000; // 5 minutes
+                const recentCutoff = now - 3600000; // 1 hour
+
+                // If update is recent (within last hour) and not stale (last action within 5 min)
+                if (updateState.lastReload > recentCutoff &&
+                    now - updateState.lastReload < staleTimeout) {
+                    tnt.core.debug.log('Update already in progress and active, waiting...', 1);
                     return;
                 }
-                const nextCityId = cityList[index];
-                if (nextCityId && tnt.get.cityId() != nextCityId) {
-                    const url = new URL(window.location.href);
-                    url.searchParams.set('view', 'city');
-                    url.searchParams.set('cityId', nextCityId);
-                    window.location.href = url.toString();
+
+                // Clear stale update state and restart
+                tnt.core.debug.log('Clearing stale update state...', 1);
+                this.clearUpdateState();
+            }
+
+            // Get and validate city list
+            const cityList = Object.keys(tnt.get.cityList());
+            if (!cityList.length) {
+                tnt.core.debug.log('No cities found to update', 1);
+                return;
+            }
+
+            // Initialize new update process
+            const updateData = {
+                cityList: cityList,
+                index: 0,
+                startCity: tnt.get.cityId(),
+                lastReload: Date.now(),
+                startTime: Date.now()
+            };
+
+            this.setUpdateState(updateData);
+            localStorage.setItem('tnt_force_update', 'true');
+
+            tnt.core.debug.log(`Starting update of ${cityList.length} cities...`, 1);
+            setTimeout(() => this.gotoNextCityForUpdate(), 500);
+        },
+
+        getUpdateState() {
+            const cityList = localStorage.getItem('tnt_city_update_list');
+            const index = localStorage.getItem('tnt_city_update_index');
+            const lastReload = localStorage.getItem('tnt_city_update_lastReload');
+            const startTime = localStorage.getItem('tnt_update_start_time');
+
+            return {
+                inProgress: !!cityList,
+                cityList: cityList ? JSON.parse(cityList) : [],
+                index: parseInt(index || '0', 10),
+                lastReload: parseInt(lastReload || '0', 10),
+                startTime: parseInt(startTime || '0', 10)
+            };
+        },
+
+        setUpdateState(state) {
+            localStorage.setItem('tnt_city_update_list', JSON.stringify(state.cityList));
+            localStorage.setItem('tnt_city_update_index', state.index.toString());
+            localStorage.setItem('tnt_city_update_start', state.startCity || '');
+            localStorage.setItem('tnt_city_update_lastReload', state.lastReload.toString());
+            localStorage.setItem('tnt_update_start_time', state.startTime.toString());
+        },
+
+        updateCurrentState(updates) {
+            const state = this.getUpdateState();
+            this.setUpdateState({ ...state, ...updates });
+        },
+
+        clearUpdateState() {
+            localStorage.removeItem('tnt_city_update_list');
+            localStorage.removeItem('tnt_city_update_index');
+            localStorage.removeItem('tnt_city_update_start');
+            localStorage.removeItem('tnt_city_update_lastReload');
+            localStorage.removeItem('tnt_force_update');
+            localStorage.removeItem('tnt_update_start_time');
+        },
+
+        gotoNextCityForUpdate() {
+            const state = this.getUpdateState();
+            if (!state.inProgress) {
+                tnt.core.debug.log('No update in progress', 1);
+                return;
+            }
+
+            const now = Date.now();
+            const timeout = 600000; // 10 minutes total timeout
+
+            // Check for overall timeout
+            if (now - state.startTime > timeout) {
+                tnt.core.debug.log('Update process exceeded time limit, aborting...', 1);
+                this.clearUpdateState();
+                return;
+            }
+
+            // Check for individual city timeout
+            if (now - state.lastReload > 60000) { // 1 minute per city timeout
+                tnt.core.debug.log('City update timed out, moving to next...', 1);
+                this.updateCurrentState({
+                    index: state.index + 1,
+                    lastReload: now
+                });
+                state.index++;
+            }
+
+            // Check if we're done
+            if (state.index >= state.cityList.length) {
+                this.finishUpdate();
+                return;
+            }
+
+            const expectedCityId = state.cityList[state.index];
+            const currentCityId = tnt.get.cityId();
+
+            tnt.core.debug.log(`Processing city ${expectedCityId} (${state.index + 1}/${state.cityList.length})`, 1);
+
+            if (currentCityId != expectedCityId) {
+                this.navigateToCity(expectedCityId);
+                return;
+            }
+
+            this.processCityUpdate(state.index, state.cityList);
+        },
+
+        navigateToCity(cityId) {
+            tnt.core.debug.log(`Navigating to city ${cityId}...`, 1);
+            localStorage.setItem('tnt_city_update_lastReload', Date.now().toString());
+
+            setTimeout(() => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('view', 'city');
+                url.searchParams.set('cityId', cityId);
+                window.location.href = url.toString();
+            }, 1000);
+        },
+
+        processCityUpdate(index, cityList) {
+            tnt.core.debug.log('Waiting for city to load...', 1);
+
+            const waitForCity = (attempt = 0) => {
+                // First check if page is still loading
+                if ($("#locations").hasClass("loading")) {
+                    if (attempt >= 30) { // 30 * 500ms = 15 seconds max wait
+                        tnt.core.debug.log('City load timeout, moving to next...', 1);
+                        this.moveToNextCity(index, cityList);
+                        return;
+                    }
+                    setTimeout(() => waitForCity(attempt + 1), 500);
+                    return;
                 }
+
+                // Now wait for city data to be available
+                const cityId = tnt.get.cityId();
+                if (!cityId || !ikariam.model.currentResources) {
+                    if (attempt >= 30) {
+                        tnt.core.debug.log('City data timeout, moving to next...', 1);
+                        this.moveToNextCity(index, cityList);
+                        return;
+                    }
+                    setTimeout(() => waitForCity(attempt + 1), 500);
+                    return;
+                }
+
+                // Finally wait for buildings
+                this.waitForBuildings(index, cityList);
+            };
+
+            waitForCity();
+        },
+
+        waitForBuildings(index, cityList, attempt = 0) {
+            const $positions = $("div[id^='js_CityPosition']").filter(function () {
+                return $(this).find('.level').length > 0;
             });
+
+            const hasTownHall = $positions.toArray().some(el => {
+                const classes = $(el).attr('class')?.split(/\s+/) || [];
+                return classes.includes('townHall');
+            });
+
+            if ($positions.length > 0 && hasTownHall) {
+                tnt.core.debug.log('Buildings detected, collecting data...', 1);
+                this.handleCityData(index, cityList);
+            } else if (attempt < 30) { // 30 * 500ms = 15 seconds max wait
+                setTimeout(() => this.waitForBuildings(index, cityList, attempt + 1), 500);
+            } else {
+                tnt.core.debug.log('Building detection timeout, moving to next...', 1);
+                this.moveToNextCity(index, cityList);
+            }
+        },
+
+        handleCityData(index, cityList) {
+            // Add delay before updating to ensure all data is loaded
+            setTimeout(() => {
+                tnt.resource.update();
+
+                // Add extra delay after update to ensure data is saved
+                setTimeout(() => {
+                    index++;
+                    if (index >= cityList.length) {
+                        this.finishUpdate();
+                        return;
+                    }
+                    this.moveToNextCity(index, cityList);
+                }, 1500);
+            }, 1000);
+        },
+
+        moveToNextCity(index, cityList) {
+            localStorage.setItem('tnt_city_update_index', index.toString());
+            localStorage.setItem('tnt_city_update_lastReload', Date.now().toString());
+
+            // Add delay before navigation
+            setTimeout(() => {
+                const nextCityId = cityList[index];
+                this.navigateToCity(nextCityId);
+            }, 1000);
+        },
+
+        finishUpdate() {
+            tnt.core.debug.log('Update complete, returning to start city...', 1);
+            const startCityId = localStorage.getItem('tnt_city_update_start');
+            const currentCityId = tnt.get.cityId();
+
+            this.clearUpdateState();
+
+            if (startCityId && currentCityId != startCityId) {
+                this.navigateToCity(startCityId);
+            }
         }
     },
-    waitForCityBuildings: function (callback) {
+
+    waitForCityBuildings: function (callback, maxAttempts = 20) {
         // Only run on city view
         if ($("body").attr("id") !== "city") return callback();
-        const cityPositions = () => $("div[id^='js_CityPosition']").length;
-        if (cityPositions()) return callback();
-        // Wait for buildings to appear
-        const observer = new MutationObserver(() => {
-            if (cityPositions()) {
-                observer.disconnect();
-                callback();
+
+        let attempts = 0;
+
+        const checkBuildings = () => {
+            // Check for any city position divs
+            const $positions = $("div[id^='js_CityPosition']");
+            if ($positions.length) {
+                // Get all building classes
+                const buildingClasses = $positions.map(function () {
+                    return $(this).attr('class') || '';
+                }).get();
+
+                // Check if we found any actual building classes
+                const hasBuildings = buildingClasses.some(classes =>
+                    classes.split(/\s+/).some(c =>
+                        !c.startsWith('position') &&
+                        !c.startsWith('level') &&
+                        !c.startsWith('buildingGround') &&
+                        !c.startsWith('constructionSite') &&
+                        c !== 'building'
+                    )
+                );
+
+                if (hasBuildings) {
+
+                    callback();
+                    return;
+                }
             }
-        });
-        observer.observe(document.getElementById("mainview") || document.body, { childList: true, subtree: true });
+
+            attempts++;
+            if (attempts >= maxAttempts) {
+                tnt.core.debug.log('Max attempts reached waiting for buildings, continuing anyway...', 1);
+                callback();
+                return;
+            }
+
+            // Try again faster - reduce delay to 200ms
+            setTimeout(checkBuildings, 200);
+        };
+
+        checkBuildings();
     },
     get: {
-        playerId: () => parseInt(ikariam.model.avatarId),
-        cityId: () => ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, ""),
-        cityLvl: () => $("#js_CityPosition0Level").text(),
-        cityIslandCoords: () => $("#js_islandBreadCoords").text(),
-        cityName: id => id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1],
-        alliance: { Id: () => parseInt(ikariam.model.avatarAllyId) },
-        tradeShips: { free: () => $("#globalResources .transporters a span:eq(1)").text().split(" ")[0] },
-        ambrosia: () => ikariam.model.ambrosia,
-        gold: () => parseInt(ikariam.model.gold),
-        godGoldResult: () => ikariam.model.godGoldResult,
-        income: () => ikariam.model.income,
-        upkeep: () => ikariam.model.upkeep,
-        sciencetistsUpkeep: () => ikariam.model.sciencetistsUpkeep,
-        hasAlly: () => ikariam.model.hasAlly,
-        isOwnCity: () => ikariam.model.isOwnCity,
-        maxCapacity: () => ikariam.model.maxResources.resource,
-        wineSpending: () => ikariam.model.wineSpending,
-        resources: {
-            wood: () => ikariam.model.currentResources.resource,
-            wine: () => ikariam.model.currentResources[1],
-            marble: () => ikariam.model.currentResources[2],
-            crystal: () => ikariam.model.currentResources[3],
-            sulfur: () => ikariam.model.currentResources[4]
+        playerId: function () { return parseInt(ikariam.model.avatarId); },
+        cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, ""); },
+        cityLvl: function () { return $("#js_CityPosition0Level").text(); },
+        cityIslandCoords: function () { return $("#js_islandBreadCoords").text(); },
+        cityName: function (id) {
+            return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1];
         },
-        population: () => ikariam.model.currentResources.population,
-        citizens: () => ikariam.model.currentResources.citizens,
-        producedTradegood: () => ikariam.model.producedTradegood,
-        tradegoodProduction: () => ikariam.model.tradegoodProduction,
-        resourceProduction: () => ikariam.model.resourceProduction,
-        realHour: () => ikariam.model.realHour,
-        serverName: () => ikariam.model.serverName,
-        serverTime: () => ikariam.model.serverTime,
-        nextETA: () => ikariam.model.nextETA,
+        alliance: {
+
+            Id: function () { return parseInt(ikariam.model.avatarAllyId); }
+        },
+
+        tradeShips: {
+            free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; }
+        },
+        resources: {
+            wood: function () { return ikariam.model.currentResources.resource; },
+            wine: function () { return ikariam.model.currentResources[1]; },
+            marble: function () { return ikariam.model.currentResources[2]; },
+            crystal: function () { return ikariam.model.currentResources[3]; },
+            sulfur: function () { return ikariam.model.currentResources[4]; }
+        },
+        population: function () { return ikariam.model.currentResources.population; },
+        citizens: function () { return ikariam.model.currentResources.citizens; },
+        producedTradegood: function () { return ikariam.model.producedTradegood; },
+        tradegoodProduction: function () { return ikariam.model.tradegoodProduction; },
+        resourceProduction: function () { return ikariam.model.resourceProduction; },
+        ambrosia: function () { return ikariam.model.ambrosia; },
+        gold: function () { return parseInt(ikariam.model.gold); },
+        godGoldResult: function () { return ikariam.model.godGoldResult; },
+        income: function () { return ikariam.model.income; },
+        upkeep: function () { return ikariam.model.upkeep; },
+        sciencetistsUpkeep: function () { return ikariam.model.sciencetistsUpkeep; },
+        hasAlly: function () { return ikariam.model.hasAlly; },
+        isOwnCity: function () { return ikariam.model.isOwnCity; },
+        maxCapacity: function () { return ikariam.model.maxResources.resource; },
+        wineSpending: function () { return ikariam.model.wineSpending; },
         cityList: function () {
             const cityList = {};
             for (const key in ikariam.model.relatedCityData) {
@@ -1165,58 +1469,11 @@ const tnt = {
                 }
             }
             return cityList;
-        },
-        p: {
-            options: {
-                playerId: () => $("#options_debug table td:eq(0)").text().replace(/[^\d-]+/g, ""),
-                playerName: () => $('#options_userData input[name="name"]').val()
-            },
-            island: {
-                islandId: function () {
-                    var islandCoords = tnt.getXY($("#breadcrumbs span.island").text());
-                    return tnt.data.map[islandCoords.x][islandCoords.y][0];
-                },
-                playerId: el => $(".cityinfo .owner a.messageSend", el).length ? parseInt($(".cityinfo .owner a.messageSend", el).attr("href").split("&")[1].split("=")[1]) : tnt.get.playerId(),
-                playerName: el => $(".cityinfo .owner", el).text().split(" ")[1],
-                alliance: el => $(".cityinfo .ally a:eq(0)", el).text(),
-                cityId: el => $("a:eq(0)", el).attr("id").replace(/[^\d-]+/g, ""),
-                cityName: el => $(".cityinfo .name:eq(0)", el).text().split(": ")[1],
-                cityLevel: el => $(".cityinfo .citylevel", el).text().replace(/[^\d-]+/g, ""),
-                totalScore: el => $(".cityinfo .name:eq(1)", el).text().replace(/[^\d-]+/g, "")
-            }
         }
-    },
-    has: {
-        construction: () => $('.constructionSite').length > 0
-    },
-    calc: {
-        production(cityID, hours) {
-            var city = tnt.data.storage.resources.city[cityID];
-            if (city) {
-                return {
-                    wood: (city.resourceProduction * hours * 3600).toLocaleString(2),
-                    wine: city.producedTradegood == 1 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
-                    marble: city.producedTradegood == 2 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
-                    crystal: city.producedTradegood == 3 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
-                    sulfur: city.producedTradegood == 4 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0
-                };
-            } else {
-                tnt.core.debug.log("City ID " + cityID + " not found in storage", 3);
-                return { wood: 0, wine: 0, marble: 0, crystal: 0, sulfur: 0 };
-            }
-        }
-    },
-    template: {
-        resources: '<div id="tnt_info_resources">' +
-            '<div id="tnt_info_resources_content"></div>' +
-            '<div id="tnt_info_buildings_content" style="display:none;"></div>' +
-            '</div>'
     },
 
-    view: {
-        city: function (cityID) {
-            $('div#dropDown_js_citySelectContainer li[selectValue="' + cityID + '"]').trigger('click');
-        }
+    has: {
+        construction: function () { return $('.constructionSite').length > 0; }
     },
 
     calc: {
@@ -1301,8 +1558,13 @@ GM_addStyle(
         display:inline-block;\
     }\
     .tnt_building_icon {\
-        width:36px !important;\
-        height:32px !important;\
+        width: 36px !important;\
+        height: 32px !important;\
+    }\
+    img[src*='/city/wall.png'].tnt_building_icon {\
+        transform: scale(0.8) !important;\
+        transform-origin: 0 0;\
+        margin-right: -8px;\
     }\
     .tnt_population{ text-align:right; }\
     .tnt_citizens{ text-align:right; }\
@@ -1452,5 +1714,33 @@ GM_addStyle(
         min-width: 20px!important;\
         max-width: 20px!important;\
         overflow: hidden!important;\
+    }\
+    #tnt_military_overview {\
+        position: fixed;\
+        top: 20px;\
+        right: 0px;\
+        width: auto;\
+        background-color: #DBBE8C;\
+        z-index: 100000000;\
+    }\
+    #tnt_military_header {\
+        padding: 5px;\
+        cursor: pointer;\
+        font-weight: bold;\
+    }\
+    #tnt_military_table {\
+        border-collapse: collapse;\
+        font: 12px Arial, Helvetica, sans-serif;\
+    }\
+    #tnt_military_table td, #tnt_military_table th {\
+        border: 1px #000000 solid;\
+        padding: 2px !important;\
+    }\
+    .movement {\
+        padding: 3px;\
+        margin: 2px 0;\
+    }\
+    .movement.attack {\
+        background-color: rgba(255,0,0,0.2);\
     }\
 ");

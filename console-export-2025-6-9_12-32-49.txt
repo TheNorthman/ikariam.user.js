@@ -1,0 +1,121 @@
+GET
+https://s53-us.ikariam.gameforge.com/?view=city&oldBackgroundView=city&mainbox_x=614&mainbox_y=NaN&mainbox_z=-122&sidebar_x=70&sidebar_y=0&sidebar_z=197&containerWidth=1751px&containerHeight=918px&worldviewWidth=1751px&worldviewHeight=872px&cityTop=-208px&cityLeft=-1633px&cityRight=&cityWorldviewScale=0.8999999999999999
+[HTTP/1.1 200 OK 908ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/skin/compiled-ltr-common_0.css?rev=65601
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://gf3.geo.gfsrv.net/cdn21/ce917ae81e87900347d0b78105f6ee.css
+[HTTP/2 200 OK 0ms]
+
+GET
+https://gf3.geo.gfsrv.net/cdn87/1206d4a949b7b0645bf294f2c32a3c.css
+[HTTP/2 200 OK 0ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/skin/compiled-us-city.css?rev=65601
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/skin/compiled-ltr-common_1.css?rev=65601
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://pixelzirkus.gameforge.com/static/js/pz.js
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://consent.gameforge.com/cookiebanner.js
+[HTTP/2 200  0ms]
+
+Cookie banner version 0.18.2 loaded cookiebanner.js:15:10665
+Initial consent: 
+Object { preferences: true, statistics: true, marketing: true, necessary: true }
+cookiebanner.js:15:12630
+GET
+https://gf1.geo.gfsrv.net/cdncf/2fbbf84281d9ecbffb4993203d543b.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf2.geo.gfsrv.net/cdndc/702ce31a83731a17f60e23c96fe944.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdnf8/8c866bf8336a550c2e48e0d9bed1ab.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdn33/05041b1dffc2ada01dd1f54417f300.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf3.geo.gfsrv.net/cdn21/2d571100067c78c4bd9dc7253350cb.js
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdn62/94c812d0241b705d8eb242f4cd96cf.png
+[HTTP/2 200  0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdn33/05041b1dffc2ada01dd1f54417f300.js
+[HTTP/2 200  0ms]
+
+GET
+https://s53-us.ikariam.gameforge.com/apple-touch-icon-precomposed.png
+[HTTP/1.1 200 OK 0ms]
+
+GET
+https://gf1.geo.gfsrv.net/cdn03/c931195193f8b4a2d6efea089cf3c4.ico
+[HTTP/2 200  0ms]
+
+injected: TNT Collection v1.5.1 - Init... content.js:9:1280
+injected: Scanning for military units... content.js:9:1280
+injected: Military scanning complete content.js:9:1280
+injected: Units found: 0 content.js:9:1280
+injected: Ships found: 0 content.js:9:1280
+injected: Movements found: 0 content.js:9:1280
+injected: Stored data for city 14484: content.js:9:1280
+injected: 
+Object { cityIslandCoords: " [32:5]", producedTradegood: 1, population: 3292, citizens: 1146.0029537967935, max: 3471418, wood: 146313, wine: 83471, marble: 88432, crystal: 127787, sulfur: 27111, … }
+content.js:9:1280
+The Web Console logging API (console.log, console.info, console.warn, console.error) has been disabled by a script on this page.
+XHRPOST
+https://s53-us.ikariam.gameforge.com/?view=cityMilitary&activeTab=tabUnits&cityId=14484&oldBackgroundView=city&mainbox_x=614&mainbox_y=NaN&mainbox_z=-122&sidebar_x=70&sidebar_y=0&sidebar_z=197&containerWidth=1751px&containerHeight=918px&worldviewWidth=1751px&worldviewHeight=872px&cityTop=-208px&cityLeft=-1633px&cityWorldviewScale=0.8999999999999999&backgroundView=city&currentCityId=14484&actionRequest=d100365052d9a92a7effb1fe22ad7f02&ajax=1
+[HTTP/1.1 200 OK 1425ms]
+
+injected: updateGlobalData (View: city) content.js:9:1280
+injected: Scanning for military units... content.js:9:1280
+injected: Military scanning complete content.js:9:1280
+injected: Units found: 0 content.js:9:1280
+injected: Ships found: 0 content.js:9:1280
+injected: Movements found: 0 content.js:9:1280
+injected: Stored data for city 14484: content.js:9:1280
+injected: 
+Object { cityIslandCoords: " [32:5]", producedTradegood: 1, population: 3292, citizens: 1146.0029537967935, max: 3471418, wood: 146319, wine: 83479, marble: 88432, crystal: 127787, sulfur: 27111, … }
+content.js:9:1280
+injected: changeView (View: city) content.js:9:1280
+injected: ikariam.templateView.id: 'cityMilitary' content.js:9:1280
+GET
+https://gf2.geo.gfsrv.net/cdn48/193ca25535330d7567683110be443b.png
+[HTTP/2 200  0ms]
+
+GET
+https://gf2.geo.gfsrv.net/cdnd2/99bb4eda859ecc63edd36b32b768f0.png
+[HTTP/2 200  0ms]
+
+XHRPOST
+https://s53-us.ikariam.gameforge.com/?view=updateGlobalData&currentTab=tabUnits&activeTab=tabUnits&backgroundView=city&currentCityId=14484&templateView=cityMilitary&actionRequest=d100365052d9a92a7effb1fe22ad7f02&ajax=1
+[HTTP/1.1 200 OK 1394ms]
+
+injected: updateGlobalData (View: city) content.js:9:1280
+injected: Scanning for military units... content.js:9:1280
+injected: Military scanning complete content.js:9:1280
+injected: Units found: 0 content.js:9:1280
+injected: Ships found: 0 content.js:9:1280
+injected: Movements found: 0 content.js:9:1280
+injected: Stored data for city 14484: content.js:9:1280
+injected: 
+Object { cityIslandCoords: " [32:5]", producedTradegood: 1, population: 3292, citizens: 1146.0029537967935, max: 3471418, wood: 146339, wine: 83502, marble: 88432, crystal: 127787, sulfur: 27111, … }
+content.js:9:1280
