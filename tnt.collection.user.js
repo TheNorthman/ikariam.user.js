@@ -634,65 +634,80 @@ const tnt = {
             });
         },
         update() {
-            // --- Always update buildings for the current city if on city view ---
             const cityId = tnt.get.cityId();
-            // Use a deep clone to avoid reference issues
+            console.log(`TNT updating buildings for city ${cityId}`);
+
             const prev = $.extend(true, {}, tnt.data.storage.resources.city[cityId] || {});
             let buildings = prev.buildings && Object.keys(prev.buildings).length > 0 ? $.extend(true, {}, prev.buildings) : {};
 
-            // If on city view, always extract buildings from DOM (even if empty)
             if ($("body").attr("id") == "city") {
+                console.log("TNT scanning city view for buildings...");
                 const buildingData = {};
-                for (let pos = 0; pos <= 16; pos++) {
-                    const $c = $("#position" + pos);
-                    if (!$c.length) continue;
+
+                // Scan all positions 0-24 for buildings
+                const positions = [...Array(25).keys()];
+                for (let pos of positions) {
+                    // Try both selector patterns since the game uses different IDs
+                    const $c = $("#position" + pos).length ? $("#position" + pos) : $("#js_CityPosition" + pos);
+                    if (!$c.length) {
+                        console.log(`TNT position ${pos}: no building found`);
+                        continue;
+                    }
+
+                    // Debug building element
+                    console.log(`TNT position ${pos} classes:`, $c.attr("class"));
 
                     // Try multiple methods to detect building type
                     let type = "";
                     const $a = $c.find("a[id$='Link']");
 
                     // Method 1: From link href
-                    type = $a.attr("href")?.match(/view=([a-zA-Z0-9]+)/)?.[1] || "";
+                    const href = $a.attr("href");
+                    type = href?.match(/view=([a-zA-Z0-9]+)/)?.[1] || "";
+                    console.log(`TNT position ${pos} link href:`, href, "extracted type:", type);
 
-                    // Method 2: From building class
+                    // Method 2: From building class 
                     if (!type) {
-                        const buildingClass = $c.attr("class")?.match(/building\s+([a-zA-Z0-9]+)/)?.[1];
-                        if (buildingClass) type = buildingClass;
+                        const classes = $c.attr("class");
+                        const buildingClass = classes?.match(/building\s+([a-zA-Z0-9]+)/)?.[1];
+                        if (buildingClass) {
+                            type = buildingClass;
+                            console.log(`TNT position ${pos} found type from class:`, type);
+                        }
                     }
 
-                    // Method 3: Special case for palace/governor
+                    // Method 3: Check for special buildings via classes
                     if (!type) {
-                        if ($c.hasClass("palace")) type = "palace";
-                        else if ($c.hasClass("palaceColony")) type = "palaceColony";
+                        if ($c.hasClass("palace")) {
+                            type = "palace";
+                            console.log(`TNT position ${pos} detected palace from class`);
+                        }
+                        else if ($c.hasClass("palaceColony")) {
+                            type = "palaceColony";
+                            console.log(`TNT position ${pos} detected governor from class`);
+                        }
                     }
 
                     const level = $c.attr("class")?.match(/level(\d+)/)?.[1] || "";
+                    console.log(`TNT position ${pos} level:`, level);
 
-                    // Skip if still no type or level found
-                    if (!type || !level) continue;
-
-                    // Special handling for palace/governor's residence
-                    if (type === "palace" || type === "palaceColony") {
-                        const buildingType = type === "palace" ? "palace" : "palaceColony";
-                        if (!buildingData[buildingType]) buildingData[buildingType] = [];
-                        buildingData[buildingType].push({
-                            level: parseInt(level, 10),
-                            position: pos,
-                            name: buildingType
-                        });
-                        // Debug log for palace detection
-                        console.log(`TNT detected ${buildingType} at position ${pos} level ${level}`);
-                    } else {
-                        // Normal building handling
-                        if (!buildingData[type]) buildingData[type] = [];
-                        buildingData[type].push({
-                            level: parseInt(level, 10),
-                            position: pos,
-                            name: type
-                        });
+                    if (!type || !level) {
+                        console.log(`TNT position ${pos} skipped - no type/level found`);
+                        continue;
                     }
+
+                    // Add building to data
+                    if (!buildingData[type]) buildingData[type] = [];
+                    buildingData[type].push({
+                        level: parseInt(level, 10),
+                        position: pos,
+                        name: type
+                    });
+                    console.log(`TNT successfully added ${type} at position ${pos} level ${level}`);
                 }
-                buildings = $.extend(true, {}, buildingData); // always overwrite for current city
+
+                console.log("TNT collected building data:", JSON.stringify(buildingData, null, 2));
+                buildings = $.extend(true, {}, buildingData);
             }
 
             tnt.data.storage.resources.city[cityId] = {
@@ -832,39 +847,54 @@ const tnt = {
 
                 // --- Building Table Structure ---
                 var buildingColumns = [
+                    // Government
                     { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png', buildingId: 0, helpId: 1 },
-                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
-                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
-                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
                     { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png', buildingId: 11, helpId: 1 },
                     { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
-                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
-                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
-                    { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
-                    { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
-                    { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
-                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
-                    { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
-                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
-                    { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
-                    { key: 'forester', name: 'Forester\'s House', icon: '/cdn/all/both/img/city/forester_l.png', buildingId: 18, helpId: 1 },
-                    { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png', buildingId: 20, helpId: 1 },
-                    { key: 'alchemist', name: 'Alchemist\'s Tower', icon: '/cdn/all/both/img/city/alchemist_l.png', buildingId: 22, helpId: 1 },
-                    { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png', buildingId: 21, helpId: 1 },
-                    { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png', buildingId: 19, helpId: 1 },
+
+                    // Resource reducers
                     { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png', buildingId: 23, helpId: 1 },
+                    { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
+                    { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
                     { key: 'optician', name: 'Optician', icon: '/cdn/all/both/img/city/optician_l.png', buildingId: 25, helpId: 1 },
                     { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png', buildingId: 27, helpId: 1 },
-                    { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
-                    { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
-                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
+
+                    // Resource enhancers
+                    { key: 'forester', name: 'Forester\'s House', icon: '/cdn/all/both/img/city/forester_l.png', buildingId: 18, helpId: 1 },
+                    { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png', buildingId: 19, helpId: 1 },
+                    { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png', buildingId: 21, helpId: 1 },
+                    { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png', buildingId: 20, helpId: 1 },
+                    { key: 'alchemist', name: 'Alchemist\'s Tower', icon: '/cdn/all/both/img/city/alchemist_l.png', buildingId: 22, helpId: 1 },
+
+                    // Resource storage
+                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
                     { key: 'dump', name: 'Depot', icon: '/cdn/all/both/img/city/dump_l.png', buildingId: 29, helpId: 1 },
+
+                    // Military
+                    { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
+                    { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
+                    { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
+
+                    // Trade & Diplomacy
+                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
+                    { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
+                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
+
+                    // Culture & Research  
+                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
+                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
+                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
+                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
+
+                    // Special buildings
+                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
+                    { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
                     { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
                     { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 },
                     { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
                     { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
-                    { key: 'shrineOfOlympus', name: 'Gods’ Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
-                    { key: 'chronosForge', name: 'Chronos’ Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 }
+                    { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
+                    { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 }
                 ];
 
                 // Determine which building columns are used in any city
