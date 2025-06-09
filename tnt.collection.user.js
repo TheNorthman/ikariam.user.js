@@ -646,10 +646,44 @@ const tnt = {
                 for (let pos = 0; pos <= 16; pos++) {
                     const $c = $("#position" + pos);
                     if (!$c.length) continue;
+
+                    // Try multiple methods to detect building type
+                    let type = "";
                     const $a = $c.find("a[id$='Link']");
-                    const type = $a.attr("href")?.match(/view=([a-zA-Z0-9]+)/)?.[1] || "";
+
+                    // Method 1: From link href
+                    type = $a.attr("href")?.match(/view=([a-zA-Z0-9]+)/)?.[1] || "";
+
+                    // Method 2: From building class
+                    if (!type) {
+                        const buildingClass = $c.attr("class")?.match(/building\s+([a-zA-Z0-9]+)/)?.[1];
+                        if (buildingClass) type = buildingClass;
+                    }
+
+                    // Method 3: Special case for palace/governor
+                    if (!type) {
+                        if ($c.hasClass("palace")) type = "palace";
+                        else if ($c.hasClass("palaceColony")) type = "palaceColony";
+                    }
+
                     const level = $c.attr("class")?.match(/level(\d+)/)?.[1] || "";
-                    if (type && level) {
+
+                    // Skip if still no type or level found
+                    if (!type || !level) continue;
+
+                    // Special handling for palace/governor's residence
+                    if (type === "palace" || type === "palaceColony") {
+                        const buildingType = type === "palace" ? "palace" : "palaceColony";
+                        if (!buildingData[buildingType]) buildingData[buildingType] = [];
+                        buildingData[buildingType].push({
+                            level: parseInt(level, 10),
+                            position: pos,
+                            name: buildingType
+                        });
+                        // Debug log for palace detection
+                        console.log(`TNT detected ${buildingType} at position ${pos} level ${level}`);
+                    } else {
+                        // Normal building handling
                         if (!buildingData[type]) buildingData[type] = [];
                         buildingData[type].push({
                             level: parseInt(level, 10),
@@ -833,6 +867,41 @@ const tnt = {
                     { key: 'chronosForge', name: 'Chronos’ Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 }
                 ];
 
+                // Determine which building columns are used in any city
+                var usedColumns = buildingColumns.filter(function (col) {
+                    // Special handling: treat 'palace' and 'palaceColony' as a single column
+                    if (col.key === 'palace' || col.key === 'palaceColony') {
+                        return Object.values(tnt.data.storage.resources.city).some(function (city) {
+                            return (
+                                (city.buildings && Array.isArray(city.buildings['palace']) && city.buildings['palace'].length > 0) ||
+                                (city.buildings && Array.isArray(city.buildings['palaceColony']) && city.buildings['palaceColony'].length > 0)
+                            );
+                        });
+                    }
+                    return Object.values(tnt.data.storage.resources.city).some(function (city) {
+                        return city.buildings && Array.isArray(city.buildings[col.key]) && city.buildings[col.key].length > 0;
+                    });
+                });
+
+                // Merge palace/palaceColony into a single column for display
+                var mergedColumns = [];
+                var seenPalace = false;
+                usedColumns.forEach(function (col) {
+                    if ((col.key === 'palace' || col.key === 'palaceColony') && !seenPalace) {
+                        mergedColumns.push({
+                            key: 'palaceOrColony',
+                            name: 'Palace / Governor\'s Residence',
+                            icon: '/cdn/all/both/img/city/palace_l.png',
+                            icon2: '/cdn/all/both/img/city/palaceColony_l.png',
+                            buildingId: 11,
+                            helpId: 1
+                        });
+                        seenPalace = true;
+                    } else if (col.key !== 'palace' && col.key !== 'palaceColony') {
+                        mergedColumns.push(col);
+                    }
+                });
+
                 var buildingTable = '<table id="tnt_building_table" border="1">\
                     <tr>\
                         <th class="tnt_center tnt_bold" style="position:relative; text-align:center;">\
@@ -843,11 +912,21 @@ const tnt = {
                             </div>\
                         </th>';
 
-                buildingColumns.forEach(function (b) {
-                    buildingTable += '<th class="tnt_center tnt_bold">' +
-                        '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=' + b.buildingId + '&amp;helpId=' + b.helpId + '\');return false;" title="Learn more about ' + b.name + '...">' +
-                        '<img class="tnt_resource_icon tnt_building_icon" title="' + b.name + '" src="' + b.icon + '">' +
-                        '</a></th>';
+                mergedColumns.forEach(function (b) {
+                    if (b.key === 'palaceOrColony') {
+                        buildingTable += '<th class="tnt_center tnt_bold">' +
+                            '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=11&amp;helpId=1\');return false;" title="Learn more about Palace...">' +
+                            '<img class="tnt_resource_icon tnt_building_icon" title="Palace" src="' + b.icon + '">' +
+                            '</a>' +
+                            '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=17&amp;helpId=1\');return false;" title="Learn more about Governor\'s Residence...">' +
+                            '<img class="tnt_resource_icon tnt_building_icon" title="Governor\'s Residence" src="' + b.icon2 + '">' +
+                            '</a></th>';
+                    } else {
+                        buildingTable += '<th class="tnt_center tnt_bold">' +
+                            '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=' + b.buildingId + '&amp;helpId=' + b.helpId + '\');return false;" title="Learn more about ' + b.name + '...">' +
+                            '<img class="tnt_resource_icon tnt_building_icon" title="' + b.name + '" src="' + b.icon + '">' +
+                            '</a></th>';
+                    }
                 });
 
                 buildingTable += '</tr>';
@@ -862,14 +941,33 @@ const tnt = {
                         '</a></td>';
                     // Print building levels for this city
                     var cityBuildings = value.buildings || {};
-                    buildingColumns.forEach(function (col) {
-                        var arr = cityBuildings[col.key];
-                        // Show highest level if multiple, or blank if none
-                        if (Array.isArray(arr) && arr.length > 0) {
-                            var maxLevel = Math.max.apply(null, arr.map(b => b.level));
-                            buildingTable += '<td class="tnt_building_level" style="text-align:center;">' + maxLevel + '</td>';
+                    mergedColumns.forEach(function (col) {
+                        if (col.key === 'palaceOrColony') {
+                            var palaceArr = Array.isArray(cityBuildings['palace']) ? cityBuildings['palace'] : [];
+                            var colonyArr = Array.isArray(cityBuildings['palaceColony']) ? cityBuildings['palaceColony'] : [];
+
+                            // Combine palace and colony data
+                            var buildingData = palaceArr.concat(colonyArr);
+
+                            if (buildingData.length > 0) {
+                                var sumLevel = buildingData.reduce((acc, b) => acc + (parseInt(b.level) || 0), 0);
+                                var tooltip = buildingData.map(b =>
+                                    (b.name === 'palace' ? 'Palace' : "Governor's Residence") +
+                                    ' (Pos ' + b.position + '): lvl ' + b.level
+                                ).join('\n');
+                                buildingTable += '<td class="tnt_building_level" style="text-align:center;" title="' + tooltip.replace(/"/g, '&quot;') + '">' + sumLevel + '</td>';
+                            } else {
+                                buildingTable += '<td class="tnt_building_level" style="text-align:center;">-</td>';
+                            }
                         } else {
-                            buildingTable += '<td class="tnt_building_level" style="text-align:center;"></td>';
+                            var arr = cityBuildings[col.key];
+                            if (Array.isArray(arr) && arr.length > 0) {
+                                var sumLevel = arr.reduce((acc, b) => acc + (b.level || 0), 0);
+                                var tooltip = arr.map(b => 'Pos ' + b.position + ': lvl ' + b.level).join('\n');
+                                buildingTable += '<td class="tnt_building_level" style="text-align:center;" title="' + tooltip.replace(/"/g, '&quot;') + '">' + sumLevel + '</td>';
+                            } else {
+                                buildingTable += '<td class="tnt_building_level" style="text-align:center;"></td>';
+                            }
                         }
                     });
                     buildingTable += '</tr>';
@@ -878,7 +976,7 @@ const tnt = {
                 // Add total row (empty, for future use or visual consistency)
                 buildingTable += '<tr>\
                     <td class="tnt_total">Total</td>';
-                buildingColumns.forEach(function () {
+                mergedColumns.forEach(function () {
                     buildingTable += '<td class="tnt_building_level"></td>';
                 });
                 buildingTable += '</tr>';
@@ -1078,14 +1176,35 @@ const tnt = {
             }
         }
     },
-    view: {
-        city: cityID => $('div#dropDown_js_citySelectContainer li[selectValue="' + cityID + '"]').trigger('click')
-    },
     template: {
-        resources: '<div id="tnt_info_resources">\
-                        <div id="tnt_info_resources_content"></div>\
-                        <div id="tnt_info_buildings_content" style="display:none;"></div>\
-                    </div>'
+        resources: '<div id="tnt_info_resources">' +
+            '<div id="tnt_info_resources_content"></div>' +
+            '<div id="tnt_info_buildings_content" style="display:none;"></div>' +
+            '</div>'
+    },
+
+    view: {
+        city: function (cityID) {
+            $('div#dropDown_js_citySelectContainer li[selectValue="' + cityID + '"]').trigger('click');
+        }
+    },
+
+    calc: {
+        production: function (cityID, hours) {
+            var city = tnt.data.storage.resources.city[cityID];
+            if (city) {
+                return {
+                    wood: (city.resourceProduction * hours * 3600).toLocaleString(2),
+                    wine: city.producedTradegood == 1 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
+                    marble: city.producedTradegood == 2 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
+                    crystal: city.producedTradegood == 3 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
+                    sulfur: city.producedTradegood == 4 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0
+                };
+            } else {
+                tnt.core.debug.log("City ID " + cityID + " not found in storage", 3);
+                return { wood: 0, wine: 0, marble: 0, crystal: 0, sulfur: 0 };
+            }
+        }
     }
 };
 
@@ -1294,7 +1413,6 @@ GM_addStyle(
         vertical-align: middle;\
         float: right;\
         margin-left: 6px;\
-       \
         background-position: -179px 0;\
     }\
     .tnt_table_toggle_btn:hover { background-position: -179px -18px; }\
