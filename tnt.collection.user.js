@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.5.2
+// @version      1.5.3
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -686,20 +686,20 @@ const tnt = {
                     { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png', buildingId: 0, helpId: 1 },
                     { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png', buildingId: 11, helpId: 1 },
                     { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
-                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
-                    { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
+                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
                     { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 },
-
+                    
                     // Culture & Research
                     { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
                     { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
-                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
                     { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
+                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
+                    { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
 
                     // Resource reducers
                     { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png', buildingId: 23, helpId: 1 },
-                    { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
                     { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
+                    { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
                     { key: 'optician', name: 'Optician', icon: '/cdn/all/both/img/city/optician_l.png', buildingId: 25, helpId: 1 },
                     { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png', buildingId: 27, helpId: 1 },
 
@@ -723,15 +723,15 @@ const tnt = {
 
                     // Trade & Diplomacy
                     { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
+                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
                     { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
                     { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
-                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
 
                     // Special buildings
                     { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
                     { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 }
                 ];
-                
+
                 // Determine which building columns are used in any city
                 var usedColumns = buildingColumns.filter(function (col) {
                     const cities = Object.values(tnt.data.storage.resources.city);
@@ -763,14 +763,52 @@ const tnt = {
                     }
                 });
 
+                var buildingCategories = {
+                    government: ['townHall', 'palace', 'palaceColony', 'dockyard', 'shrineOfOlympus', 'chronosForge'],
+                    culture: ['academy', 'museum', 'temple', 'tavern'],
+                    resourceReducers: ['carpentering', 'vineyard', 'architect', 'optician', 'fireworker'],
+                    resourceEnhancers: ['forester', 'stonemason', 'winegrower', 'glassblowing', 'alchemist'],
+                    storage: ['warehouse', 'dump'],
+                    military: ['wall', 'barracks', 'safehouse', 'workshop', 'shipyard'],
+                    trade: ['port', 'marineChartArchive', 'branchOffice', 'embassy'],
+                    special: ['pirateFortress', 'blackMarket']
+                };
+
+                // Calculate category spans first
+                var categorySpans = {};
+                mergedColumns.forEach(col => {
+                    for (let [category, buildings] of Object.entries(buildingCategories)) {
+                        if (buildings.includes(col.key) ||
+                            (col.key === 'palaceOrColony' && (buildings.includes('palace') || buildings.includes('palaceColony')))) {
+                            categorySpans[category] = (categorySpans[category] || 0) + 1;
+                        }
+                    }
+                });
+
+                // Now create the building table
                 var buildingTable = '<table id="tnt_building_table" border="1">\
                     <tr>\
+                        <th class="tnt_category_spacer"></th>';
+
+                // Add category headers
+                for (let [category, span] of Object.entries(categorySpans)) {
+                    if (span > 0) {
+                        let displayName = category.replace(/([A-Z])/g, ' $1')
+                            .split(' ')
+                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ');
+                        buildingTable += `<th colspan="${span}" class="tnt_category_header">${displayName}</th>`;
+                    }
+                }
+
+                buildingTable += '</tr>\
+                    <tr>\
                         <th class="tnt_center tnt_bold" style="position:relative; text-align:center;">\
-                            <div style="position:relative; min-width:120px; text-align:center;">\
-                                <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="position:absolute; left:2px; top:2px;"></span>\
-                                <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources" style="position:absolute; right:2px; top:2px;"></span>\
-                                <span style="display:inline-block; text-align:center; min-width:60px;">City</span>\
-                            </div>\
+                        <div style="position:relative; min-width:120px; text-align:center;">\
+                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="position:absolute; left:2px; top:2px;"></span>\
+                            <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources" style="position:absolute; right:2px; top:2px;"></span>\
+                            <span style="display:inline-block; text-align:center; min-width:60px;">City</span>\
+                        </div>\
                         </th>';
 
                 mergedColumns.forEach(function (b) {
@@ -1085,250 +1123,279 @@ const tnt = {
 
 $(document).ready(() => tnt.core.init());
 
-GM_addStyle(
-    "/* Show level styles */\
-    .tntLvl{\
-        position:relative;\
-        top:10px;\
-        left:10px;\
-        color:black;\
-        line-height:13px;\
-        background:gold;\
-        font-size:9px;\
-        font-weight:bold;\
-        text-align:center;\
-        vertical-align:middle;\
-        height: 14px;\
-        width: 14px;\
-        border-radius: 50%;\
-        border: 1px solid #000;\
-        display: inline-block;\
-    }\
-    #tnt_resource_table{\
-        border-collapse:collapse;\
-        font: 12px Arial, Helvetica, sans-serif;\
-    }\
-    #tnt_resource_table td{\
-        border:1px #000000 solid;\
-        padding:2px!important;\
-    }\
-    #tnt_resource_table th{\
-        border:1px #000000 solid;\
-        padding:2px!important;\
-        text-align:center;\
-    }\
-    #tnt_building_table{\
-        border-collapse:collapse;\
-        font: 12px Arial, Helvetica, sans-serif;\
-    }\
-    #tnt_building_table td{\
-        border:1px #000000 solid;\
-        padding:2px!important;\
-    }\
-    #tnt_building_table th{\
-        border:1px #000000 solid;\
-        padding:2px!important;\
-        text-align:center;\
-    }\
-    .storage_min{\
-        background-color: #FF000050;\
-    }\
-    .tnt_construction{\
-        background-color: #80404050;\
-    }\
-    #tnt_resource_table tr.tnt_selected{\
-        border:2px #000000 solid!important;\
-    }\
-    .tnt_resource_icon{\
-        vertical-align:middle;\
-        width:18px;\
-        height:16px;\
-        display:inline-block;\
-    }\
-    .tnt_building_icon {\
-        width: 36px !important;\
-        height: 32px !important;\
-    }\
-    img[src*='/city/wall.png'].tnt_building_icon {\
-        transform: scale(0.8) !important;\
-        transform-origin: 0 0;\
-        margin-right: -8px;\
-    }\
-    .tnt_population{ text-align:right; }\
-    .tnt_citizens{ text-align:right; }\
-    .tnt_wood{ text-align:right; }\
-    .tnt_marble{ text-align:right; }\
-    .tnt_wine{ text-align:right; }\
-    .tnt_crystal{ text-align:right; }\
-    .tnt_sulfur{ text-align:right; }\
-    #mainview a:hover{ text-decoration:none; }\
-    #tntOptions {\
-        position:absolute;\
-        top:40px;\
-        left:380px;\
-        width:620px;\
-        border:1px #755931 solid;\
-        border-top:none;\
-        background-color: #FEE8C3;\
-        padding:10px 10px 0px 10px;\
-    }\
-    #tntOptions legend{ font-weight:bold; }\
-    .tntHide, #infocontainer .tntLvl, #actioncontainer .tntLvl{ display:none; }\
-    #tntInfoWidget {\
-        position:fixed;\
-        bottom:0px;\
-        left:0px;\
-        width:716px;\
-        background-color: #DBBE8C;\
-        z-index:100000000;\
-    }\
-    #tntInfoWidget .accordionTitle {\
-        background: url(/cdn/all/both/layout/bg_maincontentbox_header.jpg) no-repeat;\
-        padding: 6px 0 0;\
-        width: 728px;\
-    }\
-    #tntInfoWidget .accordionContent {\
-        background: url(/cdn/all/both/layout/bg_maincontentbox_left.png) left center repeat-y #FAF3D7;\
-        overflow: hidden;\
-        padding: 0;\
-        position: relative;\
-        width: 725px;\
-    }\
-    #tntInfoWidget .scroll_disabled {\
-        background: url(/cdn/all/both/layout/bg_maincontentbox_left.png) repeat-y scroll left center transparent;\
-        width: 9px;\
-    }\
-    #tntInfoWidget .scroll_area {\
-        background: url(/cdn/all/both/interface/scroll_bg.png) right top repeat-y transparent;\
-        display: block;\
-        height: 100%;\
-        overflow: hidden;\
-        position: absolute;\
-        right: -3px;\
-        width: 24px;\
-        z-index: 100000;\
-    }\
-    .txtCenter{ text-align:center; }\
-    .tnt_center{ text-align:center; white-space:nowrap; }\
-    .tnt_right{ text-align:right; white-space:nowrap; }\
-    .tnt_left{ text-align:left; white-space:nowrap; }\
-    .tnt_bold{ font-weight:bold; }\
-    #tnt_info_resources{\
-        position:fixed;\
-        bottom:20px;\
-        left:0px;\
-        width:auto;\
-        height:auto;\
-        background-color: #DBBE8C;\
-        z-index:100000000;\
-    }\
-    #tnt_info_resources .tnt_back, #tnt_info_resources .tnt_foreward {\
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
-        cursor: pointer;\
-        display: block!important;\
-        height: 18px;\
-        width: 18px;\
-    }\
-    #tnt_info_resources .tnt_back {\
-        left: 2px;\
-        position: absolute;\
-        top: 2px;\
-        background-position: -197px 0;\
-    }\
-    #tnt_info_resources .tnt_back:hover {\
-        background-position: -197px -18px;\
-    }\
-    #tnt_info_resources .tnt_foreward {\
-        left: 2px;\
-        position: absolute;\
-        top: 3px;\
-        background-position: -197px 0;\
-        transform: rotate(180deg);\
-    }\
-    #tnt_info_resources .tnt_foreward:hover {\
-        background-position: -197px -18px;\
-    }\
-    #tnt_info_updateCities {\
-        position:fixed;\
-        bottom:20px;\
-        right:0px;\
-        width:auto;\
-        height:auto;\
-        background-color: #DBBE8C;\
-        z-index:100000000;\
-    }\
-    #tnt_info_resources .tnt_refresh {\
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
-        cursor: pointer;\
-        display: block!important;\
-        height: 18px;\
-        width: 18px;\
-        background-position: -179px 0;\
-        background-color: #DBBE8C;\
-    }\
-    #tnt_info_resources .tnt_refresh:hover {\
-        background-position: -179px -18px;\
-    }\
-    .tnt_panel_minimize_btn {\
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
-        cursor: pointer;\
-        display: block!important;\
-        height: 18px;\
-        width: 18px;\
-        position: absolute;\
-        left: 2px;\
-        top: 2px;\
-        z-index: 10;\
-    }\
-    .tnt_panel_minimize_btn.tnt_back { background-position: -197px 0; }\
-    .tnt_panel_minimize_btn.tnt_back:hover { background-position: -197px -18px; }\
-    .tnt_panel_minimize_btn.tnt_foreward { background-position: -197px 0; transform: rotate(180deg); top: 3px; }\
-    .tnt_panel_minimize_btn.tnt_foreward:hover { background-position: -197px -18px; }\
-    .tnt_table_toggle_btn {\
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;\
-        cursor: pointer;\
-        display: inline-block;\
-        height: 18px;\
-        width: 18px;\
-        vertical-align: middle;\
-        float: right;\
-        margin-left: 6px;\
-        background-position: -179px 0;\
-    }\
-    .tnt_table_toggle_btn:hover { background-position: -179px -18px; }\
-    .tnt_city .tnt_panel_minimize_btn { float: left; margin-right: 2px; }\
-    #tnt_info_resources.minimized {\
-        width: 20px!important;\
-        min-width: 20px!important;\
-        max-width: 20px!important;\
-        overflow: hidden!important;\
-    }\
-    #tnt_military_overview {\
-        position: fixed;\
-        top: 20px;\
-        right: 0px;\
-        width: auto;\
-        background-color: #DBBE8C;\
-        z-index: 100000000;\
-    }\
-    #tnt_military_header {\
-        padding: 5px;\
-        cursor: pointer;\
-        font-weight: bold;\
-    }\
-    #tnt_military_table {\
-        border-collapse: collapse;\
-        font: 12px Arial, Helvetica, sans-serif;\
-    }\
-    #tnt_military_table td, #tnt_military_table th {\
-        border: 1px #000000 solid;\
-        padding: 2px !important;\
-    }\
-    .movement {\
-        padding: 3px;\
-        margin: 2px 0;\
-    }\
-    .movement.attack {\
-        background-color: rgba(255,0,0,0.2);\
-    }\
-");
+GM_addStyle(`
+    /* Show level styles */
+    .tntLvl{
+        position:relative;
+        top:10px;
+        left:10px;
+        color:black;
+        line-height:13px;
+        background:gold;
+        font-size:9px;
+        font-weight:bold;
+        text-align:center;
+        vertical-align:middle;
+        height: 14px;
+        width: 14px;
+        border-radius: 50%;
+        border: 1px solid #000;
+        display: inline-block;
+    }
+    #tnt_resource_table{
+        border-collapse:collapse;
+        font: 12px Arial, Helvetica, sans-serif;
+    }
+    #tnt_resource_table td{
+        border:1px #000000 solid;
+        padding:2px!important;
+    }
+    #tnt_resource_table th{
+        border:1px #000000 solid;
+        padding:2px!important;
+        text-align:center;
+    }
+    #tnt_building_table{
+        border-collapse:collapse;
+        font: 12px Arial, Helvetica, sans-serif;
+    }
+    #tnt_building_table td{
+        border:1px #000000 solid;
+        padding:2px!important;
+    }
+    #tnt_building_table th{
+        border:1px #000000 solid;
+        padding:2px!important;
+        text-align:center;
+    }
+    #tnt_building_table th.tnt_category_spacer {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 4px !important;
+    }
+    #tnt_building_table th.tnt_category_header {
+        background-color: #DBBE8C !important;
+        border: 1px solid #000 !important;
+        padding: 4px !important;
+        font-weight: bold;
+    }
+    .storage_min{
+        background-color: #FF000050;
+    }
+    .tnt_construction{
+        background-color: #80404050;
+    }
+    #tnt_resource_table tr.tnt_selected{
+        border:2px #000000 solid!important;
+    }
+    .tnt_resource_icon{
+        vertical-align:middle;
+        width:18px;
+        height:16px;
+        display:inline-block;
+    }
+    .tnt_building_icon {
+        width: 36px !important;
+        height: 32px !important;
+    }
+    img[src*='/city/wall.png'].tnt_building_icon {
+        transform: scale(0.8) !important;
+        transform-origin: 0 0;
+        margin-right: -8px;
+    }
+    .tnt_population{ text-align:right; }
+    .tnt_citizens{ text-align:right; }
+    .tnt_wood{ text-align:right; }
+    .tnt_marble{ text-align:right; }
+    .tnt_wine{ text-align:right; }
+    .tnt_crystal{ text-align:right; }
+    .tnt_sulfur{ text-align:right; }
+    #mainview a:hover{ text-decoration:none; }
+    #tntOptions {
+        position:absolute;
+        top:40px;
+        left:380px;
+        width:620px;
+        border:1px #755931 solid;
+        border-top:none;
+        background-color: #FEE8C3;
+        padding:10px 10px 0px 10px;
+    }
+    #tntOptions legend{ font-weight:bold; }
+    .tntHide, #infocontainer .tntLvl, #actioncontainer .tntLvl{ display:none; }
+    #tntInfoWidget {
+        position:fixed;
+        bottom:0px;
+        left:0px;
+        width:716px;
+        background-color: #DBBE8C;
+        z-index:100000000;
+    }
+    #tntInfoWidget .accordionTitle {
+        background: url(/cdn/all/both/layout/bg_maincontentbox_header.jpg) no-repeat;
+        padding: 6px 0 0;
+        width: 728px;
+    }
+    #tntInfoWidget .accordionContent {
+        background: url(/cdn/all/both/layout/bg_maincontentbox_left.png) left center repeat-y #FAF3D7;
+        overflow: hidden;
+        padding: 0;
+        position: relative;
+        width: 725px;
+    }
+    #tntInfoWidget .scroll_disabled {
+        background: url(/cdn/all/both/layout/bg_maincontentbox_left.png) repeat-y scroll left center transparent;
+        width: 9px;
+    }
+    #tntInfoWidget .scroll_area {
+        background: url(/cdn/all/both/interface/scroll_bg.png) right top repeat-y transparent;
+        display: block;
+        height: 100%;
+        overflow: hidden;
+        position: absolute;
+        right: -3px;
+        width: 24px;
+        z-index: 100000;
+    }
+    .txtCenter{ text-align:center; }
+    .tnt_center{ text-align:center; white-space:nowrap; }
+    .tnt_right{ text-align:right; white-space:nowrap; }
+    .tnt_left{ text-align:left; white-space:nowrap; }
+    .tnt_bold{ font-weight:bold; }
+    #tnt_info_resources{
+        position:fixed;
+        bottom:20px;
+        left:0px;
+        width:auto;
+        height:auto;
+        background-color: #DBBE8C;
+        z-index:100000000;
+    }
+    #tnt_info_resources .tnt_back, #tnt_info_resources .tnt_foreward {
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
+        cursor: pointer;
+        display: block!important;
+        height: 18px;
+        width: 18px;
+    }
+    #tnt_info_resources .tnt_back {
+        left: 2px;
+        position: absolute;
+        top: 2px;
+        background-position: -197px 0;
+    }
+    #tnt_info_resources .tnt_back:hover {
+        background-position: -197px -18px;
+    }
+    #tnt_info_resources .tnt_foreward {
+        left: 2px;
+        position: absolute;
+        top: 3px;
+        background-position: -197px 0;
+        transform: rotate(180deg);
+    }
+    #tnt_info_resources .tnt_foreward:hover {
+        background-position: -197px -18px;
+    }
+    #tnt_info_updateCities {
+        position:fixed;
+        bottom:20px;
+        right:0px;
+        width:auto;
+        height:auto;
+        background-color: #DBBE8C;
+        z-index:100000000;
+    }
+    #tnt_info_resources .tnt_refresh {
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
+        cursor: pointer;
+        display: block!important;
+        height: 18px;
+        width: 18px;
+        background-position: -179px 0;
+        background-color: #DBBE8C;
+    }
+    #tnt_info_resources .tnt_refresh:hover {
+        background-position: -179px -18px;
+    }
+    .tnt_panel_minimize_btn {
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
+        cursor: pointer;
+        display: block!important;
+        height: 18px;
+        width: 18px;
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        z-index: 10;
+    }
+    .tnt_panel_minimize_btn.tnt_back { background-position: -197px 0; }
+    .tnt_panel_minimize_btn.tnt_back:hover { background-position: -197px -18px; }
+    .tnt_panel_minimize_btn.tnt_foreward { background-position: -197px 0; transform: rotate(180deg); top: 3px; }
+    .tnt_panel_minimize_btn.tnt_foreward:hover { background-position: -197px -18px; }
+    .tnt_table_toggle_btn {
+        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
+        cursor: pointer;
+        display: inline-block;
+        height: 18px;
+        width: 18px;
+        vertical-align: middle;
+        float: right;
+        margin-left: 6px;
+        background-position: -179px 0;
+    }
+    .tnt_table_toggle_btn:hover { background-position: -179px -18px; }
+    .tnt_city .tnt_panel_minimize_btn { float: left; margin-right: 2px; }
+    #tnt_info_resources.minimized {
+        width: 20px!important;
+        min-width: 20px!important;
+        max-width: 20px!important;
+        overflow: hidden!important;
+    }
+    #tnt_military_overview {
+        position: fixed;
+        top: 20px;
+        right: 0px;
+        width: auto;
+        background-color: #DBBE8C;
+        z-index: 100000000;
+    }
+    #tnt_military_header {
+        padding: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    #tnt_military_table {
+        border-collapse: collapse;
+        font: 12px Arial, Helvetica, sans-serif;
+    }
+    #tnt_military_table td, #tnt_military_table th {
+        border: 1px #000000 solid;
+        padding: 2px !important;
+    }
+    .movement {
+        padding: 3px;
+        margin: 2px 0;
+    }
+    .movement.attack {
+        background-color: rgba(255,0,0,0.2);
+    }
+    #tnt_building_table th:first-child {
+        background-color: rgba(255,255,255,0);
+;
+        border: none !important;
+    }
+    #tnt_building_table th.tnt_category_spacer {
+        // background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 4px !important;
+    }
+    #tnt_building_table th.tnt_category_header {
+        background-color: #DBBE8C !important;
+        border: 1px solid #000 !important;
+        padding: 4px !important;
+        font-weight: bold;
+    }
+`);
