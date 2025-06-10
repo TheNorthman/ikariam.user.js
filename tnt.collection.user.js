@@ -48,7 +48,6 @@ const tnt = {
         debug: { enable: true }
     },
     data: {
-        test: {},
         ikariam: {
             subDomain: location.hostname.split('.')[0],
             url: {
@@ -98,7 +97,6 @@ const tnt = {
 
             // Apply footer navigation hiding if enabled
             if (GM_getValue("allRemoveFooterNavigation", true)) {
-                $('div#GF_toolbar').hide();
                 $('div#breadcrumbs').hide();
                 $('div#footer').hide();
             }
@@ -162,9 +160,8 @@ const tnt = {
                         el = premium;
                         img = premium.css("background-image");
                     }
-                    // console.dir(el);
-                    // console.dir("img: " + img);
 
+                    // Check if we have a valid element and not already notified
                     if (el && $(el).data("notification") !== true); {
                         tnt.core.notification.notifyMe(
                             "Ikariam",
@@ -688,7 +685,17 @@ const tnt = {
                     { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
                     { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
                     { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 },
-                    
+
+                    // Resource storage
+                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
+                    { key: 'dump', name: 'Depot', icon: '/cdn/all/both/img/city/dump_l.png', buildingId: 29, helpId: 1 },
+
+                    // Trade & Diplomacy
+                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
+                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
+                    { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
+                    { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
+
                     // Culture & Research
                     { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
                     { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
@@ -710,22 +717,12 @@ const tnt = {
                     { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png', buildingId: 20, helpId: 1 },
                     { key: 'alchemist', name: 'Alchemist\'s Tower', icon: '/cdn/all/both/img/city/alchemist_l.png', buildingId: 22, helpId: 1 },
 
-                    // Resource storage
-                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
-                    { key: 'dump', name: 'Depot', icon: '/cdn/all/both/img/city/dump_l.png', buildingId: 29, helpId: 1 },
-
                     // Military
                     { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
                     { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
                     { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
                     { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
                     { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
-
-                    // Trade & Diplomacy
-                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
-                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
-                    { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
-                    { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
 
                     // Special buildings
                     { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
@@ -764,13 +761,13 @@ const tnt = {
                 });
 
                 var buildingCategories = {
-                    government: ['townHall', 'palace', 'palaceColony', 'dockyard', 'shrineOfOlympus', 'chronosForge'],
-                    culture: ['academy', 'museum', 'temple', 'tavern'],
-                    resourceReducers: ['carpentering', 'vineyard', 'architect', 'optician', 'fireworker'],
-                    resourceEnhancers: ['forester', 'stonemason', 'winegrower', 'glassblowing', 'alchemist'],
+                    government: ['townHall', 'palace', 'palaceColony', 'embassy', 'chronosForge'],
                     storage: ['warehouse', 'dump'],
+                    trade: ['port', 'dockyard', 'marineChartArchive', 'branchOffice'],
+                    resourceReducers: ['carpentering', 'architect', 'vineyard', 'optician', 'fireworker'],
+                    resourceEnhancers: ['forester', 'stonemason', 'winegrower', 'glassblowing', 'alchemist'],
                     military: ['wall', 'barracks', 'safehouse', 'workshop', 'shipyard'],
-                    trade: ['port', 'marineChartArchive', 'branchOffice', 'embassy'],
+                    culture: ['tavern', 'museum', 'academy', 'temple', 'shrineOfOlympus'],
                     special: ['pirateFortress', 'blackMarket']
                 };
 
@@ -1008,6 +1005,54 @@ const tnt = {
 
         checkBuildings();
     },
+
+    all() {
+        // Handle tasks that should run on all pages
+
+        // Remove premium offers if enabled
+        tnt.features.removePremiumOffers();
+
+        // Change navigation coordinate inputs to number type if enabled
+        tnt.features.changeNavigationCoord();
+    },
+    city() {
+        // Handle city view specific functionality
+        if (GM_getValue("cityRemoveFlyingShop", true)) {
+            $('.premiumOfferBox').hide();
+        }
+    },
+
+    island() {
+        // Handle island view specific functionality
+        if (GM_getValue("islandShowCityLvl", true)) {
+            $('.cityinfo').each(function () {
+                const level = $(this).find('.level').text();
+                if (level) {
+                    $(this).append(`<span class="tntLvl">${level}</span>`);
+                }
+            });
+        }
+    },
+
+    world() {
+        // Handle world map specific functionality
+        // Currently no specific functionality needed
+    },
+
+    features: {
+        removePremiumOffers: function () {
+            if (GM_getValue("allRemovePremiumOffers", true)) {
+                $('.premiumOffer, .premium, #js_TradegoodPremiumTraderButton, .getPremium, .ambrosia, #premium_btn, #js_togglePremiumOffers, #js_toggleAmbrosiaPremiumOffers, .resourceShop, li.slot1[onclick*="premiumTrader"]').hide();
+            }
+        },
+
+        changeNavigationCoord: function () {
+            if (GM_getValue("allChangeNavigationCoord", true)) {
+                $('#inputXCoord, #inputYCoord').attr('type', 'number');
+            }
+        }
+    },
+
     get: {
         playerId: function () { return parseInt(ikariam.model.avatarId); },
         cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, ""); },
@@ -1082,42 +1127,6 @@ const tnt = {
                 return { wood: 0, wine: 0, marble: 0, crystal: 0, sulfur: 0 };
             }
         }
-    },
-    all() {
-        // Handle tasks that should run on all pages
-
-        // Remove premium offers if enabled
-        if (GM_getValue("allRemovePremiumOffers", true)) {
-            $('.premiumOffer, .premium, #js_TradegoodPremiumTraderButton, .getPremium, .ambrosia, #premium_btn, #js_togglePremiumOffers, #js_toggleAmbrosiaPremiumOffers, .resourceShop, li.slot1[onclick*="premiumTrader"]').hide();
-        }
-
-        // Change navigation coordinate inputs to number type if enabled
-        if (GM_getValue("allChangeNavigationCoord", true)) {
-            $('#inputXCoord, #inputYCoord').attr('type', 'number');
-        }
-    },
-    city() {
-        // Handle city view specific functionality
-        if (GM_getValue("cityRemoveFlyingShop", true)) {
-            $('.premiumOfferBox').hide();
-        }
-    },
-
-    island() {
-        // Handle island view specific functionality
-        if (GM_getValue("islandShowCityLvl", true)) {
-            $('.cityinfo').each(function () {
-                const level = $(this).find('.level').text();
-                if (level) {
-                    $(this).append(`<span class="tntLvl">${level}</span>`);
-                }
-            });
-        }
-    },
-
-    world() {
-        // Handle world map specific functionality
-        // Currently no specific functionality needed
     },
 };
 
@@ -1383,7 +1392,6 @@ GM_addStyle(`
     }
     #tnt_building_table th:first-child {
         background-color: rgba(255,255,255,0);
-;
         border: none !important;
     }
     #tnt_building_table th.tnt_category_spacer {
