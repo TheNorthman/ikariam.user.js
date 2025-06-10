@@ -1,159 +1,226 @@
 {
     "gameName": "Ikariam",
-    "serverName": "Herakles",
-    "avatarId": "11732",
-    "avatarAllyId": "0",
+    "serverName": "Eurydike",
+    "avatarId": "101468",
+    "avatarAllyId": "81",
     "woodCounter": {
         "timer": {
-            "serverTimeDiff": -1621,
-            "currenttime": 1668306764272,
+            "serverTimeDiff": -1728,
+            "currenttime": 1749521305132,
             "updatefrequency": 1000,
-            "ls": 1668306764,
-            "startdate": 1668306766000,
+            "ls": 1749521305,
+            "startDate": 1749521251000,
             "watchedResource": "resource",
-            "production": 0.062777777777778,
-            "startRes": 839,
+            "production": 0.4326,
+            "startRes": 383553,
             "updateImmediately": false,
             "valueElem": {},
-            "tm": 193,
-            "currentdate": 1668306766367000
+            "tm": 131350
         }
     },
     "tradegoodCounter": {
         "timer": {
-            "serverTimeDiff": -1621,
-            "currenttime": 1668306764272,
+            "serverTimeDiff": -1728,
+            "currenttime": 1749521305133,
             "updatefrequency": 1000,
-            "ls": 1668306764,
-            "startdate": 1668306766000,
-            "watchedResource": "2",
-            "production": 0.01625,
-            "startRes": 2680,
+            "ls": 1749521305,
+            "startDate": 1749521251000,
+            "watchedResource": "1",
+            "production": 0.5062409722222222,
+            "startRes": 129572,
             "updateImmediately": false,
             "valueElem": {},
-            "tm": 194,
-            "currentdate": 1668306766367000
+            "tm": 131351
         }
     },
     "wineCounter": null,
-    "actionRequest": "9de4b2373fe8580ec103a013ded5add5",
-    "serverTime": 1668306766,
-    "requestTime": 1668306766,
-    "dateTimeFormat": "d.m.Y G:i:s",
-    "initialBrowserTime": 1668306705619,
-    "initialServerTime": 1668285104000,
+    "actionRequest": "1a2ed4312d91970b15e690b17b91287c",
+    "serverTime": 1749521251,
+    "requestTime": 1749521251,
+    "dateTimeFormat": "d.m.Y G:i:s CEST",
+    "initialBrowserTime": 1749519511603,
+    "initialServerTime": 1749501508000,
     "realHour": 3600,
     "languageDirection": "ltr",
     "sideAttr": "left",
-    "hasAlly": false,
+    "hasAlly": true,
     "animationsActive": "1",
     "buildingNamesActive": "1",
     "chatPollFrequency": 5000,
     "chatLineMaxlength": 200,
     "sessionDeprecated": "Your session has expired, please log in through the start page!",
-    "notesLineMaxlength": 8192,
+    "notesLineMaxlength": 200,
     "currentResources": {
-        "1": 952,
-        "2": 2680,
-        "3": 650,
-        "4": 610,
-        "citizens": 6.3316712743242,
-        "population": 287.33167127432,
-        "resource": 839
+        "1": 129599,
+        "2": 3007,
+        "3": 47011,
+        "4": 59489,
+        "citizens": 1146.0029537967935,
+        "population": 3292,
+        "resource": 383576
     },
     "maxResources": {
-        "0": 27955,
-        "1": 27955,
-        "2": 27755,
-        "3": 27955,
-        "4": 27955,
-        "resource": 27955
+        "0": 3471418,
+        "1": 3471418,
+        "2": 3471418,
+        "3": 3471418,
+        "4": 3471418,
+        "resource": 3471418
+    },
+    "maxResourcesWithModifier": {
+        "0": 3471418,
+        "1": 3471418,
+        "2": 3471418,
+        "3": 3471418,
+        "4": 3471418,
+        "resource": 3471418
     },
     "branchOfficeResources": {
-        "1": "0",
-        "2": "200",
-        "3": "0",
-        "4": "0",
-        "resource": "0"
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "resource": 0
     },
     "isOwnCity": true,
-    "producedTradegood": "2",
-    "resourceProduction": 0.062777777777778,
-    "tradegoodProduction": 0.01625,
+    "producedTradegood": "1",
+    "resourceProduction": 0.4326,
+    "tradegoodProduction": 0.5062409722222222,
     "wineTickInterval": 3600,
-    "wineSpendings": 13,
+    "wineSpendings": 194,
     "shortcuts": [],
     "viewParams": {
-        "view": "city",
-        "oldBackgroundView": "city",
-        "mainbox_x": "889",
-        "mainbox_y": "NaN",
-        "mainbox_z": "5",
-        "sidebar_x": "70",
-        "sidebar_y": "NaN",
-        "sidebar_z": "170",
-        "containerWidth": "1687px",
-        "containerHeight": "899px",
-        "worldviewWidth": "1687px",
-        "worldviewHeight": "853px",
-        "cityTop": "-100px",
-        "cityLeft": "-1761px",
-        "cityRight": "",
-        "cityWorldviewScale": "0.9"
+        "destinationCityId": 13158,
+        "barbarianVillage": 0
     },
-    "resetSliders": 0,
+    "resetSliders": true,
     "relatedCityData": {
-        "city_2786": {
-            "id": 2786,
-            "name": "Copenhagen",
+        "city_14483": {
+            "id": 14483,
+            "name": "København",
             "coords": "[31:5] ",
-            "tradegood": "2",
+            "tradegood": 2,
             "relationship": "ownCity"
         },
-        "city_2912": {
-            "id": 2912,
+        "city_14486": {
+            "id": 14486,
+            "name": "Korsør",
+            "coords": "[31:5] ",
+            "tradegood": 2,
+            "relationship": "ownCity"
+        },
+        "city_14487": {
+            "id": 14487,
+            "name": "Århus",
+            "coords": "[32:7] ",
+            "tradegood": 2,
+            "relationship": "ownCity"
+        },
+        "city_14490": {
+            "id": 14490,
+            "name": "Kværndrup",
+            "coords": "[31:5] ",
+            "tradegood": 2,
+            "relationship": "ownCity"
+        },
+        "city_14492": {
+            "id": 14492,
+            "name": "Kerteminde",
+            "coords": "[32:7] ",
+            "tradegood": 2,
+            "relationship": "ownCity"
+        },
+        "city_31411": {
+            "id": 31411,
+            "name": "Kalundborg",
+            "coords": "[32:7] ",
+            "tradegood": 2,
+            "relationship": "ownCity"
+        },
+        "city_14484": {
+            "id": 14484,
             "name": "Odense",
             "coords": "[32:5] ",
-            "tradegood": "1",
+            "tradegood": 1,
+            "relationship": "ownCity"
+        },
+        "city_14488": {
+            "id": 14488,
+            "name": "Svendborg",
+            "coords": "[32:5] ",
+            "tradegood": 1,
+            "relationship": "ownCity"
+        },
+        "city_14489": {
+            "id": 14489,
+            "name": "Ålborg",
+            "coords": "[32:6] ",
+            "tradegood": 3,
+            "relationship": "ownCity"
+        },
+        "city_14485": {
+            "id": 14485,
+            "name": "Herning",
+            "coords": "[33:5] ",
+            "tradegood": 4,
+            "relationship": "ownCity"
+        },
+        "city_14491": {
+            "id": 14491,
+            "name": "Esbjerg",
+            "coords": "[33:5] ",
+            "tradegood": 4,
             "relationship": "ownCity"
         },
         "additionalInfo": "cityCoords",
-        "selectedCity": "city_2786"
+        "selectedCity": "city_14484"
     },
     "advisorData": {
         "military": {
-            "link": "?view=militaryAdvisor&oldView=updateGlobalData&cityId=2786",
-            "cssclass": "premium",
-            "premiumlink": "?view=premiumMilitaryAdvisor&oldView=updateGlobalData&cityId=2786"
+            "link": "?view=militaryAdvisor&oldView=updateGlobalData&islandId=4136",
+            "cssclass": "normal",
+            "premiumlink": "?view=premiumDetails&oldView=updateGlobalData&islandId=4136"
         },
         "cities": {
-            "cssclass": "premiumactive",
-            "link": "?view=tradeAdvisor&oldView=updateGlobalData&cityId=2786",
-            "premiumlink": "?view=premiumTradeAdvisor&oldView=updateGlobalData&cityId=2786"
+            "cssclass": "normal",
+            "link": "?view=tradeAdvisor&oldView=updateGlobalData&islandId=4136",
+            "premiumlink": "?view=premiumDetails&oldView=updateGlobalData&islandId=4136"
         },
         "research": {
-            "cssclass": "premium",
-            "link": "?view=researchAdvisor&oldView=updateGlobalData&cityId=2786",
-            "premiumlink": "?view=premiumResearchAdvisor&oldView=updateGlobalData&cityId=2786"
+            "cssclass": "normal",
+            "link": "?view=researchAdvisor&oldView=updateGlobalData&islandId=4136",
+            "premiumlink": "?view=premiumDetails&oldView=updateGlobalData&islandId=4136"
         },
         "diplomacy": {
-            "cssclass": "premium",
-            "link": "?view=diplomacyAdvisor&oldView=updateGlobalData&cityId=2786",
-            "premiumlink": "?view=premiumDiplomacyAdvisor&oldView=updateGlobalData&cityId=2786"
+            "cssclass": "normal",
+            "link": "?view=diplomacyAdvisor&oldView=updateGlobalData&islandId=4136",
+            "premiumlink": "?view=premiumDetails&oldView=updateGlobalData&islandId=4136"
         },
-        "hasPremiumAccount": true
+        "hasPremiumAccount": false
     },
-    "upkeep": -8,
-    "scientistsUpkeep": -96,
-    "income": 57,
+    "upkeep": -20451,
+    "scientistsUpkeep": 0,
+    "income": 34235.325065179684,
     "badTaxAccountant": 0,
-    "cityProducesWine": false,
-    "nextETA": 0,
+    "godGoldResult": 0,
+    "cityProducesWine": true,
+    "nextETA": 1749529295,
     "breadcrumbsWorldlinkText": "World",
+    "titleCounter": {
+        "enddate": 1749529295000,
+        "serverTimeDiff": -3603,
+        "currenttime": 1749521305094,
+        "updatefrequency": 1000,
+        "ls": 1749521305,
+        "tm": 131485
+    },
     "specialEvent": 0,
-    "ambrosia": 32,
-    "gold": "3024.4770087869",
-    "freeTransporters": 3,
-    "maxTransporters": "3",
-    "maxActionPoints": 4
+    "ambrosia": 72,
+    "gold": 12517208.504476285,
+    "freeTransporters": 224,
+    "maxTransporters": 224,
+    "freeFreighters": 6,
+    "maxFreighters": 6,
+    "maxActionPoints": 10,
+    "serverTimeDiff": -1728
 }

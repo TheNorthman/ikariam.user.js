@@ -1,0 +1,45 @@
+I am working on a userscript called "TNT Collection" that enhances the browser game Ikariam. Here are the key principles I follow:
+
+1. Centralized Data Access
+- All game data should be accessed through tnt.get.* functions
+- Direct access to ikariam.model.* should be avoided
+- This ensures we only need to update one place if the game changes
+
+2. Clean Code Structure
+- Core functionality split into logical modules (core, resource, get, has, calc etc.)
+- Each module handles a specific responsibility
+- Code is organized to be maintainable and easy to understand
+
+3. Error Handling & Safety
+- Always validate data before using it
+- Provide fallbacks for missing/invalid values 
+- Use null checks and default values where appropriate
+
+4. Performance
+- Minimize DOM operations
+- Cache frequently used values
+- Use efficient selectors and event handling
+
+5. Game Integration
+- Work with the game's existing systems, don't fight against them
+- Handle timing issues with appropriate delays when needed
+- Match the game's visual style and UX patterns
+
+6. Code Organization
+- Related functionality should be grouped together
+- Use consistent naming conventions
+- Comment complex logic but keep code self-documenting where possible
+
+When reviewing code, please ensure it follows these principles and suggest improvements that align with them.
+
+The userscript extends the game by:
+- Adding resource management features
+- Improving military functionality
+- Providing building management tools
+- Adding quality of life improvements
+
+Key files:
+- tnt.collection.user.js: Main userscript file
+- Any helper or module files should go in the same directory
+
+The code base uses jQuery and interfaces with the game's existing JavaScript API through the ikariam.* namespace.

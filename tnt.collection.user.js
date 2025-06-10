@@ -43,6 +43,7 @@ const tnt = {
     version: GM_info.script.version,
     template, // Add template to tnt object
     url: { versionUrl: VERSION_URL, updateUrl: UPDATE_URL, update: UPDATE_HQ_URL },
+    delay: (time) => new Promise(resolve => setTimeout(resolve, time)),
     settings: {
         debug: { enable: true }
     },
@@ -118,7 +119,13 @@ const tnt = {
                     url, method: 'POST',
                     data: "data=" + encodeURIComponent(JSON.stringify(data)),
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    onload: resp => { tnt.core.debug.dir(resp.responseText, 5); if (callback) callback(); }
+                    onload: resp => {
+                        tnt.core.debug.dir(resp.responseText, 5);
+                        if (callback) callback();
+                    },
+                    onerror: (error) => { // Add onerror handler
+                        tnt.core.debug.log("AJAX Error: " + error.message, 1);
+                    }
                 });
             }
         },
@@ -227,113 +234,122 @@ const tnt = {
             init() { tnt.core.events.ikariam.override(); },
             ikariam: {
                 override() {
-
                     // updateGlobalData
                     ajax.Responder.tntUpdateGlobalData = ajax.Responder.updateGlobalData;
                     ajax.Responder.updateGlobalData = function (response) {
-                        // Let Ikariam do its stuff first
+                        var view = $('body').attr('id');
+                        tnt.core.debug.log("updateGlobalData (View: " + view + ")", 3);
+
+                        // Let Ikariam do its stuff
                         ajax.Responder.tntUpdateGlobalData(response);
 
-                        // Re-bind handlers for specific views with delay
-                        const viewsNeedingRebind = [
-                            'militaryAdvisor', 'tradegood', 'transport', 'trader',
-                            'tradeAdvisor', 'privateOffer'
-                        ];
-
-                        if (response.updateView && viewsNeedingRebind.includes(response.updateView.view)) {
-                            setTimeout(() => {
-                                try {
-                                    // Fix dropdown handlers with more specific selectors
-                                    $('.amount select, #resourceTableContainer select').each(function () {
-                                        $(this).off('change').on('change', function () {
-                                            if (typeof ikariam.model.selectAmount === 'function') {
-                                                ikariam.model.selectAmount(this);
-                                            }
-                                        });
-                                    });
-
-                                    // Fix max buttons with more specific selectors
-                                    $('.max, .setMax').off('click').on('click', function (e) {
-                                        e.preventDefault();
-                                        if (typeof ikariam.model.selectMax === 'function') {
-                                            ikariam.model.selectMax(this);
-                                        }
-                                        return false;
-                                    });
-                                } catch (err) {
-                                    console.error('Error rebinding trade handlers:', err);
-                                }
-                            }, 500); // Increased delay for more reliability
-                        }
-
-                        // Then do our stuff
+                        // Check notifications
                         tnt.core.notification.check();
+
+                        // Collect resource data  
                         tnt.resource.update();
                     }
 
                     // updateBackgroundData
                     ajax.Responder.tntUpdateBackgroundData = ajax.Responder.updateBackgroundData;
                     ajax.Responder.updateBackgroundData = function (response) {
-                        // Let Ikariam do its stuff first
+                        var view = $('body').attr('id');
+                        tnt.core.debug.log("updateBackgroundData (View: " + view + ")", 3);
+
+                        // Let Ikariam do its stuff
                         ajax.Responder.tntUpdateBackgroundData(response);
 
-                        // Handle trade fleet and plunder views with small delay
-                        setTimeout(() => {
-                            try {
-                                // Fix trade fleet dropdowns by triggering the pulldown button
-                                $('#merchantNavy .pulldown .btn').trigger('click');
-
-                                // Fix max buttons including plunder view
-                                $('.max, .setMax, #plunderButton').off('click').on('click', function (e) {
-                                    e.preventDefault();
-                                    if (typeof ikariam.model.selectMax === 'function') {
-                                        ikariam.model.selectMax(this);
-                                    }
-                                    return false;
-                                });
-                            } catch (err) {
-                                console.error('Error handling trade fleet:', err);
-                            }
-                        }, 100); // Small delay for background views
-
-                        // Then do our stuff
+                        // Check notifications
                         tnt.core.notification.check();
+
+                        switch (view) {
+                            case "worldmap_iso":
+                                tnt.core.debug.log($('worldmap_iso: div.islandTile div.cities'), 3);
+                                var totalCities = 0;
+                                $('div.islandTile div.cities').each(function () {
+                                    totalCities += parseInt($(this).text());
+                                });
+                                tnt.core.debug.log(totalCities, 3);
+                                break;
+                            case "city":
+                                break;
+                            case "plunder":
+                                // Select all units when pillaging
+                                setTimeout(() => {
+                                    $('#selectArmy .assignUnits .setMax').trigger("click");
+                                    // Set extra transporters to available count
+                                    const freeTransporters = parseInt($("#js_GlobalMenu_freeTransporters").text()) || 0;
+                                    $('#extraTransporter').val(freeTransporters);
+                                }, 1000);
+                                break;
+                            case 'tradeAdvisor':
+                                tnt.core.debug.log("tradeAdvisor", 3);
+                                break;
+                        }
                     }
 
                     // changeView
                     ajax.Responder.tntChangeView = ajax.Responder.changeView;
                     ajax.Responder.changeView = function (response) {
-                        // Let Ikariam do its stuff first
+                        var view = $('body').attr('id');
+                        tnt.core.debug.log("changeView (View: " + view + ")", 3);
+
+                        // Let Ikariam do its stuff
                         ajax.Responder.tntChangeView(response);
 
-                        // Re-bind handlers for specific views
-                        const viewsNeedingRebind = [
-                            'militaryAdvisor', 'tradegood', 'transport', 'trader',
-                            'tradeAdvisor', 'privateOffer'
-                        ];
-
-                        if (response.view && viewsNeedingRebind.includes(response.view)) {
-                            setTimeout(() => {
-                                try {
-                                    // Fix trade fleet dropdowns
-                                    $('#merchantNavy .pulldown .btn').trigger('click');
-
-                                    // Fix max buttons
-                                    $('.max').off('click').on('click', function (e) {
-                                        e.preventDefault();
-                                        if (typeof ikariam.model.selectMax === 'function') {
-                                            ikariam.model.selectMax(this);
-                                        }
-                                        return false;
-                                    });
-                                } catch (err) {
-                                    console.error('Error handling trade fleet:', err);
-                                }
-                            }, 100);
-                        }
-
-                        // Then do our stuff  
+                        // Check notifications
                         tnt.core.notification.check();
+
+                        tnt.core.debug.log("ikariam.templateView.id: '" + ikariam.templateView.id + "'", 3);
+                        switch (ikariam.templateView.id) {
+                            case "townHall":
+                                if (!ikariam.backgroundView.screen.data.isCapital && $('#sidebarWidget .indicator').length > 1) {
+                                    $('#sidebarWidget .indicator').last().trigger("click");
+                                }
+                                break;
+                            case "tradeAdvisor":
+                                $("#tradeAdvisor").children('div.contentBox01h').eq(1).hide();
+                                break;
+                            case "militaryAdvisor":
+                                $("#militaryAdvisor").find('div.contentBox01h').eq(0).hide();
+                                break;
+                            case "researchAdvisor":
+                                $("#researchAdvisor").find('div.contentBox01h').eq(1).hide();
+                                break;
+                            case "diplomacyAdvisor":
+                                $("#tab_diplomacyAdvisor").find('div.contentBox01h').eq(2).hide();
+                                break;
+                            case "transport":
+                                $('#setPremiumJetPropulsion').hide().prev().hide();
+                                break;
+                            case "resource":
+                                $('#sidebarWidget .indicator').eq(1).trigger("click");
+                                break;
+                            case "merchantNavy":
+                                setTimeout(() => {
+                                    $('.pulldown .btn').trigger('click');
+                                }, 250);
+                                break;
+                            case "deployment":
+                            case "plunder":
+                                // Wait for dialog to be ready
+                                setTimeout(() => {
+                                    // Select all units
+                                    $('#selectArmy .assignUnits .setMax').trigger("click");
+
+                                    // Set initial transporter count
+                                    const freeTransporters = tnt.get.transporters.free();
+                                    $('#extraTransporter').val(freeTransporters);
+
+                                    // Prevent 0 transporters when min is clicked 
+                                    $('#selectArmy .assignUnits .setMin').on('click', function () {
+                                        if (parseInt($('#extraTransporter').val()) === 0) {
+                                            $('#extraTransporter').val(tnt.get.transporters.free());
+                                        }
+                                    });
+                                }, 200); // Add delay to let dialog initialize
+                                break;
+                        }
                     }
                 }
             }
@@ -502,7 +518,7 @@ const tnt = {
             // Initialize city data
             const cityData = {
                 ...prev,
-                buildings: prev.buildings || {}, // Keep existing building data by default
+                buildings: {}, // Clear building data each time to prevent duplicates
                 cityIslandCoords: tnt.get.cityIslandCoords(),
                 producedTradegood: parseInt(tnt.get.producedTradegood()),
                 population: tnt.get.population(),
@@ -525,7 +541,7 @@ const tnt = {
                     const $positions = $('div[id^="position"].building, div[id^="js_CityPosition"].building');
                     if (!$positions.length) return;
 
-                    const foundBuildings = { ...cityData.buildings }; // Start with existing building data
+                    const foundBuildings = {}; // Start fresh each time
 
                     $positions.each(function () {
                         const $pos = $(this);
@@ -562,27 +578,25 @@ const tnt = {
                             targetLevel = level;
                         }
 
-                        // Keep existing building data if we couldn't detect new data
-                        if (!level && foundBuildings[buildingType]?.some(b => b.position === position)) {
-                            return;
-                        }
+                        // Only store buildings with level > 0
+                        if (level > 0 || targetLevel > 0) {
+                            // Store or update building data
+                            foundBuildings[buildingType] = foundBuildings[buildingType] || [];
+                            const existingIndex = foundBuildings[buildingType].findIndex(b => b.position === position);
+                            const buildingData = {
+                                position,
+                                level: targetLevel || level,
+                                currentLevel: level,
+                                targetLevel,
+                                name: buildingType,
+                                underConstruction
+                            };
 
-                        // Store or update building data
-                        foundBuildings[buildingType] = foundBuildings[buildingType] || [];
-                        const existingIndex = foundBuildings[buildingType].findIndex(b => b.position === position);
-                        const buildingData = {
-                            position,
-                            level: targetLevel || level,
-                            currentLevel: level,
-                            targetLevel,
-                            name: buildingType,
-                            underConstruction
-                        };
-
-                        if (existingIndex >= 0) {
-                            foundBuildings[buildingType][existingIndex] = buildingData;
-                        } else {
-                            foundBuildings[buildingType].push(buildingData);
+                            if (existingIndex >= 0) {
+                                foundBuildings[buildingType][existingIndex] = buildingData;
+                            } else {
+                                foundBuildings[buildingType].push(buildingData);
+                            }
                         }
                     });
 
@@ -672,11 +686,20 @@ const tnt = {
                     { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png', buildingId: 0, helpId: 1 },
                     { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png', buildingId: 11, helpId: 1 },
                     { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
+                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
+                    { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
+                    { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 },
+
+                    // Culture & Research
+                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
+                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
+                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
+                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
 
                     // Resource reducers
                     { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png', buildingId: 23, helpId: 1 },
-                    { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
                     { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
+                    { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
                     { key: 'optician', name: 'Optician', icon: '/cdn/all/both/img/city/optician_l.png', buildingId: 25, helpId: 1 },
                     { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png', buildingId: 27, helpId: 1 },
 
@@ -694,30 +717,21 @@ const tnt = {
                     // Military
                     { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
                     { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
+                    { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
+                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
                     { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
 
                     // Trade & Diplomacy
                     { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
+                    { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
                     { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
                     { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
 
-                    // Culture & Research
-                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
-                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
-                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
-                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
-
                     // Special buildings
-                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
-                    { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
                     { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
-                    { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 },
-                    { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
-                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
-                    { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
-                    { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 }
+                    { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 }
                 ];
-
+                
                 // Determine which building columns are used in any city
                 var usedColumns = buildingColumns.filter(function (col) {
                     const cities = Object.values(tnt.data.storage.resources.city);
@@ -969,8 +983,9 @@ const tnt = {
             Id: function () { return parseInt(ikariam.model.avatarAllyId); }
         },
 
-        tradeShips: {
-            free: function () { return $("#globalResources .transporters a span:eq(1)").text().split(" ")[0]; }
+        transporters: {
+            free: function () { return ikariam.model.freeTransporters; },
+            max: function () { return ikariam.model.maxTransporters; }
         },
         resources: {
             wood: function () { return ikariam.model.currentResources.resource; },
@@ -1035,8 +1050,7 @@ const tnt = {
 
         // Remove premium offers if enabled
         if (GM_getValue("allRemovePremiumOffers", true)) {
-            // Update selectors to catch more premium elements
-            $('.premiumOffer, .premium, #js_TradegoodPremiumTraderButton, .getPremium, .ambrosia').hide();
+            $('.premiumOffer, .premium, #js_TradegoodPremiumTraderButton, .getPremium, .ambrosia, #premium_btn, #js_togglePremiumOffers, #js_toggleAmbrosiaPremiumOffers, .resourceShop, li.slot1[onclick*="premiumTrader"]').hide();
         }
 
         // Change navigation coordinate inputs to number type if enabled
