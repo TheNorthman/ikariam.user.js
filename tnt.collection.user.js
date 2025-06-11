@@ -148,6 +148,7 @@ const tnt = {
                 return;
             },
             check() {
+                return; // Disable notifications for now
                 // cities advisor
                 if (!tnt.core.storage.get('notification', 'cities')) {
                     var normal = $('li#advCities a.normalactive');
@@ -245,6 +246,9 @@ const tnt = {
 
                         // Collect resource data  
                         tnt.resource.update();
+
+                        // Run tnt.all() to handle all common tasks
+                        tnt.all();
                     }
 
                     // updateBackgroundData
@@ -347,6 +351,9 @@ const tnt = {
                                 }, 200); // Add delay to let dialog initialize
                                 break;
                         }
+
+                        // Run tnt.all() to handle all common tasks
+                        tnt.all();
                     }
                 }
             }
@@ -1042,12 +1049,15 @@ const tnt = {
     features: {
         removePremiumOffers: function () {
             if (GM_getValue("allRemovePremiumOffers", true)) {
-                $('.premiumOffer, .premium, #js_TradegoodPremiumTraderButton, .getPremium, .ambrosia, #premium_btn, #js_togglePremiumOffers, #js_toggleAmbrosiaPremiumOffers, .resourceShop, li.slot1[onclick*="premiumTrader"]').hide();
+                tnt.core.debug.log("Adding allRemovePremiumOffers styles...", 5);
+                // .premium has been removed. It should be aiming more precisely
+                $('.premiumOffer, #js_TradegoodPremiumTraderButton, .getPremium, .ambrosia, #premium_btn, #js_togglePremiumOffers, #js_toggleAmbrosiaPremiumOffers, .resourceShop, li.slot1[onclick*="premiumTrader"]').hide();
             }
         },
 
         changeNavigationCoord: function () {
             if (GM_getValue("allChangeNavigationCoord", true)) {
+                tnt.core.debug.log("Changing navigation coordinates input types to number...", 5);
                 $('#inputXCoord, #inputYCoord').attr('type', 'number');
             }
         }
