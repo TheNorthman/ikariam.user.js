@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.5.18
+// @version      1.5.19
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -683,29 +683,29 @@ const tnt = {
 
             // Add category header row if needed
             if (config.categories) {
-                table += '<tr><th class="tnt_category_spacer" style="background:transparent;border:none;padding:4px;text-align:center;"></th>';
+                table += '<tr><th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;"><span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="position:absolute;left:2px;top:2px;"></span><span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span></th>';
                 if (tableType === 'resources') {
                     // For resources table, calculate spans dynamically based on visible columns
                     let cityInfoSpan = 2; // City + Lvl always visible
                     let resourcesSpan = 0;
-                    
+
                     // Count visible population/citizen columns for cityInfo span
                     if (GM_getValue("cityShowResourcesPorpulation")) cityInfoSpan++;
                     if (GM_getValue("cityShowResourcesCitizens")) cityInfoSpan++;
-                    
+
                     // Count visible resource columns
                     if (GM_getValue("cityShowResourcesWoods")) resourcesSpan++;
                     if (GM_getValue("cityShowResourcesWine")) resourcesSpan++;
                     if (GM_getValue("cityShowResourcesMarble")) resourcesSpan++;
                     if (GM_getValue("cityShowResourcesCrystal")) resourcesSpan++;
                     if (GM_getValue("cityShowResourcesSulfur")) resourcesSpan++;
-                    
+
                     if (cityInfoSpan > 2) {
                         table += `<th colspan="${cityInfoSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>`;
                     } else {
                         table += `<th colspan="${cityInfoSpan}" class="tnt_category_spacer" style="background:transparent;border:none;padding:4px;text-align:center;"></th>`;
                     }
-                    
+
                     if (resourcesSpan > 0) {
                         table += `<th colspan="${resourcesSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resources</th>`;
                     }
@@ -766,8 +766,7 @@ const tnt = {
                     },
                     headerCell: `
                         <th class="tnt_center tnt_bold" style="position:relative;padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
-                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="float:left;"></span>
-                            City <span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>
+                            City
                         </th>
                         <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">Lvl</th>`,
 
@@ -872,7 +871,7 @@ const tnt = {
                         return `
                             <tr>
                                 <td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>
-                                <td style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"><span class="tnt_refresh"></span></td>
+                                <td style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
                                 <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesPorpulation") ? '' : 'display:none;'}">${parseInt(total.population).toLocaleString()}</td>
                                 <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesCitizens") ? '' : 'display:none;'}">${parseInt(total.citizens).toLocaleString()}</td>
                                 <td class="tnt_wood" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesWoods") ? '' : 'display:none;'}">${total.wood.toLocaleString()}</td>
@@ -894,8 +893,6 @@ const tnt = {
                     headerCell: `
                         <th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
                             <div style="position:relative; min-width:120px; text-align:center;">
-                                <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="position:absolute; left:2px; top:2px;"></span>
-                                <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources" style="position:absolute; right:2px; top:2px;"></span>
                                 <span style="display:inline-block; text-align:center; min-width:60px;">City</span>
                             </div>
                         </th>`,
@@ -1141,11 +1138,6 @@ const tnt = {
                     $resourceContent.show();
                     $(this).removeClass('active');
                 }
-            });
-
-            // Refresh button in totals row
-            $('.tnt_refresh').off('click').on('click', function () {
-                tnt.resource.update();
             });
         },
 
@@ -1421,7 +1413,7 @@ const tnt = {
         gold: function () {
             try {
                 return parseInt(ikariam.model.gold);
-           
+
             } catch (e) {
                 return 0;
             }
@@ -1502,10 +1494,14 @@ const tnt = {
     },
 
     has: {
-        construction: function () { return $('.constructionSite').length >  0; }
+        construction: function () {
+            try {
+                return $('.constructionSite').length > 0;
+            } catch (e) {
+                return false;
+            }
+        }
     },
-
-
 
     calc: {
         production: function (cityID, hours) {
@@ -1771,18 +1767,6 @@ GM_addStyle(`
         height:auto;
         background-color: #DBBE8C;
         z-index:100000000;
-    }
-    #tnt_info_resources .tnt_refresh {
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
-        cursor: pointer;
-        display: block!important;
-        height: 18px;
-        width: 18px;
-        background-position: -179px 0;
-        background-color: #DBBE8C;
-    }
-    #tnt_info_resources .tnt_refresh:hover {
-        background-position: -179px -18px;
     }
     .tnt_panel_minimize_btn {
         background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
