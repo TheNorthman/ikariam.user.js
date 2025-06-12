@@ -529,8 +529,8 @@ const tnt = {
             }
         }
     },
-    // This should be renamed to some better name. This has to do with data collection of all Ikariam data. Maybe we should also group specific data into its own sub-object. Like tnt.xxx.buildings.getBuildingDefinitions() etc.
-    resource: {
+    // dataCollector
+    resource: { // Renamed from resource to dataCollector and make any other nessesary adjustments
         update() {
             const cityId = tnt.get.cityId();
             const prev = $.extend(true, {}, tnt.data.storage.resources.city[cityId] || {});
