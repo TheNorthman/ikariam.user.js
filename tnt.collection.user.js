@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.5.3
+// @version      1.5.18
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -130,16 +130,48 @@ const tnt = {
         debug: {
             log(val) {
                 if (tnt.settings.debug.enable) console.log(val);
+            },
+            dir(obj, level = 0) {
+                if (tnt.settings.debug.enable) console.dir(obj);
             }
         },
         storage: {
             init() {
-                tnt.data.storage = $.extend(true, {}, tnt.data.storage, JSON.parse(localStorage.getItem("tnt_storage")));
-                tnt.data.ikaTweaks = JSON.parse(localStorage.getItem("ikaTweaks_")) || {};
+                try {
+                    const storedData = localStorage.getItem("tnt_storage");
+                    const parsedData = storedData ? JSON.parse(storedData) : {};
+                    tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
+                } catch (e) {
+                    tnt.core.debug.log("Error parsing tnt_storage: " + e.message, 1);
+                    // Keep default storage structure if parsing fails
+                }
+
+                try {
+                    const ikaTweaksData = localStorage.getItem("ikaTweaks_");
+                    tnt.data.ikaTweaks = ikaTweaksData ? JSON.parse(ikaTweaksData) : {};
+                } catch (e) {
+                    tnt.core.debug.log("Error parsing ikaTweaks_: " + e.message, 1);
+                    tnt.data.ikaTweaks = {};
+                }
             },
-            get(group, name) { return tnt.data.storage[group][name]; },
-            set(group, name, value) { tnt.data.storage[group][name] = value; tnt.core.storage.save(); },
-            save() { localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage)); }
+            get(group, name) {
+                if (!tnt.data.storage || !tnt.data.storage[group]) return undefined;
+                return tnt.data.storage[group][name];
+            },
+            set(group, name, value) {
+                if (!tnt.data.storage) tnt.data.storage = {};
+                if (!tnt.data.storage[group]) tnt.data.storage[group] = {};
+                tnt.data.storage[group][name] = value;
+                tnt.core.storage.save();
+            },
+            save() {
+                try {
+                    localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage));
+                } catch (e) {
+                    tnt.core.debug.log("Error saving to localStorage: " + e.message, 1);
+                    // Could implement fallback storage mechanism here if needed
+                }
+            }
         },
         notification: {
             init() { if (Notification && Notification.permission !== "granted") Notification.requestPermission(); },
@@ -163,7 +195,7 @@ const tnt = {
                     }
 
                     // Check if we have a valid element and not already notified
-                    if (el && $(el).data("notification") !== true); {
+                    if (el && $(el).data("notification") !== true) {
                         tnt.core.notification.notifyMe(
                             "Ikariam",
                             "Something happened in one of your towns!",
@@ -534,6 +566,7 @@ const tnt = {
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
                 hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : (prev.hasConstruction || false),
+                cityLvl: tnt.get.cityLvl(), // Get city level regardless of construction
                 resourceProduction: tnt.get.resourceProduction(),
                 tradegoodProduction: tnt.get.tradegoodProduction(),
                 lastUpdate: Date.now()
@@ -631,318 +664,509 @@ const tnt = {
 
                 $('#tnt_info_resources_content').empty();
 
-                // Only one set of buttons in the header cell
-                var table = '<table id="tnt_resource_table" border="1">\
-                    <tr>\
-                        <th class="tnt_center tnt_bold" style="position:relative;">\
-                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="float:left;"></span>\
-                            City <span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>\
-                        </th>\
-                        <th class="tnt_center tnt_bold">Lvl</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('population') + '</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon('citizens') + '</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(0) + '</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(1) + '</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(2) + '</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(3) + '</th>\
-                        <th class="tnt_center"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + tnt.resource.getIcon(4) + '</th>\
-                    </tr>';
+                // Build resource table
+                const resourceTable = tnt.resource.buildTable('resources');
+                $('#tnt_info_resources_content').html(resourceTable);
 
-                // Add city rows (no panel/minimize button in city rows)
-                $.each(tnt.resource.sortCities(), function (index, cityID) {
-                    var value = tnt.data.storage.resources.city[cityID];
-                    table += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
-                        <td class="tnt_city tnt_left' + (value.hasConstruction ? ' tnt_construction' : '') + '" title="' + value.cityIslandCoords + '">\
-                            <a onclick=\'$("#dropDown_js_citySelectContainer li[selectValue=\\"' + cityID + '\\"]").trigger("click"); return false;\'>' + tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) + '</a>\
-                        </td>\
-                        <td>' + (value.cityLvl ? value.cityLvl : '-') + '</td>\
-                        <td class="tnt_population"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.population)).toLocaleString() + '</td>\
-                        <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(Math.round(value.citizens)).toLocaleString() + '</td>\
-                        <td class="tnt_wood' + tnt.resource.checkMinMax(value, 0) + '"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '><span title="' + tnt.calc.production(cityID, 24).wood + '">' + value.wood.toLocaleString() + '</span></td>\
-                        <td class="tnt_wine' + tnt.resource.checkMinMax(value, 1) + (value.producedTradegood == 1 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '><span title="' + tnt.calc.production(cityID, 24).wine + '">' + value.wine.toLocaleString() + '</span></td>\
-                        <td class="tnt_marble' + tnt.resource.checkMinMax(value, 2) + (value.producedTradegood == 2 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '><span title="' + tnt.calc.production(cityID, 24).marble + '">' + value.marble.toLocaleString() + '</span></td>\
-                        <td class="tnt_crystal' + tnt.resource.checkMinMax(value, 3) + (value.producedTradegood == 3 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '><span title="' + tnt.calc.production(cityID, 24).crystal + '">' + value.crystal.toLocaleString() + '</span></td>\
-                        <td class="tnt_sulfur' + tnt.resource.checkMinMax(value, 4) + (value.producedTradegood == 4 ? ' tnt_bold' : '') + '"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '><span title="' + tnt.calc.production(cityID, 24).sulfur + '">' + value.sulfur.toLocaleString() + '</span></td>\
-                    </tr>';
-                });
-
-                // Add total row
-                var total = tnt.data.storage.resources.total;
-                table += '<tr>\
-                    <td class="tnt_total">\
-                        Total\
-                    </td>\
-                    <td><span class="tnt_refresh"></span></td>\
-                    <td class="tnt_population"' + (GM_getValue("cityShowResourcesPorpulation") ? '' : ' style="display:none;"') + '>' + parseInt(total.population).toLocaleString() + '</td>\
-                    <td class="tnt_citizens"' + (GM_getValue("cityShowResourcesCitizens") ? '' : ' style="display:none;"') + '>' + parseInt(total.citizens).toLocaleString() + '</td>\
-                    <td class="tnt_wood"' + (GM_getValue("cityShowResourcesWoods") ? '' : ' style="display:none;"') + '>' + total.wood.toLocaleString() + '</td>\
-                    <td class="tnt_wine"' + (GM_getValue("cityShowResourcesWine") ? '' : ' style="display:none;"') + '>' + total.wine.toLocaleString() + '</td>\
-                    <td class="tnt_marble"' + (GM_getValue("cityShowResourcesMarble") ? '' : ' style="display:none;"') + '>' + total.marble.toLocaleString() + '</td>\
-                    <td class="tnt_crystal"' + (GM_getValue("cityShowResourcesCrystal") ? '' : ' style="display:none;"') + '>' + total.crystal.toLocaleString() + '</td>\
-                    <td class="tnt_sulfur"' + (GM_getValue("cityShowResourcesSulfur") ? '' : ' style="display:none;"') + '>' + total.sulfur.toLocaleString() + '</td>\
-                </tr>';
-                table += '</table>';
-                $('#tnt_info_resources_content').html(table);
-
-                // --- Building Table Structure ---
-                var buildingColumns = [
-                    // Government
-                    { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png', buildingId: 0, helpId: 1 },
-                    { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png', buildingId: 11, helpId: 1 },
-                    { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
-                    { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
-                    { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 },
-
-                    // Resource storage
-                    { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
-                    { key: 'dump', name: 'Depot', icon: '/cdn/all/both/img/city/dump_l.png', buildingId: 29, helpId: 1 },
-
-                    // Trade & Diplomacy
-                    { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
-                    { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
-                    { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
-                    { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
-
-                    // Culture & Research
-                    { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
-                    { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
-                    { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
-                    { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
-                    { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
-
-                    // Resource reducers
-                    { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png', buildingId: 23, helpId: 1 },
-                    { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
-                    { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
-                    { key: 'optician', name: 'Optician', icon: '/cdn/all/both/img/city/optician_l.png', buildingId: 25, helpId: 1 },
-                    { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png', buildingId: 27, helpId: 1 },
-
-                    // Resource enhancers
-                    { key: 'forester', name: 'Forester\'s House', icon: '/cdn/all/both/img/city/forester_l.png', buildingId: 18, helpId: 1 },
-                    { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png', buildingId: 19, helpId: 1 },
-                    { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png', buildingId: 21, helpId: 1 },
-                    { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png', buildingId: 20, helpId: 1 },
-                    { key: 'alchemist', name: 'Alchemist\'s Tower', icon: '/cdn/all/both/img/city/alchemist_l.png', buildingId: 22, helpId: 1 },
-
-                    // Military
-                    { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
-                    { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
-                    { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
-                    { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
-                    { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
-
-                    // Special buildings
-                    { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
-                    { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 }
-                ];
-
-                // Determine which building columns are used in any city
-                var usedColumns = buildingColumns.filter(function (col) {
-                    const cities = Object.values(tnt.data.storage.resources.city);
-                    if (col.key === 'palace' || col.key === 'palaceColony') {
-                        return cities.some(city =>
-                            (city.buildings?.['palace']?.length > 0) ||
-                            (city.buildings?.['palaceColony']?.length > 0)
-                        );
-                    }
-                    return cities.some(city => city.buildings?.[col.key]?.length > 0);
-                });
-
-                // Merge palace/palaceColony into a single column for display
-                var mergedColumns = [];
-                var seenPalace = false;
-                usedColumns.forEach(function (col) {
-                    if ((col.key === 'palace' || col.key === 'palaceColony') && !seenPalace) {
-                        mergedColumns.push({
-                            key: 'palaceOrColony',
-                            name: 'Palace / Governor\'s Residence',
-                            icon: '/cdn/all/both/img/city/palace_l.png',
-                            icon2: '/cdn/all/both/img/city/palaceColony_l.png',
-                            buildingId: 11,
-                            helpId: 1
-                        });
-                        seenPalace = true;
-                    } else if (col.key !== 'palace' && col.key !== 'palaceColony') {
-                        mergedColumns.push(col);
-                    }
-                });
-
-                var buildingCategories = {
-                    government: ['townHall', 'palace', 'palaceColony', 'embassy', 'chronosForge'],
-                    storage: ['warehouse', 'dump'],
-                    trade: ['port', 'dockyard', 'marineChartArchive', 'branchOffice'],
-                    resourceReducers: ['carpentering', 'architect', 'vineyard', 'optician', 'fireworker'],
-                    resourceEnhancers: ['forester', 'stonemason', 'winegrower', 'glassblowing', 'alchemist'],
-                    military: ['wall', 'barracks', 'safehouse', 'workshop', 'shipyard'],
-                    culture: ['tavern', 'museum', 'academy', 'temple', 'shrineOfOlympus'],
-                    special: ['pirateFortress', 'blackMarket']
-                };
-
-                // Calculate category spans first
-                var categorySpans = {};
-                mergedColumns.forEach(col => {
-                    for (let [category, buildings] of Object.entries(buildingCategories)) {
-                        if (buildings.includes(col.key) ||
-                            (col.key === 'palaceOrColony' && (buildings.includes('palace') || buildings.includes('palaceColony')))) {
-                            categorySpans[category] = (categorySpans[category] || 0) + 1;
-                        }
-                    }
-                });
-
-                // Now create the building table
-                var buildingTable = '<table id="tnt_building_table" border="1">\
-                    <tr>\
-                        <th class="tnt_category_spacer"></th>';
-
-                // Add category headers
-                for (let [category, span] of Object.entries(categorySpans)) {
-                    if (span > 0) {
-                        let displayName = category.replace(/([A-Z])/g, ' $1')
-                            .split(' ')
-                            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                            .join(' ');
-                        buildingTable += `<th colspan="${span}" class="tnt_category_header">${displayName}</th>`;
-                    }
-                }
-
-                buildingTable += '</tr>\
-                    <tr>\
-                        <th class="tnt_center tnt_bold" style="position:relative; text-align:center;">\
-                        <div style="position:relative; min-width:120px; text-align:center;">\
-                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="position:absolute; left:2px; top:2px;"></span>\
-                            <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources" style="position:absolute; right:2px; top:2px;"></span>\
-                            <span style="display:inline-block; text-align:center; min-width:60px;">City</span>\
-                        </div>\
-                        </th>';
-
-                mergedColumns.forEach(function (b) {
-                    if (b.key === 'palaceOrColony') {
-                        buildingTable += '<th class="tnt_center tnt_bold">' +
-                            '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=11&amp;helpId=1\');return false;" title="Learn more about Palace...">' +
-                            '<img class="tnt_resource_icon tnt_building_icon" title="Palace" src="' + b.icon + '">' +
-                            '</a>' +
-                            '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=17&amp;helpId=1\');return false;" title="Learn more about Governor\'s Residence...">' +
-                            '<img class="tnt_resource_icon tnt_building_icon" title="Governor\'s Residence" src="' + b.icon2 + '">' +
-                            '</a></th>';
-                    } else {
-                        buildingTable += '<th class="tnt_center tnt_bold">' +
-                            '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&amp;buildingId=' + b.buildingId + '&amp;helpId=' + b.helpId + '\');return false;" title="Learn more about ' + b.name + '...">' +
-                            '<img class="tnt_resource_icon tnt_building_icon" title="' + b.name + '" src="' + b.icon + '">' +
-                            '</a></th>';
-                    }
-                });
-
-                buildingTable += '</tr>';
-
-                // Add city rows (now with resource icon in first column)
-                $.each(tnt.resource.sortCities(), function (index, cityID) {
-                    var value = tnt.data.storage.resources.city[cityID];
-                    buildingTable += '<tr' + (cityID == tnt.get.cityId() ? ' class="tnt_selected"' : '') + '>\
-                        <td class="tnt_city tnt_left" style="text-align:left;">' +
-                        '<a onclick=\'$("#dropDown_js_citySelectContainer li[selectValue=\\"' + cityID + '\\"]").trigger("click"); return false;\'>' +
-                        tnt.resource.getIcon(value.producedTradegood) + ' ' + tnt.get.cityName(cityID) +
-                        '</a></td>';
-                    // Print building levels for this city
-                    var cityBuildings = value.buildings || {};
-                    mergedColumns.forEach(function (col) {
-                        if (col.key === 'palaceOrColony') {
-                            var palaceArr = Array.isArray(cityBuildings['palace']) ? cityBuildings['palace'] : [];
-                            var colonyArr = Array.isArray(cityBuildings['palaceColony']) ? cityBuildings['palaceColony'] : [];
-
-                            // Combine palace and colony data
-                            var buildingData = palaceArr.concat(colonyArr);
-
-                            if (buildingData.length > 0) {
-                                var sumLevel = buildingData.reduce((acc, b) => acc + (parseInt(b.level) || 0), 0);
-                                var tooltip = buildingData.map(b =>
-                                    (b.name === 'palace' ? 'Palace' : "Governor's Residence") +
-                                    ' (Pos ' + b.position + '): lvl ' + b.level
-                                ).join('\n');
-                                buildingTable += '<td class="tnt_building_level" style="text-align:center;" title="' + tooltip.replace(/"/g, '&quot;') + '">' + sumLevel + '</td>';
-                            } else {
-                                buildingTable += '<td class="tnt_building_level" style="text-align:center;">-</td>';
-                            }
-                        } else {
-                            var arr = cityBuildings[col.key];
-                            if (Array.isArray(arr) && arr.length > 0) {
-                                var sumLevel = arr.reduce((acc, b) => acc + (b.level || 0), 0);
-                                var tooltip = arr.map(b => {
-                                    let text = 'Pos ' + b.position + ': lvl ' + b.level;
-                                    if (b.underConstruction) {
-                                        text += ' (Upgrading from ' + b.currentLevel + ' to ' + b.targetLevel + ')';
-                                    }
-                                    return text;
-                                }).join('\n');
-                                buildingTable += '<td class="tnt_building_level' + (arr.some(b => b.underConstruction) ? ' construction' : '') +
-                                    '" style="text-align:center;" title="' + tooltip.replace(/"/g, '&quot;') + '">' + sumLevel + '</td>';
-                            } else {
-                                buildingTable += '<td class="tnt_building_level" style="text-align:center;"></td>';
-                            }
-                        }
-                    });
-                    buildingTable += '</tr>';
-                });
-
-                // Add total row (empty, for future use or visual consistency)
-                buildingTable += '<tr>\
-                    <td class="tnt_total">Total</td>';
-                mergedColumns.forEach(function () {
-                    buildingTable += '<td class="tnt_building_level"></td>';
-                });
-                buildingTable += '</tr>';
-
-                buildingTable += '</table>';
-
+                // Build building table
+                const buildingTable = tnt.resource.buildTable('buildings');
                 $('#tnt_info_buildings_content').html(buildingTable);
 
-                // Add handlers after tables are created
-                // Panel minimize/maximize
-                $('.tnt_panel_minimize_btn').off('click').on('click', function () {
-                    const $panel = $('#tnt_info_resources');
-                    const $btn = $(this);
-
-                    if ($panel.hasClass('minimized')) {
-                        $panel.removeClass('minimized');
-                        $btn.removeClass('tnt_foreward').addClass('tnt_back');
-                    } else {
-                        $panel.addClass('minimized');
-                        $btn.removeClass('tnt_back').addClass('tnt_foreward');
-                    }
-                });
-
-                // Toggle between resources/buildings tables
-                $('.tnt_table_toggle_btn').off('click').on('click', function () {
-                    const $resourceContent = $('#tnt_info_resources_content');
-                    const $buildingContent = $('#tnt_info_buildings_content');
-
-                    if ($resourceContent.is(':visible')) {
-                        $resourceContent.hide();
-                        $buildingContent.show();
-                        $(this).addClass('active');
-                    } else {
-                        $buildingContent.hide();
-                        $resourceContent.show();
-                        $(this).removeClass('active');
-                    }
-                });
-
-                // Refresh button in totals row
-                $('.tnt_refresh').off('click').on('click', function () {
-                    tnt.citySwitcher.updateAllCitiesResources();
-                });
+                // Add event handlers
+                tnt.resource.attachEventHandlers();
             }
         },
+
+        buildTable(tableType) {
+            const config = tnt.resource.getTableConfig(tableType);
+            let table = `<table id="tnt_${tableType}_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;">`;
+
+            // Add category header row if needed
+            if (config.categories) {
+                table += '<tr><th class="tnt_category_spacer" style="background:transparent;border:none;padding:4px;text-align:center;"></th>';
+                if (tableType === 'resources') {
+                    // For resources table, calculate spans dynamically based on visible columns
+                    let cityInfoSpan = 2; // City + Lvl always visible
+                    let resourcesSpan = 0;
+                    
+                    // Count visible population/citizen columns for cityInfo span
+                    if (GM_getValue("cityShowResourcesPorpulation")) cityInfoSpan++;
+                    if (GM_getValue("cityShowResourcesCitizens")) cityInfoSpan++;
+                    
+                    // Count visible resource columns
+                    if (GM_getValue("cityShowResourcesWoods")) resourcesSpan++;
+                    if (GM_getValue("cityShowResourcesWine")) resourcesSpan++;
+                    if (GM_getValue("cityShowResourcesMarble")) resourcesSpan++;
+                    if (GM_getValue("cityShowResourcesCrystal")) resourcesSpan++;
+                    if (GM_getValue("cityShowResourcesSulfur")) resourcesSpan++;
+                    
+                    if (cityInfoSpan > 2) {
+                        table += `<th colspan="${cityInfoSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>`;
+                    } else {
+                        table += `<th colspan="${cityInfoSpan}" class="tnt_category_spacer" style="background:transparent;border:none;padding:4px;text-align:center;"></th>`;
+                    }
+                    
+                    if (resourcesSpan > 0) {
+                        table += `<th colspan="${resourcesSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resources</th>`;
+                    }
+                } else {
+                    // Existing building table logic
+                    for (let [category, span] of Object.entries(config.categorySpans)) {
+                        if (span > 0) {
+                            let displayName = category.replace(/([A-Z])/g, ' $1')
+                                .split(' ')
+                                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                                .join(' ');
+                            table += `<th colspan="${span}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">${displayName}</th>`;
+                        }
+                    }
+                }
+                table += '</tr>';
+            }
+
+            // Add main header row
+            table += '<tr>';
+            table += config.headerCell;
+            config.columns.forEach(col => {
+                table += col.headerHtml;
+            });
+            table += '</tr>';
+
+            // Add data rows
+            const currentCityId = tnt.get.cityId();
+
+            $.each(tnt.resource.sortCities(), function (index, cityID) {
+                const value = tnt.data.storage.resources.city[cityID];
+                const isCurrentCity = (cityID == currentCityId);
+                const cityRowClass = isCurrentCity ? ' class="tnt_selected"' : '';
+
+                table += `<tr${cityRowClass}>`;
+                table += config.getCityCell(cityID, value);
+
+                config.columns.forEach(col => {
+                    table += col.getCellHtml(value, cityID);
+                });
+                table += '</tr>';
+            });
+
+            // Add total row
+            table += config.getTotalRow();
+            table += '</table>';
+
+            return table;
+        },
+
+        getTableConfig(tableType) {
+            if (tableType === 'resources') {
+                return {
+                    categories: true,
+                    categorySpans: {
+                        cityInfo: 3, // City, Lvl, Population, Citizens
+                        resources: 5 // Wood, Wine, Marble, Crystal, Sulfur
+                    },
+                    headerCell: `
+                        <th class="tnt_center tnt_bold" style="position:relative;padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
+                            <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="float:left;"></span>
+                            City <span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>
+                        </th>
+                        <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">Lvl</th>`,
+
+                    columns: [
+                        {
+                            key: 'population',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesPorpulation") ? '' : 'display:none;'}">${tnt.resource.getIcon('population')}</th>`,
+                            getCellHtml: (value) => {
+                                const display = GM_getValue("cityShowResourcesPorpulation") ? '' : 'display:none;';
+                                const val = parseInt(Math.round(value.population)).toLocaleString();
+                                return `<td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${display}">${val}</td>`;
+                            }
+                        },
+                        {
+                            key: 'citizens',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesCitizens") ? '' : 'display:none;'}">${tnt.resource.getIcon('citizens')}</th>`,
+                            getCellHtml: (value) => {
+                                const display = GM_getValue("cityShowResourcesCitizens") ? '' : 'display:none;';
+                                const val = parseInt(Math.round(value.citizens)).toLocaleString();
+                                return `<td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${display}">${val}</td>`;
+                            }
+                        },
+                        {
+                            key: 'wood',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesWoods") ? '' : 'display:none;'}">${tnt.resource.getIcon(0)}</th>`,
+                            getCellHtml: (value, cityID) => {
+                                const display = GM_getValue("cityShowResourcesWoods") ? '' : 'display:none;';
+                                const cssClass = tnt.resource.checkMinMax(value, 0);
+                                const production = tnt.calc.production(cityID, 24).wood;
+                                const bgColor = cssClass.includes('storage_min') ? '#FF000050' : '#fdf7dd';
+                                return `<td class="tnt_wood${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:${bgColor};${display}"><span title="${production}">${value.wood.toLocaleString()}</span></td>`;
+                            }
+                        },
+                        {
+                            key: 'wine',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesWine") ? '' : 'display:none;'}">${tnt.resource.getIcon(1)}</th>`,
+                            getCellHtml: (value, cityID) => {
+                                const display = GM_getValue("cityShowResourcesWine") ? '' : 'display:none;';
+                                const cssClass = tnt.resource.checkMinMax(value, 1);
+                                const production = tnt.calc.production(cityID, 24).wine;
+                                const bgColor = cssClass.includes('storage_min') ? '#FF000050' : '#fdf7dd';
+                                const fontWeight = value.producedTradegood == 1 ? 'bold' : 'normal';
+                                return `<td class="tnt_wine${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:${bgColor};font-weight:${fontWeight};${display}"><span title="${production}">${value.wine.toLocaleString()}</span></td>`;
+                            }
+                        },
+                        {
+                            key: 'marble',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesMarble") ? '' : 'display:none;'}">${tnt.resource.getIcon(2)}</th>`,
+                            getCellHtml: (value, cityID) => {
+                                const display = GM_getValue("cityShowResourcesMarble") ? '' : 'display:none;';
+                                const cssClass = tnt.resource.checkMinMax(value, 2);
+                                const production = tnt.calc.production(cityID, 24).marble;
+                                const bgColor = cssClass.includes('storage_min') ? '#FF000050' : '#fdf7dd';
+                                const fontWeight = value.producedTradegood == 2 ? 'bold' : 'normal';
+                                return `<td class="tnt_marble${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:${bgColor};font-weight:${fontWeight};${display}"><span title="${production}">${value.marble.toLocaleString()}</span></td>`;
+                            }
+                        },
+                        {
+                            key: 'crystal',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesCrystal") ? '' : 'display:none;'}">${tnt.resource.getIcon(3)}</th>`,
+                            getCellHtml: (value, cityID) => {
+                                const display = GM_getValue("cityShowResourcesCrystal") ? '' : 'display:none;';
+                                const cssClass = tnt.resource.checkMinMax(value, 3);
+                                const production = tnt.calc.production(cityID, 24).crystal;
+                                const bgColor = cssClass.includes('storage_min') ? '#FF000050' : '#fdf7dd';
+                                const fontWeight = value.producedTradegood == 3 ? 'bold' : 'normal';
+                                return `<td class="tnt_crystal${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:${bgColor};font-weight:${fontWeight};${display}"><span title="${production}">${value.crystal.toLocaleString()}</span></td>`;
+                            }
+                        },
+                        {
+                            key: 'sulfur',
+                            headerHtml: `<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;${GM_getValue("cityShowResourcesSulfur") ? '' : 'display:none;'}">${tnt.resource.getIcon(4)}</th>`,
+                            getCellHtml: (value, cityID) => {
+                                const display = GM_getValue("cityShowResourcesSulfur") ? '' : 'display:none;';
+                                const cssClass = tnt.resource.checkMinMax(value, 4);
+                                const production = tnt.calc.production(cityID, 24).sulfur;
+                                const bgColor = cssClass.includes('storage_min') ? '#FF000050' : '#fdf7dd';
+                                const fontWeight = value.producedTradegood == 4 ? 'bold' : 'normal';
+                                return `<td class="tnt_sulfur${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:${bgColor};font-weight:${fontWeight};${display}"><span title="${production}">${value.sulfur.toLocaleString()}</span></td>`;
+                            }
+                        }
+                    ],
+
+                    getCityCell: (cityID, value) => {
+                        const constructionClass = (value.hasConstruction ? ' tnt_construction' : '');
+                        const cityIcon = tnt.resource.getIcon(value.producedTradegood);
+                        const cityName = tnt.get.cityName(cityID);
+                        const cityLevel = (value.cityLvl ? value.cityLvl : '-');
+                        const cityBgColor = value.hasConstruction ? '#80404050' : '#fdf7dd';
+
+                        return `
+                            <td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:${cityBgColor};" title="${value.cityIslandCoords}">
+                                <a onclick='$("#dropDown_js_citySelectContainer li[selectValue=\\"${cityID}\\"]").trigger("click"); return false;'>
+                                    ${cityIcon} ${cityName}
+                                </a>
+                            </td>
+                            <td style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">${cityLevel}</td>`;
+                    },
+
+                    getTotalRow: () => {
+                        const total = tnt.resource.calculateTotals();
+                        return `
+                            <tr>
+                                <td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>
+                                <td style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"><span class="tnt_refresh"></span></td>
+                                <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesPorpulation") ? '' : 'display:none;'}">${parseInt(total.population).toLocaleString()}</td>
+                                <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesCitizens") ? '' : 'display:none;'}">${parseInt(total.citizens).toLocaleString()}</td>
+                                <td class="tnt_wood" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesWoods") ? '' : 'display:none;'}">${total.wood.toLocaleString()}</td>
+                                <td class="tnt_wine" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesWine") ? '' : 'display:none;'}">${total.wine.toLocaleString()}</td>
+                                <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesMarble") ? '' : 'display:none;'}">${total.marble.toLocaleString()}</td>
+                                <td class="tnt_crystal" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesCrystal") ? '' : 'display:none;'}">${total.crystal.toLocaleString()}</td>
+                                <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;${GM_getValue("cityShowResourcesSulfur") ? '' : 'display:none;'}">${total.sulfur.toLocaleString()}</td>
+                            </tr>`;
+                    }
+                };
+            } else if (tableType === 'buildings') {
+                const buildingDefs = tnt.resource.getBuildingDefinitions();
+                const mergedColumns = tnt.resource.getMergedBuildingColumns(buildingDefs);
+                const categorySpans = tnt.resource.calculateCategorySpans(mergedColumns);
+
+                return {
+                    categories: true,
+                    categorySpans,
+                    headerCell: `
+                        <th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
+                            <div style="position:relative; min-width:120px; text-align:center;">
+                                <span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_building_header" style="position:absolute; left:2px; top:2px;"></span>
+                                <span id="tnt_toggle_table" class="tnt_table_toggle_btn active" title="Show Resources" style="position:absolute; right:2px; top:2px;"></span>
+                                <span style="display:inline-block; text-align:center; min-width:60px;">City</span>
+                            </div>
+                        </th>`,
+
+                    columns: mergedColumns.map(b => ({
+                        key: b.key,
+                        headerHtml: b.key === 'palaceOrColony' ?
+                            `<th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
+                                <a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=11&amp;helpId=1');return false;" title="Learn more about Palace...">
+                                    <img class="tnt_resource_icon tnt_building_icon" title="Palace" src="${b.icon}">
+                                </a>
+                                <a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=17&amp;helpId=1');return false;" title="Learn more about Governor's Residence...">
+                                    <img class="tnt_resource_icon tnt_building_icon" title="Governor's Residence" src="${b.icon2}">
+                                </a>
+                            </th>` :
+                            `<th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
+                                <a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=${b.buildingId}&amp;helpId=${b.helpId}');return false;" title="Learn more about ${b.name}...">
+                                    <img class="tnt_resource_icon tnt_building_icon" title="${b.name}" src="${b.icon}">
+                                </a>
+                            </th>`,
+
+                        getCellHtml: (value) => {
+                            const cityBuildings = value.buildings || {};
+
+                            if (b.key === 'palaceOrColony') {
+                                const palaceArr = Array.isArray(cityBuildings['palace']) ? cityBuildings['palace'] : [];
+                                const colonyArr = Array.isArray(cityBuildings['palaceColony']) ? cityBuildings['palaceColony'] : [];
+                                const buildingData = palaceArr.concat(colonyArr);
+
+                                if (buildingData.length > 0) {
+                                    const sumLevel = buildingData.reduce((acc, building) => acc + (parseInt(building.level) || 0), 0);
+                                    const tooltip = buildingData.map(building =>
+                                        (building.name === 'palace' ? 'Palace' : "Governor's Residence") +
+                                        ' (Pos ' + building.position + '): lvl ' + building.level
+                                    ).join('\n');
+                                    return `<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="${tooltip.replace(/"/g, '&quot;')}">${sumLevel}</td>`;
+                                } else {
+                                    return '<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">-</td>';
+                                }
+                            } else {
+                                const arr = cityBuildings[b.key];
+                                if (Array.isArray(arr) && arr.length > 0) {
+                                    const sumLevel = arr.reduce((acc, building) => acc + (building.level || 0), 0);
+                                    const tooltip = arr.map(building => {
+                                        let text = 'Pos ' + building.position + ': lvl ' + building.level;
+                                        if (building.underConstruction) {
+                                            text += ' (Upgrading from ' + building.currentLevel + ' to ' + building.targetLevel + ')';
+                                        }
+                                        return text;
+                                    }).join('\n');
+                                    const bgColor = arr.some(building => building.underConstruction) ? '#80404050' : '#fdf7dd';
+                                    return `<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:${bgColor};" title="${tooltip.replace(/"/g, '&quot;')}">${sumLevel}</td>`;
+                                } else {
+                                    return '<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>';
+                                }
+                            }
+                        }
+                    })),
+
+                    getCityCell: (cityID, value) => {
+                        return `
+                            <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">
+                                <a onclick='$("#dropDown_js_citySelectContainer li[selectValue=\\"${cityID}\\"]").trigger("click"); return false;'>
+                                    ${tnt.resource.getIcon(value.producedTradegood)} ${tnt.get.cityName(cityID)}
+                                </a>
+                            </td>`;
+                    },
+
+                    getTotalRow: () => {
+                        return `
+                            <tr>
+                                <td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>
+                                ${mergedColumns.map(() => '<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>').join('')}
+                            </tr>`;
+                    }
+                };
+            }
+        },
+
+        calculateTotals() {
+            let total = {
+                population: 0,
+                citizens: 0,
+                wood: 0,
+                wine: 0,
+                marble: 0,
+                crystal: 0,
+                sulfur: 0
+            };
+
+            $.each(tnt.data.storage.resources.city, function (cityID, cityData) {
+                total.population += cityData.population || 0;
+                total.citizens += cityData.citizens || 0;
+                total.wood += cityData.wood || 0;
+                total.wine += cityData.wine || 0;
+                total.marble += cityData.marble || 0;
+                total.crystal += cityData.crystal || 0;
+                total.sulfur += cityData.sulfur || 0;
+            });
+
+            return total;
+        },
+
+        getBuildingDefinitions() {
+            return [
+                // Government
+                { key: 'townHall', name: 'Town Hall', icon: '/cdn/all/both/img/city/townhall_l.png', buildingId: 0, helpId: 1 },
+                { key: 'palace', name: 'Palace', icon: '/cdn/all/both/img/city/palace_l.png', buildingId: 11, helpId: 1 },
+                { key: 'palaceColony', name: 'Governor\'s Residence', icon: '/cdn/all/both/img/city/palaceColony_l.png', buildingId: 17, helpId: 1 },
+                { key: 'embassy', name: 'Embassy', icon: '/cdn/all/both/img/city/embassy_l.png', buildingId: 12, helpId: 1 },
+                { key: 'chronosForge', name: 'Chronos\' Forge', icon: '/cdn/all/both/img/city/chronosForge_l.png', buildingId: 35, helpId: 1 },
+
+                // Resource storage
+                { key: 'warehouse', name: 'Warehouse', icon: '/cdn/all/both/img/city/warehouse_l.png', buildingId: 7, helpId: 1 },
+                { key: 'dump', name: 'Depot', icon: '/cdn/all/both/img/city/dump_l.png', buildingId: 29, helpId: 1 },
+
+                // Trade & Diplomacy
+                { key: 'port', name: 'Trading Port', icon: '/cdn/all/both/img/city/port_l.png', buildingId: 3, helpId: 1 },
+                { key: 'dockyard', name: 'Dockyard', icon: '/cdn/all/both/img/city/dockyard_l.png', buildingId: 33, helpId: 1 },
+                { key: 'marineChartArchive', name: 'Sea Chart Archive', icon: '/cdn/all/both/img/city/marinechartarchive_l.png', buildingId: 32, helpId: 1 },
+                { key: 'branchOffice', name: 'Trading Post', icon: '/cdn/all/both/img/city/branchoffice_l.png', buildingId: 13, helpId: 1 },
+
+                // Culture & Research
+                { key: 'academy', name: 'Academy', icon: '/cdn/all/both/img/city/academy_l.png', buildingId: 4, helpId: 1 },
+                { key: 'museum', name: 'Museum', icon: '/cdn/all/both/img/city/museum_l.png', buildingId: 10, helpId: 1 },
+                { key: 'tavern', name: 'Tavern', icon: '/cdn/all/both/img/city/taverne_l.png', buildingId: 9, helpId: 1 },
+                { key: 'temple', name: 'Temple', icon: '/cdn/all/both/img/city/temple_l.png', buildingId: 28, helpId: 1 },
+                { key: 'shrineOfOlympus', name: 'Gods\' Shrine', icon: '/cdn/all/both/img/city/shrineOfOlympus_l.png', buildingId: 34, helpId: 1 },
+
+                // Resource reducers
+                { key: 'carpentering', name: 'Carpenter', icon: '/cdn/all/both/img/city/carpentering_l.png', buildingId: 23, helpId: 1 },
+                { key: 'architect', name: 'Architect\'s Office', icon: '/cdn/all/both/img/city/architect_l.png', buildingId: 24, helpId: 1 },
+                { key: 'vineyard', name: 'Wine Press', icon: '/cdn/all/both/img/city/vineyard_l.png', buildingId: 26, helpId: 1 },
+                { key: 'optician', name: 'Optician', icon: '/cdn/all/both/img/city/optician_l.png', buildingId: 25, helpId: 1 },
+                { key: 'fireworker', name: 'Firework Test Area', icon: '/cdn/all/both/img/city/fireworker_l.png', buildingId: 27, helpId: 1 },
+
+                // Resource enhancers
+                { key: 'forester', name: 'Forester\'s House', icon: '/cdn/all/both/img/city/forester_l.png', buildingId: 18, helpId: 1 },
+                { key: 'stonemason', name: 'Stonemason', icon: '/cdn/all/both/img/city/stonemason_l.png', buildingId: 19, helpId: 1 },
+                { key: 'winegrower', name: 'Winegrower', icon: '/cdn/all/both/img/city/winegrower_l.png', buildingId: 21, helpId: 1 },
+                { key: 'glassblowing', name: 'Glassblower', icon: '/cdn/all/both/img/city/glassblowing_l.png', buildingId: 20, helpId: 1 },
+                { key: 'alchemist', name: 'Alchemist\'s Tower', icon: '/cdn/all/both/img/city/alchemist_l.png', buildingId: 22, helpId: 1 },
+
+                // Military
+                { key: 'wall', name: 'Wall', icon: '/cdn/all/both/img/city/wall.png', buildingId: 8, helpId: 1 },
+                { key: 'barracks', name: 'Barracks', icon: '/cdn/all/both/img/city/barracks_l.png', buildingId: 6, helpId: 1 },
+                { key: 'safehouse', name: 'Hideout', icon: '/cdn/all/both/img/city/safehouse_l.png', buildingId: 16, helpId: 1 },
+                { key: 'workshop', name: 'Workshop', icon: '/cdn/all/both/img/city/workshop_l.png', buildingId: 15, helpId: 1 },
+                { key: 'shipyard', name: 'Shipyard', icon: '/cdn/all/both/img/city/shipyard_l.png', buildingId: 5, helpId: 1 },
+
+                // Special buildings
+                { key: 'pirateFortress', name: 'Pirate Fortress', icon: '/cdn/all/both/img/city/pirateFortress_l.png', buildingId: 30, helpId: 1 },
+                { key: 'blackMarket', name: 'Black Market', icon: '/cdn/all/both/img/city/blackmarket_l.png', buildingId: 31, helpId: 1 }
+            ];
+        },
+
+        getMergedBuildingColumns(buildingColumns) {
+            // Determine which building columns are used in any city
+            const usedColumns = buildingColumns.filter(function (col) {
+                const cities = Object.values(tnt.data.storage.resources.city);
+                if (col.key === 'palace' || col.key === 'palaceColony') {
+                    return cities.some(city =>
+                        (city.buildings?.['palace']?.length > 0) ||
+                        (city.buildings?.['palaceColony']?.length > 0)
+                    );
+                }
+                return cities.some(city => city.buildings?.[col.key]?.length > 0);
+            });
+
+            // Merge palace/palaceColony into a single column for display
+            const mergedColumns = [];
+            let seenPalace = false;
+            usedColumns.forEach(function (col) {
+                if ((col.key === 'palace' || col.key === 'palaceColony') && !seenPalace) {
+                    mergedColumns.push({
+                        key: 'palaceOrColony',
+                        name: 'Palace / Governor\'s Residence',
+                        icon: '/cdn/all/both/img/city/palace_l.png',
+                        icon2: '/cdn/all/both/img/city/palaceColony_l.png',
+                        buildingId: 11,
+                        helpId: 1
+                    });
+                    seenPalace = true;
+                } else if (col.key !== 'palace' && col.key !== 'palaceColony') {
+                    mergedColumns.push(col);
+                }
+            });
+
+            return mergedColumns;
+        },
+
+        calculateCategorySpans(mergedColumns) {
+            const buildingCategories = {
+                government: ['townHall', 'palace', 'palaceColony', 'embassy', 'chronosForge'],
+                storage: ['warehouse', 'dump'],
+                trade: ['port', 'dockyard', 'marineChartArchive', 'branchOffice'],
+                resourceReducers: ['carpentering', 'architect', 'vineyard', 'optician', 'fireworker'],
+                resourceEnhancers: ['forester', 'stonemason', 'winegrower', 'glassblowing', 'alchemist'],
+                military: ['wall', 'barracks', 'safehouse', 'workshop', 'shipyard'],
+                culture: ['tavern', 'museum', 'academy', 'temple', 'shrineOfOlympus'],
+                special: ['pirateFortress', 'blackMarket']
+            };
+
+            const categorySpans = {};
+            mergedColumns.forEach(col => {
+                for (let [category, buildings] of Object.entries(buildingCategories)) {
+                    if (buildings.includes(col.key) ||
+                        (col.key === 'palaceOrColony' && (buildings.includes('palace') || buildings.includes('palaceColony')))) {
+                        categorySpans[category] = (categorySpans[category] || 0) + 1;
+                    }
+                }
+            });
+
+            return categorySpans;
+        },
+
+        attachEventHandlers() {
+            // Panel minimize/maximize
+            $('.tnt_panel_minimize_btn').off('click').on('click', function () {
+                const $panel = $('#tnt_info_resources');
+                const $btn = $(this);
+
+                if ($panel.hasClass('minimized')) {
+                    $panel.removeClass('minimized');
+                    $btn.removeClass('tnt_foreward').addClass('tnt_back');
+                } else {
+                    $panel.addClass('minimized');
+                    $btn.removeClass('tnt_back').addClass('tnt_foreward');
+                }
+            });
+
+            // Toggle between resources/buildings tables
+            $('.tnt_table_toggle_btn').off('click').on('click', function () {
+                const $resourceContent = $('#tnt_info_resources_content');
+                const $buildingContent = $('#tnt_info_buildings_content');
+
+                if ($resourceContent.is(':visible')) {
+                    $resourceContent.hide();
+                    $buildingContent.show();
+                    $(this).addClass('active');
+                } else {
+                    $buildingContent.hide();
+                    $resourceContent.show();
+                    $(this).removeClass('active');
+                }
+            });
+
+            // Refresh button in totals row
+            $('.tnt_refresh').off('click').on('click', function () {
+                tnt.resource.update();
+            });
+        },
+
         toggle(el) {
             // No longer used, logic moved to .tnt_toggle_panel_btn click handler
         },
+
         sortCities() {
             var list = {};
-            $.each(tnt.data.storage.resources.city, (cityID, value) => list[cityID] = value.producedTradegood);
+            var cities = tnt.data.storage.resources.city || {};
+            $.each(cities, (cityID, value) => {
+                if (value && typeof value.producedTradegood !== 'undefined') {
+                    list[cityID] = value.producedTradegood;
+                }
+            });
             var order = { 2: 0, 1: 1, 3: 2, 4: 3 };
             return Object.keys(list).sort((a, b) => order[list[a]] - order[list[b]]);
         },
+
         checkMinMax(city, resource) {
-            if (!GM_getValue("cityShowResources")) return '';
+            if (!GM_getValue("cityShowResources") || !city || !city.max) return '';
             var max = city.max, txt = '';
             switch (resource) {
                 case 0: if (city.wood > max * .8) txt += ' storage_danger'; if (city.wood < 100000) txt += ' storage_min'; break;
@@ -953,6 +1177,7 @@ const tnt = {
             }
             return txt;
         },
+
         getIcon(resource) {
             switch (resource) {
                 case 0: return '<img class="tnt_resource_icon" title="Wood" src="/cdn/all/both/resources/icon_wood.png">';
@@ -962,8 +1187,9 @@ const tnt = {
                 case 4: return '<img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png">';
                 case 'population': return '<img class="tnt_resource_icon" title="Population" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;">';
                 case 'citizens': return '<img class="tnt_resource_icon" title="Citizens" src="/cdn/all/both/resources/icon_population.png">';
+                default: return '';
             }
-        }
+        },
     },
 
     waitForCityBuildings: function (callback, maxAttempts = 20) {
@@ -993,7 +1219,6 @@ const tnt = {
                 );
 
                 if (hasBuildings) {
-
                     callback();
                     return;
                 }
@@ -1022,6 +1247,7 @@ const tnt = {
         // Change navigation coordinate inputs to number type if enabled
         tnt.features.changeNavigationCoord();
     },
+
     city() {
         // Handle city view specific functionality
         if (GM_getValue("cityRemoveFlyingShop", true)) {
@@ -1064,80 +1290,240 @@ const tnt = {
     },
 
     get: {
-        playerId: function () { return parseInt(ikariam.model.avatarId); },
-        cityId: function () { return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, ""); },
+        playerId: function () {
+            try {
+                return parseInt(ikariam.model.avatarId);
+            } catch (e) {
+                return 0;
+            }
+        },
+        cityId: function () {
+            try {
+                return ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "");
+            } catch (e) {
+                return "";
+            }
+        },
         cityLvl: function () { return $("#js_CityPosition0Level").text(); },
         cityIslandCoords: function () { return $("#js_islandBreadCoords").text(); },
         cityName: function (id) {
-            return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1];
+            try {
+                return id ? ikariam.model.relatedCityData["city_" + id].name : $("#citySelect option:selected").text().split("] ")[1];
+            } catch (e) {
+                return "Unknown City";
+            }
         },
         alliance: {
-
-            Id: function () { return parseInt(ikariam.model.avatarAllyId); }
+            Id: function () {
+                try {
+                    return parseInt(ikariam.model.avatarAllyId);
+                } catch (e) {
+                    return 0;
+                }
+            }
         },
 
         transporters: {
-            free: function () { return ikariam.model.freeTransporters; },
-            max: function () { return ikariam.model.maxTransporters; }
-        },
-        resources: {
-            wood: function () { return ikariam.model.currentResources.resource; },
-            wine: function () { return ikariam.model.currentResources[1]; },
-            marble: function () { return ikariam.model.currentResources[2]; },
-            crystal: function () { return ikariam.model.currentResources[3]; },
-            sulfur: function () { return ikariam.model.currentResources[4]; }
-        },
-        population: function () { return ikariam.model.currentResources.population; },
-        citizens: function () { return ikariam.model.currentResources.citizens; },
-        producedTradegood: function () { return ikariam.model.producedTradegood; },
-        tradegoodProduction: function () { return ikariam.model.tradegoodProduction; },
-        resourceProduction: function () { return ikariam.model.resourceProduction; },
-        ambrosia: function () { return ikariam.model.ambrosia; },
-        gold: function () { return parseInt(ikariam.model.gold); },
-        godGoldResult: function () { return ikariam.model.godGoldResult; },
-        income: function () { return ikariam.model.income; },
-        upkeep: function () { return ikariam.model.upkeep; },
-        sciencetistsUpkeep: function () { return ikariam.model.sciencetistsUpkeep; },
-        hasAlly: function () { return ikariam.model.hasAlly; },
-        isOwnCity: function () { return ikariam.model.isOwnCity; },
-        maxCapacity: function () { return ikariam.model.maxResources.resource; },
-        wineSpending: function () { return ikariam.model.wineSpending; },
-        cityList: function () {
-            const cityList = {};
-            for (const key in ikariam.model.relatedCityData) {
-                if (key.startsWith("city_")) {
-                    const cityId = key.replace("city_", "");
-                    cityList[cityId] = {
-                        name: ikariam.model.relatedCityData[key].name,
-                        coordinates: ikariam.model.relatedCityData[key].coords
-                    };
+            free: function () {
+                try {
+                    return ikariam.model.freeTransporters;
+                } catch (e) {
+                    return 0;
+                }
+            },
+            max: function () {
+                try {
+                    return ikariam.model.maxTransporters;
+                } catch (e) {
+                    return 0;
                 }
             }
-            return cityList;
+        },
+        resources: {
+            wood: function () {
+                try {
+                    return ikariam.model.currentResources.resource;
+                } catch (e) {
+                    return 0;
+                }
+            },
+            wine: function () {
+                try {
+                    return ikariam.model.currentResources[1];
+                } catch (e) {
+                    return 0;
+                }
+            },
+            marble: function () {
+                try {
+                    return ikariam.model.currentResources[2];
+                } catch (e) {
+                    return 0;
+                }
+            },
+            crystal: function () {
+                try {
+                    return ikariam.model.currentResources[3];
+                } catch (e) {
+                    return 0;
+                }
+            },
+            sulfur: function () {
+                try {
+                    return ikariam.model.currentResources[4];
+                } catch (e) {
+                    return 0;
+                }
+            }
+        },
+        population: function () {
+            try {
+                return ikariam.model.currentResources.population;
+            } catch (e) {
+                return 0;
+            }
+        },
+        citizens: function () {
+            try {
+                return ikariam.model.currentResources.citizens;
+            } catch (e) {
+                return 0;
+            }
+        },
+        producedTradegood: function () {
+            try {
+                return ikariam.model.producedTradegood;
+            } catch (e) {
+                return 0;
+            }
+        },
+        tradegoodProduction: function () {
+            try {
+                return ikariam.model.tradegoodProduction;
+            } catch (e) {
+                return 0;
+            }
+        },
+        resourceProduction: function () {
+            try {
+                return ikariam.model.resourceProduction;
+            } catch (e) {
+                return 0;
+            }
+        },
+        ambrosia: function () {
+            try {
+                return ikariam.model.ambrosia;
+            } catch (e) {
+                return 0;
+            }
+        },
+        gold: function () {
+            try {
+                return parseInt(ikariam.model.gold);
+           
+            } catch (e) {
+                return 0;
+            }
+        },
+        godGoldResult: function () {
+            try {
+                return ikariam.model.godGoldResult;
+            } catch (e) {
+                return 0;
+            }
+        },
+        income: function () {
+            try {
+                return ikariam.model.income;
+            } catch (e) {
+                return 0;
+            }
+        },
+        upkeep: function () {
+            try {
+                return ikariam.model.upkeep;
+            } catch (e) {
+                return 0;
+            }
+        },
+        sciencetistsUpkeep: function () {
+            try {
+                return ikariam.model.sciencetistsUpkeep;
+            } catch (e) {
+                return 0;
+            }
+        },
+        hasAlly: function () {
+            try {
+                return ikariam.model.hasAlly;
+            } catch (e) {
+                return false;
+            }
+        },
+        isOwnCity: function () {
+            try {
+                return ikariam.model.isOwnCity;
+            } catch (e) {
+                return false;
+            }
+        },
+        maxCapacity: function () {
+            try {
+                return ikariam.model.maxResources.resource;
+            } catch (e) {
+                return 0;
+            }
+        },
+        wineSpending: function () {
+            try {
+                return ikariam.model.wineSpending;
+            } catch (e) {
+                return 0;
+            }
+        },
+        cityList: function () {
+            try {
+                const cityList = {};
+                for (const key in ikariam.model.relatedCityData) {
+                    if (key.startsWith("city_")) {
+                        const cityId = key.replace("city_", "");
+                        cityList[cityId] = {
+                            name: ikariam.model.relatedCityData[key].name,
+                            coordinates: ikariam.model.relatedCityData[key].coords
+                        };
+                    }
+                }
+                return cityList;
+            } catch (e) {
+                return {};
+            }
         }
     },
 
     has: {
-        construction: function () { return $('.constructionSite').length > 0; }
+        construction: function () { return $('.constructionSite').length >  0; }
     },
+
+
 
     calc: {
         production: function (cityID, hours) {
             var city = tnt.data.storage.resources.city[cityID];
-            if (city) {
+            if (city && city.resourceProduction && city.tradegoodProduction) {
                 return {
-                    wood: (city.resourceProduction * hours * 3600).toLocaleString(2),
-                    wine: city.producedTradegood == 1 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
-                    marble: city.producedTradegood == 2 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
-                    crystal: city.producedTradegood == 3 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0,
-                    sulfur: city.producedTradegood == 4 ? (city.tradegoodProduction * hours * 3600).toLocaleString(2) : 0
+                    wood: (city.resourceProduction * hours * 3600).toLocaleString(),
+                    wine: city.producedTradegood == 1 ? (city.tradegoodProduction * hours * 3600).toLocaleString() : "0",
+                    marble: city.producedTradegood == 2 ? (city.tradegoodProduction * hours * 3600).toLocaleString() : "0",
+                    crystal: city.producedTradegood == 3 ? (city.tradegoodProduction * hours * 3600).toLocaleString() : "0",
+                    sulfur: city.producedTradegood == 4 ? (city.tradegoodProduction * hours * 3600).toLocaleString() : "0"
                 };
             } else {
                 tnt.core.debug.log("City ID " + cityID + " not found in storage", 3);
-                return { wood: 0, wine: 0, marble: 0, crystal: 0, sulfur: 0 };
+                return { wood: "0", wine: "0", marble: "0", crystal: "0", sulfur: "0" };
             }
         }
-    },
+    }
 };
 
 $(document).ready(() => tnt.core.init());
@@ -1161,58 +1547,86 @@ GM_addStyle(`
         border: 1px solid #000;
         display: inline-block;
     }
-    #tnt_resource_table{
-        border-collapse:collapse;
-        font: 12px Arial, Helvetica, sans-serif;
+    /* TNT table styles with higher specificity - override Ikariam's .table01 styles */
+    body #tnt_info_resources #tnt_resource_table,
+    body #tnt_info_buildings_content #tnt_building_table{
+        border-collapse:collapse !important;
+        font: 12px Arial, Helvetica, sans-serif !important;
+        background-color: #fdf7dd !important;
     }
-    #tnt_resource_table td{
-        border:1px #000000 solid;
-        padding:2px!important;
+    body #tnt_info_resources #tnt_resource_table td,
+    body #tnt_info_buildings_content #tnt_building_table td{
+        border:1px #000000 solid !important;
+        padding:4px !important;
+        text-align:center !important;
+        vertical-align:middle !important;
+        background-color: #fdf7dd !important;
     }
-    #tnt_resource_table th{
-        border:1px #000000 solid;
-        padding:2px!important;
-        text-align:center;
+    body #tnt_info_resources #tnt_resource_table th,
+    body #tnt_info_buildings_content #tnt_building_table th{
+        border:1px #000000 solid !important;
+        padding:4px !important;
+        text-align:center !important;
+        vertical-align:middle !important;
+        background-color: #faeac6 !important;
+        font-weight: bold !important;
+        height: auto !important;
     }
-    #tnt_building_table{
-        border-collapse:collapse;
-        font: 12px Arial, Helvetica, sans-serif;
-    }
-    #tnt_building_table td{
-        border:1px #000000 solid;
-        padding:2px!important;
-    }
-    #tnt_building_table th{
-        border:1px #000000 solid;
-        padding:2px!important;
-        text-align:center;
-    }
-    #tnt_building_table th.tnt_category_spacer {
+    body #tnt_info_buildings_content #tnt_building_table th.tnt_category_spacer {
         background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         padding: 4px !important;
+        text-align:center !important;
     }
-    #tnt_building_table th.tnt_category_header {
+    body #tnt_info_buildings_content #tnt_building_table th.tnt_category_header {
         background-color: #DBBE8C !important;
         border: 1px solid #000 !important;
         padding: 4px !important;
-        font-weight: bold;
+        font-weight: bold !important;
+        text-align: center !important;
+    }
+    body #tnt_info_resources #tnt_resource_table td.tnt_total,
+    body #tnt_info_buildings_content #tnt_building_table td.tnt_total {
+        background-color: #faeac6 !important;
+        font-weight: bold !important;
     }
     .storage_min{
-        background-color: #FF000050;
+        background-color: #FF000050 !important;
     }
     .tnt_construction{
-        background-color: #80404050;
+        background-color: #80404050 !important;
     }
-    #tnt_resource_table tr.tnt_selected{
-        border:2px #000000 solid!important;
+    /* Current city highlighting with 2px black border - no background change */
+    body #tnt_info_resources .tnt_selected,
+    body #tnt_info_buildings_content .tnt_selected {
+        border: 2px solid black !important;
+    }
+    body #tnt_info_resources .tnt_selected td,
+    body #tnt_info_buildings_content .tnt_selected td {
+        border-top: 2px solid black !important;
+        border-bottom: 2px solid black !important;
+        color: #000 !important;
+    }
+    body #tnt_info_resources .tnt_selected td:first-child,
+    body #tnt_info_buildings_content .tnt_selected td:first-child {
+        border-left: 2px solid black !important;
+    }
+    body #tnt_info_resources .tnt_selected td:last-child,
+    body #tnt_info_buildings_content .tnt_selected td:last-child {
+        border-right: 2px solid black !important;
+    }
+    /* Make tradegood production more visible with dark grey text color */
+    body #tnt_info_resources .tnt_bold,
+    body #tnt_info_buildings_content .tnt_bold {
+        color: #333333 !important;
+        font-weight: bold !important;
     }
     .tnt_resource_icon{
-        vertical-align:middle;
-        width:18px;
-        height:16px;
-        display:inline-block;
+        vertical-align:middle !important;
+        width:18px !important;
+        height:16px !important;
+        display:inline-block !important;
     }
     .tnt_building_icon {
         width: 36px !important;
@@ -1223,13 +1637,44 @@ GM_addStyle(`
         transform-origin: 0 0;
         margin-right: -8px;
     }
-    .tnt_population{ text-align:right; }
-    .tnt_citizens{ text-align:right; }
-    .tnt_wood{ text-align:right; }
-    .tnt_marble{ text-align:right; }
-    .tnt_wine{ text-align:right; }
-    .tnt_crystal{ text-align:right; }
-    .tnt_sulfur{ text-align:right; }
+    body #tnt_info_resources .tnt_population{ text-align:right !important; }
+    body #tnt_info_resources .tnt_citizens{ text-align:right !important; }
+    body #tnt_info_resources .tnt_wood{ text-align:right !important; }
+    body #tnt_info_resources .tnt_marble{ text-align:right !important; }
+    body #tnt_info_resources .tnt_wine{ text-align:right !important; }
+    body #tnt_info_resources .tnt_crystal{ text-align:right !important; }
+    body #tnt_info_resources .tnt_sulfur{ text-align:right !important; }
+    body #tnt_info_resources .tnt_city{ text-align:left !important; }
+    body #tnt_info_buildings_content .tnt_city{ text-align:left !important; }
+    body #tnt_info_buildings_content .tnt_building_level{ text-align:center !important; }
+    
+    /* Override Ikariam's container table styles specifically for our TNT tables */
+    #container body #tnt_info_resources #tnt_resource_table.table01,
+    #container body #tnt_info_buildings_content #tnt_building_table.table01 {
+        border: none !important;
+        margin: 0px !important;
+        background-color: #fdf7dd !important;
+        border-bottom: none !important;
+        text-align: center !important;
+        width: auto !important;
+    }
+    #container body #tnt_info_resources #tnt_resource_table.table01 td,
+    #container body #tnt_info_buildings_content #tnt_building_table.table01 td {
+        text-align: center !important;
+        vertical-align: middle !important;
+        padding: 4px !important;
+        border: 1px #000000 solid !important;
+    }
+    #container body #tnt_info_resources #tnt_resource_table.table01 th,
+    #container body #tnt_info_buildings_content #tnt_building_table.table01 th {
+        background-color: #faeac6 !important;
+        text-align: center !important;
+        height: auto !important;
+        padding: 4px !important;
+        font-weight: bold !important;
+        border: 1px #000000 solid !important;
+    }
+    
     #mainview a:hover{ text-decoration:none; }
     #tntOptions {
         position:absolute;
@@ -1239,8 +1684,9 @@ GM_addStyle(`
         border:1px #755931 solid;
         border-top:none;
         background-color: #FEE8C3;
-        padding:10px 10px 0px 10px;
+        padding:10px 10px 0px   10px;
     }
+
     #tntOptions legend{ font-weight:bold; }
     .tntHide, #infocontainer .tntLvl, #actioncontainer .tntLvl{ display:none; }
     #tntInfoWidget {
@@ -1252,6 +1698,7 @@ GM_addStyle(`
         z-index:100000000;
     }
     #tntInfoWidget .accordionTitle {
+
         background: url(/cdn/all/both/layout/bg_maincontentbox_header.jpg) no-repeat;
         padding: 6px 0 0;
         width: 728px;
@@ -1278,10 +1725,9 @@ GM_addStyle(`
         z-index: 100000;
     }
     .txtCenter{ text-align:center; }
-    .tnt_center{ text-align:center; white-space:nowrap; }
-    .tnt_right{ text-align:right; white-space:nowrap; }
-    .tnt_left{ text-align:left; white-space:nowrap; }
-    .tnt_bold{ font-weight:bold; }
+    .tnt_center{ text-align:center!important; white-space:nowrap; }
+    .tnt_right{ text-align:right!important; white-space:nowrap; }
+    .tnt_left{ text-align:left!important; white-space:nowrap; }
     #tnt_info_resources{
         position:fixed;
         bottom:20px;
@@ -1405,7 +1851,7 @@ GM_addStyle(`
         border: none !important;
     }
     #tnt_building_table th.tnt_category_spacer {
-        // background: transparent !important;
+        background: transparent !important;
         border: none !important;
         box-shadow: none !important;
         padding: 4px !important;
@@ -1415,5 +1861,6 @@ GM_addStyle(`
         border: 1px solid #000 !important;
         padding: 4px !important;
         font-weight: bold;
+        text-align: center !important;
     }
 `);
