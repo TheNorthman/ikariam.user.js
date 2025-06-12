@@ -1,0 +1,33 @@
+# TNT Collection - Styling Rules Overview
+
+| CATEGORY            | RESOURCES TABLE                              | BUILDINGS TABLE                              | COMMON RULES                                 |
+|---------------------|----------------------------------------------|----------------------------------------------|----------------------------------------------|
+| **Base Styles**     | 12px Arial, `#fdf7dd` bg                     | Same                                         | Collapsed borders, 4px padding               |
+| **Headers**         | `#faeac6` bg, bold, center                   | Same                                         | Dynamic category spans                       |
+| **Column Visibility**| City+Lvl always visible, others toggleable   | Only shows buildings that exist              | Based on user settings/data                  |
+| **Value Warnings**  | `storage_min`: `#FF000050` when < threshold  | `tnt_construction`: `#80404050` for upgrading| Red/orange tints for alerts                  |
+| **Storage Thresholds**| Wood/Wine: <100k<br>Marble/Crystal/Sulfur: <50k | N/A                                    | `storage_danger`: >80% max                   |
+| **Production Indicators**| Bold font for tradegood cities, tooltips show 24h production | Construction status in tooltips      | Hover shows additional info                  |
+| **Current City**    | 2px black border around entire row           | Same                                         | No background change, just border            |
+| **Categories**      | City Info (2-4 cols), Resources (0-5 cols)   | Gov, Storage, Trade, Reducers, Enhancers, Military, Culture, Special | Spans calculated dynamically |
+| **Special Features**| Number formatting with `.toLocaleString()`   | Palace+Governor merged into single column    | Clickable city names for navigation          |
+| **Control Elements**| Minimize (top-left), Toggle (top-right)      | Same                                         | Sprite-based icons with hover states         |
+| **Total Row**       | Shows sums, `#faeac6` bg, bold               | Empty cells, same header styling             | Last row of each table                       |
+
+---
+
+### Key Differences
+
+- **Resources:** Focus on quantities, warnings, production rates  
+- **Buildings:** Focus on construction status, building presence/absence  
+- **Both:** Responsive visibility, current city highlighting, unified control scheme
+
+---
+
+### Color Codes
+
+- `#fdf7dd` = Light cream background  
+- `#faeac6` = Header background (darker cream)  
+- `#DBBE8C` = Category header background (brown/tan)  
+- `#FF000050` = Red tint for storage warnings  
+- `#80404050` = Orange tint for construction
