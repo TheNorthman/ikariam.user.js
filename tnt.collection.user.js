@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection
-// @version      1.5.21
+// @version      1.5.22
 // @namespace    tnt.collection
 // @author       Ronny Jespersen
 // @description  TNT Collection of Ikariam enhancements to enhance the game
@@ -41,9 +41,12 @@ const template = {
 
 const tnt = {
     version: GM_info.script.version,
+
     template, // Add template to tnt object
     url: { versionUrl: VERSION_URL, updateUrl: UPDATE_URL, update: UPDATE_HQ_URL },
     delay: (time) => new Promise(resolve => setTimeout(resolve, time)),
+
+    // Settings module - manage user settings
     settings: {
         debug: { enable: true },
         
@@ -412,7 +415,8 @@ const tnt = {
             }
         }
     },
-    
+
+    // Main data structure to hold all data
     data: {
         ikariam: {
             subDomain: location.hostname.split('.')[0],
@@ -450,7 +454,8 @@ const tnt = {
             }
         }
     },
-    
+
+    // Initialize the core module
     core: {
         init() {
             tnt.core.debug.log(`TNT Collection v${tnt.version} - Init...`);
