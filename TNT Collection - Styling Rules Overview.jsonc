@@ -4,7 +4,7 @@
         "description": "This file provides an overview of the styling rules used in the TNT Collection.",
         "version": "1.0.0",
         "rules": {
-            "base": {
+            "all tables": {
                 "Category Headers": {
                     "background": "#DBBE8C (brown/tan)",
                     "border": "1px solid #000",
