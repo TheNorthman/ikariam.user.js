@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection Core
-// @version      1.5.23
+// @version      1.5.24
 // @namespace    tnt.collection.core
 // @author       Ronny Jespersen
 // @description  TNT Collection Core - Stable functionality for Ikariam enhancements
@@ -120,6 +120,12 @@ const TNT_STYLES = `
         border-radius: 3px;
         font-size: 10px;
         z-index: 10;
+    }
+    
+    /* Construction status highlighting */
+    .tnt_construction {
+        background-color: #80404050 !important;
+        border-left: 3px solid #804040 !important;
     }
 `;
 
@@ -464,9 +470,9 @@ const tnt = {
             }
         },
 
-        // Check if city has construction
+        // Check if city has construction - simplified
         hasConstruction() {
-            return tnt.utils.safeGet(() => $('.constructionSite').length > 0, false);
+            return $('.constructionSite').length > 0;
         },
 
         // Calculate production for a city over time
@@ -804,8 +810,8 @@ const tnt = {
                 marble: tnt.get.resources.marble(),
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
-                hasConstruction: $("body").attr("id") == "city" ? tnt.has.construction() : (prev.hasConstruction || false),
-                cityLvl: tnt.get.cityLvl(), // Get city level regardless of construction
+                hasConstruction: false, // Initialize as false, will be set properly below
+                cityLvl: tnt.get.cityLvl(),
                 resourceProduction: tnt.get.resourceProduction(),
                 tradegoodProduction: tnt.get.tradegoodProduction(),
                 lastUpdate: Date.now()
@@ -818,6 +824,8 @@ const tnt = {
                     if (!$positions.length) return;
 
                     const foundBuildings = {};
+                    // Simplified construction detection - just check if any .constructionSite elements exist
+                    const hasAnyConstruction = $('.constructionSite').length > 0;
 
                     $positions.each(function () {
                         const $pos = $(this);
@@ -831,24 +839,26 @@ const tnt = {
                         const buildingType = classes.find(c => validBuildingTypes.includes(c));
                         if (!buildingType) return;
 
-                        // Get current level from either constructionSite or regular building
-                        const $constructionSite = $pos.find('.constructionSite');
-                        const $level = $pos.find('.level');
+                        // Check if this specific position has construction
+                        const underConstruction = $pos.hasClass('constructionSite');
 
+                        // Get level information
                         let level = 0;
                         let targetLevel = 0;
-                        let underConstruction = false;
 
-                        if ($constructionSite.length) {
-                            underConstruction = true;
-                            const currentLevelText = $constructionSite.find('.level').text();
+                        if (underConstruction) {
+                            // For buildings under construction, try to get current and target levels
+                            const $level = $pos.find('.level');
+                            const currentLevelText = $level.text();
                             level = parseInt(currentLevelText.match(/\d+/)?.[0] || '0');
 
-                            const headerText = $constructionSite.find('.header .time').text();
-                            const targetMatch = headerText.match(/Level (\d+)/i);
-                            targetLevel = targetMatch ? parseInt(targetMatch[1]) : level + 1;
+                            // Try to get target level from title or construction info
+                            const title = $pos.find('a').attr('title') || '';
+                            const titleMatch = title.match(/\((\d+)\)/);
+                            targetLevel = titleMatch ? parseInt(titleMatch[1]) : level + 1;
                         } else {
                             const levelClass = classes.find(c => c.startsWith('level'));
+                            const $level = $pos.find('.level');
                             level = parseInt(levelClass?.match(/\d+$/)?.[0] || $level.text().match(/\d+/)?.[0] || '0');
                             targetLevel = level;
                         }
@@ -873,14 +883,19 @@ const tnt = {
                         }
                     });
 
-                    // Update city data with found buildings
+                    // Update city data with found buildings and construction status
                     cityData.buildings = foundBuildings;
+                    cityData.hasConstruction = hasAnyConstruction;
+
                     tnt.data.storage.resources.city[currentCityId] = cityData;
                     tnt.core.storage.save();
                     tnt.dataCollector.show();
                 };
 
                 detectBuildings();
+            } else {
+                // When not in city view, preserve previous construction status
+                cityData.hasConstruction = prev.hasConstruction || false;
             }
 
             // Store final data and update display
@@ -1446,10 +1461,23 @@ const tnt = {
         },
 
         getResourceCityCell(cityID, value) {
-            const hasConstruction = value.buildings && Object.values(value.buildings).some(buildingArray =>
-                Array.isArray(buildingArray) && buildingArray.some(building => building.underConstruction)
-            );
+            // Check if city has construction - look at the hasConstruction flag first,
+            // then also check building data as backup
+            let hasConstruction = value.hasConstruction;
+
+            // Backup check in building data if hasConstruction flag isn't set
+            if (!hasConstruction && value.buildings) {
+                hasConstruction = Object.values(value.buildings).some(buildingArray =>
+                    Array.isArray(buildingArray) && buildingArray.some(building => building.underConstruction)
+                );
+            }
+
             const constructionClass = hasConstruction ? ' tnt_construction' : '';
+
+            // Debug logging for construction class application
+            if (hasConstruction) {
+                tnt.core.debug.log(`Applying construction class to city ${cityID}: ${constructionClass}`);
+            }
 
             let townHallLevel = '-';
             if (value && value.buildings && Array.isArray(value.buildings['townHall']) && value.buildings['townHall'].length > 0) {
@@ -1466,10 +1494,23 @@ const tnt = {
         },
 
         getBuildingCityCell(cityID, value) {
-            const hasConstruction = value.buildings && Object.values(value.buildings).some(buildingArray =>
-                Array.isArray(buildingArray) && buildingArray.some(building => building.underConstruction)
-            );
+            // Check if city has construction - look at the hasConstruction flag first,
+            // then also check building data as backup
+            let hasConstruction = value.hasConstruction;
+
+            // Backup check in building data if hasConstruction flag isn't set
+            if (!hasConstruction && value.buildings) {
+                hasConstruction = Object.values(value.buildings).some(buildingArray =>
+                    Array.isArray(buildingArray) && buildingArray.some(building => building.underConstruction)
+                );
+            }
+
             const constructionClass = hasConstruction ? ' tnt_construction' : '';
+
+            // Debug logging for construction class application
+            if (hasConstruction) {
+                tnt.core.debug.log(`Applying construction class to city ${cityID}: ${constructionClass}`);
+            }
 
             return `
                 <td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">
@@ -1651,33 +1692,44 @@ const tnt = {
     get: {
         playerId: () => tnt.game.player.getId(),
         cityId() {
-            // Try multiple methods to get city ID
-            let cityId = $('#js_GlobalMenu_citySelect').attr('name');
+            // Method 1: From URL parameters (most reliable during city switches)
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlCityId = urlParams.get('cityId') || urlParams.get('currentCityId');
 
-            // If not found, try URL parameters
-            if (!cityId || cityId === 'undefined') {
-                const urlParams = new URLSearchParams(window.location.search);
-                cityId = urlParams.get('cityId');
+            if (urlCityId && urlCityId !== 'undefined' && urlCityId !== '') {
+                return urlCityId;
             }
 
-            // If still not found, try to get from city list (fallback to first city)
-            if (!cityId || cityId === 'undefined') {
-                const cities = this.cityList();
-                const cityIds = Object.keys(cities);
-                if (cityIds.length > 0) {
-                    cityId = cityIds[0];
-                    tnt.core.debug.log('Using fallback city ID: ' + cityId);
+            // Method 2: From Ikariam model
+            let modelCityId;
+            try {
+                modelCityId = ikariam.model.relatedCityData.selectedCity.replace(/[^\d-]+/g, "");
+                if (modelCityId && modelCityId !== 'undefined' && modelCityId !== '') {
+                    return modelCityId;
                 }
+            } catch (e) {
+                // Continue to next method
+            }
+
+            // Method 3: From global menu (fallback)
+            const menuCityId = $('#js_GlobalMenu_citySelect').attr('name');
+            if (menuCityId && menuCityId !== 'undefined' && menuCityId !== '') {
+                return menuCityId;
+            }
+
+            // Method 4: Fallback to first city from city list
+            const cities = this.cityList();
+            const cityIds = Object.keys(cities);
+            if (cityIds.length > 0) {
+                tnt.core.debug.log('Using fallback city ID: ' + cityIds[0]);
+                return cityIds[0];
             }
 
             // Final validation
-            if (!cityId || cityId === 'undefined') {
-                tnt.core.debug.log('No valid city ID found');
-                return null;
-            }
-
-            return cityId;
+            tnt.core.debug.log('No valid city ID found');
+            return null;
         },
+
         cityLvl: () => tnt.game.city.getLevel(),
         cityIslandCoords: () => tnt.game.city.getCoordinates(),
         cityName: (id) => tnt.game.city.getName(id),
@@ -1692,8 +1744,6 @@ const tnt = {
             free: () => tnt.game.military.getTransporters().free,
             max: () => tnt.game.military.getTransporters().max
         },
-
-
 
         resources: {
             wood: () => tnt.game.resources.getCurrent().wood,
@@ -1718,8 +1768,8 @@ const tnt = {
         godGoldResult: () => tnt.game.economy.getFinances().godGoldResult,
 
         hasAlly: () => tnt.game.player.getAlliance().hasAlly,
-        isOwnCity: () => tnt.game.city.isOwn()
-
+        isOwnCity: () => tnt.game.city.isOwn(),
+        construction: () => tnt.utils.hasConstruction()
     },
 
     has: {
