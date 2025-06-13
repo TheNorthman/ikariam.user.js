@@ -1405,7 +1405,9 @@ const tnt = {
         }
     },
 
+    // BEGIN: DO NOT MODIFY - Fixed logic
     // Legacy compatibility - keeping these for backward compatibility
+
     get: {
         playerId: () => tnt.game.player.getId(),
         cityId: () => tnt.game.city.getId(),
@@ -1457,6 +1459,8 @@ const tnt = {
     calc: {
         production: (cityID, hours) => tnt.utils.calculateProduction(cityID, hours)
     },
+
+    // END: DO NOT MODIFY - Fixed logic
 
     // Wait for city buildings to load before executing callback
     waitForCityBuildings: function (callback, maxAttempts = 20) {
