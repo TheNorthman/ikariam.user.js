@@ -6,8 +6,8 @@
 - [ ] Consider caching frequently called functions
 
 ## UI/Styling  
-- [ ] Window control sprite still being requested
-- [ ] Verify all buttons use Unicode instead of external sprites
+- [x] Window control sprite still being requested
+- [x] Verify all buttons use Unicode instead of external sprites
 
 ## Code Quality
 - [ ] Reduce debug logging in production
