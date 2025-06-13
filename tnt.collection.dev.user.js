@@ -42,7 +42,7 @@ const tnt = {
     // Ready for new features to be added here
     init() {
         console.log('[TNT-Dev] Initializing TNT Collection Development Environment');
-        // Additional initialization code can be added here
+        console.log('[TNT-Dev] Ready for development - add features here');
     }
 };
 
