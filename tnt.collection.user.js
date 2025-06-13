@@ -1405,65 +1405,6 @@ const tnt = {
         }
     },
 
-    // BEGIN: DO NOT MODIFY - Fixed logic
-    // Legacy compatibility - Here all the communication with Ikariam is handled
-    // Should only be changed by the core team
-    // These has to work for the rest of the code to work properly. We keep them here so we only have to change them in one place.
-
-    get: {
-        playerId: () => tnt.game.player.getId(),
-        cityId: () => tnt.game.city.getId(),
-        cityLvl: () => tnt.game.city.getLevel(),
-        cityIslandCoords: () => tnt.game.city.getCoordinates(),
-        cityName: (id) => tnt.game.city.getName(id),
-        producedTradegood: () => tnt.game.city.getProducedTradegood(),
-        cityList: () => tnt.game.city.getList(),
-        
-        alliance: {
-            Id: () => tnt.game.player.getAlliance().id
-        },
-        
-        transporters: {
-            free: () => tnt.game.military.getTransporters().free,
-            max: () => tnt.game.military.getTransporters().max
-        },
-        
-        resources: {
-            wood: () => tnt.game.resources.getCurrent().wood,
-            wine: () => tnt.game.resources.getCurrent().wine,
-            marble: () => tnt.game.resources.getCurrent().marble,
-            crystal: () => tnt.game.resources.getCurrent().crystal,
-            sulfur: () => tnt.game.resources.getCurrent().sulfur
-        },
-        
-        population: () => tnt.game.resources.getCurrent().population,
-        citizens: () => tnt.game.resources.getCurrent().citizens,
-        resourceProduction: () => tnt.game.resources.getProduction().resource,
-        tradegoodProduction: () => tnt.game.resources.getProduction().tradegood,
-        maxCapacity: () => tnt.game.resources.getCapacity().max,
-        wineSpending: () => tnt.game.resources.getCapacity().wineSpending,
-        
-        gold: () => tnt.game.economy.getGold(),
-        ambrosia: () => tnt.game.economy.getAmbrosia(),
-        income: () => tnt.game.economy.getFinances().income,
-        upkeep: () => tnt.game.economy.getFinances().upkeep,
-        sciencetistsUpkeep: () => tnt.game.economy.getFinances().scientistsUpkeep,
-        godGoldResult: () => tnt.game.economy.getFinances().godGoldResult,
-        
-        hasAlly: () => tnt.game.player.getAlliance().hasAlly,
-        isOwnCity: () => tnt.game.city.isOwn()
-    },
-    
-    has: {
-        construction: () => tnt.utils.hasConstruction()
-    },
-    
-    calc: {
-        production: (cityID, hours) => tnt.utils.calculateProduction(cityID, hours)
-    },
-
-    // END: DO NOT MODIFY - Fixed logic
-
     // Wait for city buildings to load before executing callback
     waitForCityBuildings: function (callback, maxAttempts = 20) {
         if ($("body").attr("id") !== "city") return callback();
@@ -1552,8 +1493,65 @@ const tnt = {
             }
         }
     },
+
+    // BEGIN: DO NOT MODIFY - Fixed logic
+    // Legacy compatibility - Here all the communication with Ikariam is handled
+    // Should only be changed by the core team
+    // These has to work for the rest of the code to work properly. We keep them here so we only have to change them in one place.
+
+    get: {
+        playerId: () => tnt.game.player.getId(),
+        cityId: () => tnt.game.city.getId(),
+        cityLvl: () => tnt.game.city.getLevel(),
+        cityIslandCoords: () => tnt.game.city.getCoordinates(),
+        cityName: (id) => tnt.game.city.getName(id),
+        producedTradegood: () => tnt.game.city.getProducedTradegood(),
+        cityList: () => tnt.game.city.getList(),
+        
+        alliance: {
+            Id: () => tnt.game.player.getAlliance().id
+        },
+        
+        transporters: {
+            free: () => tnt.game.military.getTransporters().free,
+            max: () => tnt.game.military.getTransporters().max
+        },
+        
+        resources: {
+            wood: () => tnt.game.resources.getCurrent().wood,
+            wine: () => tnt.game.resources.getCurrent().wine,
+            marble: () => tnt.game.resources.getCurrent().marble,
+            crystal: () => tnt.game.resources.getCurrent().crystal,
+            sulfur: () => tnt.game.resources.getCurrent().sulfur
+        },
+        
+        population: () => tnt.game.resources.getCurrent().population,
+        citizens: () => tnt.game.resources.getCurrent().citizens,
+        resourceProduction: () => tnt.game.resources.getProduction().resource,
+        tradegoodProduction: () => tnt.game.resources.getProduction().tradegood,
+        maxCapacity: () => tnt.game.resources.getCapacity().max,
+        wineSpending: () => tnt.game.resources.getCapacity().wineSpending,
+        
+        gold: () => tnt.game.economy.getGold(),
+        ambrosia: () => tnt.game.economy.getAmbrosia(),
+        income: () => tnt.game.economy.getFinances().income,
+        upkeep: () => tnt.game.economy.getFinances().upkeep,
+        sciencetistsUpkeep: () => tnt.game.economy.getFinances().scientistsUpkeep,
+        godGoldResult: () => tnt.game.economy.getFinances().godGoldResult,
+        
+        hasAlly: () => tnt.game.player.getAlliance().hasAlly,
+        isOwnCity: () => tnt.game.city.isOwn()
+    },
     
-    // ...existing code...
+    has: {
+        construction: () => tnt.utils.hasConstruction()
+    },
+    
+    calc: {
+        production: (cityID, hours) => tnt.utils.calculateProduction(cityID, hours)
+    }
+
+    // END: DO NOT MODIFY - Fixed logic
 };
 
 $(document).ready(() => tnt.core.init());
