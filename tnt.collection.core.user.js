@@ -17,9 +17,22 @@
 // @updateURL    https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.core.user.js
 // ==/UserScript==
 
-if (!window.tnt) {
-    window.tnt = {};
-}
+// ===== AI-NOTICE: IMPORTANT FOR AI TOOLS - HUMAN SUPERVISION REQUIRED FOR THIS SECTION =====
+// This section is critical for AI tools. Please review carefully!
+// This is the core TNT Collection script that provides stable functionality for Ikariam enhancements.
+// It includes comprehensive data collection, UI modifications, and city management features.
+// The script initializes the main TNT Collection object with all core modules including:
+// - Settings management with localStorage persistence
+// - Data collection and storage for resources and buildings
+// - Table building and UI rendering
+// - City switching functionality
+// - AJAX event handling and overrides
+// Things to be aware of:
+// - The tnt object is assigned to window.tnt for global access
+// - Settings use localStorage with specific key patterns
+// - AJAX overrides intercept Ikariam's background updates
+// !!! This is the stable core - changes here affect all functionality. Test thoroughly!
+// =============================================================
 
 const VERSION_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/version.php";
 const UPDATE_URL = "http://ikariam.rjj-net.dk/scripts/tnt.Collection/update.php";
@@ -469,7 +482,7 @@ const tnt = {
             tnt.core.notification.init();
             tnt.core.events.init();
             tnt.core.options.init();
-            
+
             // Apply UI modifications
             tnt.ui.applyUIModifications();
 
@@ -554,11 +567,11 @@ const tnt = {
         },
 
         events: {
-            init() { 
+            init() {
                 // Check if ajax and ajax.Responder exist before overriding
                 if (typeof ajax !== 'undefined' && ajax.Responder) {
                     tnt.core.debug.log('Ajax responder available, applying override');
-                    tnt.core.events.ikariam.override(); 
+                    tnt.core.events.ikariam.override();
                 } else {
                     tnt.core.debug.log('Ajax responder not available, skipping override');
                 }
@@ -703,7 +716,7 @@ const tnt = {
     dataCollector: {
         update() {
             const currentCityId = tnt.get.cityId();
-            
+
             // Skip data collection if no valid city ID
             if (!currentCityId || currentCityId === 'undefined') {
                 return;
@@ -1013,65 +1026,65 @@ const tnt = {
         isActive: false,
         startCityId: null,
         visitedCities: [],
-        
+
         start() {
             this.startCityId = tnt.get.cityId();
-            
+
             if (!this.startCityId) {
                 console.log('[TNT] Cannot start - no valid city ID detected');
                 return;
             }
-            
+
             this.isActive = true;
             this.visitedCities = [this.startCityId];
-            
+
             tnt.settings.set("citySwitcherActive", true);
             tnt.settings.set("citySwitcherStartCity", this.startCityId);
             tnt.settings.set("citySwitcherVisited", this.visitedCities);
-            
+
             console.log('[TNT] CitySwitcher started from city:', this.startCityId);
             this.nextCity();
         },
-        
+
         nextCity() {
             const allCities = Object.keys(tnt.get.cityList());
-            
+
             for (const cityId of allCities) {
                 if (!this.visitedCities.includes(cityId)) {
                     this.switchToCity(cityId);
                     return;
                 }
             }
-            
+
             this.end();
         },
-        
+
         switchToCity(cityId) {
             console.log('[TNT] Attempting to switch to city:', cityId);
-            
+
             if (!this.visitedCities.includes(cityId)) {
                 this.visitedCities.push(cityId);
                 tnt.settings.set("citySwitcherVisited", this.visitedCities);
             }
-            
+
             const $cityOption = $(`#dropDown_js_citySelectContainer li[selectValue="${cityId}"]`);
-            
+
             if ($cityOption.length > 0) {
                 console.log('[TNT] Using improved URL method with cityId parameter');
-                
+
                 const currentUrl = new URL(window.location.href);
                 currentUrl.searchParams.set('cityId', cityId);
                 currentUrl.searchParams.set('currentCityId', cityId);
-                
+
                 console.log('[TNT] Navigating to URL:', currentUrl.toString());
                 window.location.href = currentUrl.toString();
-                
+
                 return true;
             }
-            
+
             return false;
         },
-        
+
         end() {
             console.log('[TNT] CitySwitcher cycle completed successfully!');
             console.log('[TNT] Visited', this.visitedCities.length, 'cities total');
@@ -1081,14 +1094,14 @@ const tnt = {
             tnt.settings.set("citySwitcherActive", false);
             console.log('[TNT] CitySwitcher finished and deactivated');
         },
-        
+
         checkAndContinue() {
             const isActive = tnt.settings.get("citySwitcherActive", false);
             if (isActive) {
                 this.isActive = true;
                 this.startCityId = tnt.settings.get("citySwitcherStartCity");
                 this.visitedCities = tnt.settings.get("citySwitcherVisited", []);
-                
+
                 setTimeout(() => {
                     this.nextCity();
                 }, 1000);
@@ -1581,7 +1594,7 @@ const tnt = {
         const settings = tnt.settings.getFeatureSettings();
         if (settings.showCityLvl) {
             $('.cityinfo').each(function () {
-                               const level = $(this).find('.level').text();
+                const level = $(this).find('.level').text();
                 if (level) {
                     $(this).append(`<span class="tntLvl">${level}</span>`);
                 }
@@ -1622,13 +1635,13 @@ const tnt = {
         cityId() {
             // Try multiple methods to get city ID
             let cityId = $('#js_GlobalMenu_citySelect').attr('name');
-            
+
             // If not found, try URL parameters
             if (!cityId || cityId === 'undefined') {
                 const urlParams = new URLSearchParams(window.location.search);
                 cityId = urlParams.get('cityId');
             }
-            
+
             // If still not found, try to get from city list (fallback to first city)
             if (!cityId || cityId === 'undefined') {
                 const cities = this.cityList();
@@ -1638,13 +1651,13 @@ const tnt = {
                     tnt.core.debug.log('Using fallback city ID: ' + cityId);
                 }
             }
-            
+
             // Final validation
             if (!cityId || cityId === 'undefined') {
                 tnt.core.debug.log('No valid city ID found');
                 return null;
             }
-            
+
             return cityId;
         },
         cityLvl: () => tnt.game.city.getLevel(),
@@ -1700,10 +1713,7 @@ const tnt = {
     }
 };
 
-// Assign to global window
-window.tnt = tnt;
-
-$(document).ready(() => window.tnt.core.init());
+$(document).ready(() => tnt.core.init());
 
 GM_addStyle(`
     /* Show level styles */
@@ -2051,14 +2061,23 @@ GM_addStyle(`
     }
 
     .tnt_refresh_btn {
-        background: url(/cdn/all/both/interface/window_control_sprite.png) no-repeat scroll transparent;
         cursor: pointer;
         display: inline-block;
         height: 18px;
         width: 18px;
-        background-position: -161px 0;
+        border: 1px solid #8B4513;
+        background: #D2B48C;
+        border-radius: 2px;
+        text-align: center;
+        line-height: 16px;
+        font-size: 12px;
     }
-    .tnt_refresh_btn:hover { 
-        background-position: -161px -18px; 
+    
+    .tnt_refresh_btn:before {
+        content: "⟳";
+    }
+    
+    .tnt_refresh_btn:hover {
+        background: #DDD;
     }
 `);

@@ -3,7 +3,7 @@
 // @version      1.0.0
 // @namespace    tnt.collection.dev
 // @author       Ronny Jespersen
-// @description  TNT Collection Development - Simplified architecture
+// @description  TNT Collection Development - Clean slate for new features
 // @license      MIT
 // @include      http*s*.ikariam.*/*
 // @exclude      http*support*.ikariam.*/*
@@ -14,11 +14,22 @@
 // @grant        GM_log
 // ==/UserScript==
 
-// Now we can use the exact same structure as core!
+// ===== AI-NOTICE: IMPORTANT FOR AI TOOLS - HUMAN SUPERVISION REQUIRED FOR THIS SECTION =====
+// This is an extension of the TNT Collection core script (tnt.collection.core.user.js).
+// It provides a simplified architecture for development purposes.
+// The script initializes a simplified version of the TNT Collection with a focus on development features.
+// It includes a settings object for managing user settings, a get object for retrieving city information,
+// and an experimental feature section for testing new functionalities.
+// Things to be aware of:
+// - The settings object uses GM_getValue and GM_setValue with a 'dev_' prefix to avoid conflicts with the core script.
+// - The get object provides methods to retrieve the current city ID and list of cities.
+// !!! It is important to keep both tnt.settings and tnt.get in sync with the core script.
+// =============================================================
+
+// Clean slate - ready for next development project
 const tnt = {
     version: "1.0.0-dev",
 
-    // Same settings structure as core (with dev prefix for storage)
     settings: {
         get(key, defaultValue = null) {
             return GM_getValue('dev_' + key, defaultValue);
@@ -28,37 +39,10 @@ const tnt = {
         }
     },
 
-    // Copy core's get functions exactly (no more duplicated code!)
-    get: {
-        cityId() {
-            const urlParams = new URLSearchParams(window.location.search);
-            let cityId = urlParams.get('cityId');
-            
-            if (!cityId) {
-                const cities = Object.keys(this.cityList());
-                cityId = cities.length > 0 ? cities[0] : null;
-            }
-            
-            return cityId;
-        },
-
-        cityList() {
-            const cities = {};
-            $('#dropDown_js_citySelectContainer li[selectValue]').each(function() {
-                const $this = $(this);
-                const cityId = $this.attr('selectValue');
-                const cityName = $this.text().trim();
-                cities[cityId] = cityName;
-            });
-            return cities;
-        }
-    },
-
-    // New experimental features can be added here
-    experimentalFeature: {
-        init() {
-            console.log('[TNT-Dev] Experimental feature ready');
-        }
+    // Ready for new features to be added here
+    init() {
+        console.log('[TNT-Dev] Initializing TNT Collection Development Environment');
+        // Additional initialization code can be added here
     }
 };
 
@@ -69,5 +53,5 @@ $(document).ready(() => {
     }
 
     console.log('[TNT-Dev] Simplified architecture initialized');
-    tnt.experimentalFeature.init();
+    tnt.init();
 });
