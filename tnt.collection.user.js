@@ -1406,7 +1406,9 @@ const tnt = {
     },
 
     // BEGIN: DO NOT MODIFY - Fixed logic
-    // Legacy compatibility - keeping these for backward compatibility
+    // Legacy compatibility - Here all the communication with Ikariam is handled
+    // Should only be changed by the core team
+    // These has to work for the rest of the code to work properly. We keep them here so we only have to change them in one place.
 
     get: {
         playerId: () => tnt.game.player.getId(),
