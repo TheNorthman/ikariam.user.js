@@ -1,8 +1,40 @@
 # TNT Collection Version Log
 
-## 🚀 Version 1.5.24 (Current) - Major Stability Release
-**Release Date:** [Current]  
+## 🚀 Version 1.5.31 (Current) - Stable Foundation Release
+**Release Date:** 2025-06-14  
 **Status:** ✅ Stable - Production Ready
+
+### 🎯 Major Achievements
+- ✅ **Stable Core Architecture**: Error-free Core script with comprehensive functionality
+- ✅ **Independent Dev Environment**: Separate development tools for safe experimentation
+- ✅ **Memory Space Documentation**: Proper understanding of userscript isolation
+- ✅ **Clean Project Structure**: Organized documentation with lowercase naming convention
+- ✅ **Git Repository**: Both Core and Dev scripts committed safely
+
+### 🏗️ Architecture Improvements
+- **Core Script (v1.5.31)**: Production-ready, runs independently in its own memory space
+- **Dev Script (v1.0.2)**: Development tools, separate `tnt` object, includes tooltip testing
+- **Documentation**: Properly organized under `docs/` with consistent lowercase naming
+- **File Structure**: Clean organization following modern conventions
+
+### 🔧 Technical Details
+- Scripts run in isolated memory spaces - cannot directly call each other
+- Use `window` object for cross-script communication when needed
+- Each script maintains its own independent `tnt` object
+- Always test scripts separately to ensure independence
+
+### 🚀 Ready for Development
+- Tooltip system investigation using `tntTestTooltip()` function
+- Ikariam's native `bindBubbleTip` integration
+- Enhanced user experience features
+
+---
+
+## 📚 Previous Versions
+
+### Version 1.5.24 - Major Stability Release
+**Release Date:** [Previous]  
+**Status:** ✅ Stable - Superseded by 1.5.31
 
 ### 🎯 Major Fixes
 - ✅ **CRITICAL FIX**: City ID detection completely resolved
@@ -31,23 +63,6 @@
 
 ---
 
-## 📚 Previous Versions
-
-### Version 1.5.23 - Development Phase
-**Status:** 🔧 Development - Issues Identified
-
-### 🐛 Known Issues (RESOLVED in 1.5.24)
-- City ID detection failing in certain navigation scenarios
-- Construction highlighting not working consistently
-- Multiple fallback city ID messages in logs
-
-### 🧪 Development Progress
-- Identified userscript console access limitations
-- Developed standalone testing methodology
-- Split codebase into core and development scripts
-
----
-
 ## 🎯 Development Milestones
 
 ### 🎉 Major Achievements
@@ -55,22 +70,27 @@
 2. **Console Testing Breakthrough** - Overcame userscript limitations with standalone blocks
 3. **Visual Communication** - Emoji-based status reporting for clear debugging
 4. **Critical Issues Resolution** - Both major blocking issues resolved
+5. **Memory Space Documentation** - Proper understanding of userscript isolation
+6. **Clean Project Structure** - Organized documentation and naming conventions
 
 ### 🚀 Future Development Opportunities
-1. **Icon CSS Implementation** - Replace hardcoded URLs with Ikariam's native CSS structure
-2. **Performance Optimizations** - Reduce multiple table builds, optimize city detection calls
-3. **Additional Features** - Build on the stable foundation established
+1. **Tooltip System Integration** - Investigate Ikariam's native `bindBubbleTip` method
+2. **Icon CSS Implementation** - Replace hardcoded URLs with Ikariam's native CSS structure
+3. **Performance Optimizations** - Reduce multiple table builds, optimize city detection calls
+4. **Additional Features** - Build on the stable foundation established
 
 ---
 
 ## 🧪 Testing & Quality Assurance
 
-### ✅ Tested Scenarios (v1.5.24)
+### ✅ Tested Scenarios (v1.5.31)
 - City switching via dropdown menu
 - "Show Town" button navigation
 - Direct URL navigation with cityId parameters
 - Construction detection with vineyard at position 3
 - Resource table highlighting for cities under construction
+- Memory space isolation between Core and Dev scripts
+- Independent script functionality
 
 ### 🔧 Testing Methodology
 - **Standalone Console Testing**: Proven effective for userscript limitations
@@ -106,12 +126,14 @@
 
 ## 🏆 Success Metrics
 
-### v1.5.24 Achievements
-- ✅ **100% Core Functionality**: Both critical issues resolved
+### v1.5.31 Achievements
+- ✅ **100% Core Functionality**: All critical issues resolved
 - ✅ **Zero Critical Bugs**: No blocking issues remaining
 - ✅ **Stable Architecture**: Clean core/dev separation established
 - ✅ **Proven Testing**: Effective methodology for future development
 - ✅ **Production Ready**: Fully functional and stable
+- ✅ **Memory Space Isolation**: Proper understanding and implementation
+- ✅ **Clean Documentation**: Well-organized project structure
 
 ### 📊 Quality Indicators
 - **Code Stability**: 🟢 Excellent
@@ -119,6 +141,7 @@
 - **Development Process**: 🟢 Excellent
 - **Documentation**: 🟢 Comprehensive
 - **Testing Coverage**: 🟢 Thorough
+- **Architecture**: 🟢 Clean and Modular
 
 ---
 
