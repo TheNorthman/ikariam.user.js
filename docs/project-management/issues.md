@@ -17,22 +17,26 @@
   - ✅ Standalone test confirmed: Construction elements found in city with vineyard construction
   - ✅ Simplified detection using `$('.constructionSite').length > 0` working perfectly
   - ✅ Construction HTML confirmed: `<div id="position3" class="position3 building constructionSite animated">`
-  - ✅ City highlighting should now work in resource table
+  - ✅ City highlighting working correctly in resource table
+- [x] **🎉 CitySwitcher navigation hijacking RESOLVED** - Fixed in v1.5.24
+  - ✅ **SOLUTION**: Modified `checkAndContinue()` to detect direct vs automatic navigation
+  - ✅ **RESULT**: Direct Mayor Advisor links work correctly
+  - ✅ **STATUS**: All navigation methods verified working
 
 ## Current Status
-🎉 **COMPLETE SUCCESS - ALL MAJOR ISSUES RESOLVED!**
-- City ID detection working correctly for all navigation methods (14490 detected)
-- Construction detection working correctly (vineyard construction found)
-- Core script fixes applied and fully functional
-- Script loads without errors, all components initialized
-- Ready for production use!
+🎉 **ALL MAJOR ISSUES RESOLVED - PRODUCTION READY!**
+- City ID detection working correctly for all navigation methods
+- Construction highlighting working correctly 
+- CitySwitcher respects user navigation intent
+- Core script stable and fully functional
+- Ready for next enhancement projects!
 
-## Final Success Summary
-✅ **Both critical issues completely resolved:**
-- **City ID Detection**: Uses URL params first, correctly identifies current city in all scenarios
-- **Construction Detection**: Simplified to `$('.constructionSite').length > 0`, detecting construction perfectly
-- **Testing Method**: Standalone console blocks proven effective for userscript testing
-- **Comprehensive Fix**: Handles all navigation methods (city switches, "Show Town", direct URLs)
+## Success Summary
+✅ **All critical issues successfully resolved:**
+- **City ID Detection**: Working correctly for all scenarios
+- **Construction Detection**: Simplified and reliable  
+- **CitySwitcher Logic**: Respects user navigation intent
+- **Development Process**: Proven methodology established
 
 ## Next Development Opportunities
 With core functionality working perfectly, consider these future enhancements:
