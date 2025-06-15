@@ -10,12 +10,57 @@
 - ✅ **Memory Space Documentation**: Proper understanding of userscript isolation
 - ✅ **Clean Project Structure**: Organized documentation with lowercase naming convention
 - ✅ **Git Repository**: Both Core and Dev scripts committed safely
+- ✅ **Tooltip System Discovery**: Successfully confirmed Ikariam's native `bindBubbleTip` integration
+- ✅ **Command System Implementation**: Comprehensive AI command system with versioned backup management
+
+### 🤖 Command System Development (2025-06-14)
+- ✅ **Versioned Backup System**: Auto-incrementing backup structure with timestamps
+- ✅ **20+ Commands Available**: Complete command set for backup, restore, version management, analysis
+- ✅ **Smart Organization**: Commands organized by frequency with most important at bottom
+- ✅ **Multi-threshold Validation**: Sophisticated backup validation with size analysis
+- ✅ **Command Documentation**: Comprehensive command reference with exact procedures
+- ✅ **Safety Features**: Backup validation, error checking, detailed reporting
+- ✅ **User-friendly Design**: Compact command list optimized for minimal scrolling
+- ✅ **File Watcher System**: PowerShell-based command execution through file monitoring
+- ⚠️ **Memory Limitations**: Large Core script causes VS Code memory errors - backup system critical
+- 🧹 **Project Cleanup**: Removed deprecated stable backup system, documentation updated
+- ✅ **Cleanup Completed**: PowerShell one-liner successfully removed all deprecated files
+- 🗑️ **Final Cleanup**: Removed temporary command output files and unnecessary cleanup scripts
+- 📁 **File Reorganization**: Renamed scripts to be project-agnostic (removed TNT- prefixes)
+- 🎯 **File Naming Standards**: Implemented kebab-case naming convention for all files
+- 🧹 **Naming Cleanup**: Removed inconsistent file names and deprecated files
+
+### 🔬 Tooltip System Investigation (2025-06-14)
+- ✅ **Native System Accessible**: `ikariam.controller.tooltipController` confirmed available
+- ✅ **Multiple Methods Available**: `opacity, tooltipWidth, bubbleNode, infoNode, offsetLeft, offsetTop, tooltip, createBubble, createTooltip`
+- ✅ **bindBubbleTip Function**: Method exists and can be called successfully without errors
+- ✅ **Tooltip Creation**: 19 potential tooltip elements found after calling bindBubbleTip
+- ✅ **Hijacking Successful**: Tooltip hijacking confirmed working - intercepted all tooltip calls
+- ✅ **Enhancement Working**: Successfully enhanced TNT element tooltips with real data
+- ❌ **Visibility Issue**: All created tooltips have `visible: false` - hijacking works but tooltips remain hidden
+- 🔄 **Git Restore**: Core script restored to stable v1.5.24 state due to accumulated syntax errors
+- 🧹 **Dev Script Cleaned**: Manually cleaned out Dev script to create clean baseline for tooltip development
+- 🎯 **Clean Slate Ready**: Dev script empty, ready for fresh custom tooltip implementation
+- 📋 **Baseline Documented**: Clean state documented for future restoration
+- 🛡️ **Stable Backups Created**: User copied current Dev content to stable backup location
+
+### 🧪 Tooltip Hijacking Test Results (v1.1.2)
+- ✅ **Found 55 TNT elements** - All resource cells detected successfully
+- ✅ **Hijack installation confirmed** - Green indicator showed "🧪 TNT Dev: Tooltip Hijacking Active"
+- ✅ **Manual triggers working** - Mouse hover events properly attached to TNT elements
+- ✅ **Enhancement logic working** - Console showed "✅ Enhancing TNT element tooltip!" for each hover
+- ✅ **Data access working** - Successfully accessed Ikariam's native resource data
+- ❌ **Tooltips not visible** - Despite successful hijacking and enhancement, tooltips remain hidden
+- 🔍 **Root cause identified**: Ikariam's `bindBubbleTip` creates tooltips but sets them to invisible
 
 ### 🏗️ Architecture Improvements
-- **Core Script (v1.5.31)**: Production-ready, runs independently in its own memory space
-- **Dev Script (v1.0.2)**: Development tools, separate `tnt` object, includes tooltip testing
-- **Documentation**: Properly organized under `docs/` with consistent lowercase naming
-- **File Structure**: Clean organization following modern conventions
+- **Core Script (v1.5.24)**: Production-ready, runs independently in its own memory space
+- **Dev Script**: Clean state, manually cleaned out for fresh tooltip development
+- **Command System**: 20+ commands for comprehensive project management
+- **Backup System**: Versioned backups under `/backup/core/` and `/backup/dev/`
+- **Documentation**: Clean, current, with deprecated systems removed
+- **File Structure**: Organized, no deprecated folders or files
+- **Project Root**: Clean, only essential files remain
 
 ### 🔧 Technical Details
 - Scripts run in isolated memory spaces - cannot directly call each other
@@ -24,9 +69,11 @@
 - Always test scripts separately to ensure independence
 
 ### 🚀 Ready for Development
-- Tooltip system investigation using `tntTestTooltip()` function
-- Ikariam's native `bindBubbleTip` integration
-- Enhanced user experience features
+- ✅ **Tooltip System Investigation**: Native `bindBubbleTip` method confirmed working
+- ✅ **Command System Active**: Full backup/restore/version management available
+- ✅ **Versioned Backups**: Safe development with complete history preservation
+- 🎯 **Tooltip Enhancement Implementation**: Ready to build enhanced tooltips
+- 📊 **Enhanced User Experience**: Can add detailed information to resource tables
 
 ---
 
