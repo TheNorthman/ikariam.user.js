@@ -84,21 +84,21 @@ The TNT Collection uses a **modular development approach** that splits functiona
 - **🔄 Update URL dependency**: Userscript managers expect file in root
 - **📦 Merge carefully**: All dev functionality must work in single-file format
 
+### URL Management - IMPORTANT
+- **ALL scripts** (Core, Dev, Styles) must point to production URLs
+- **Download URL**: Always `https://github.com/.../tnt.collection.user.js`
+- **Update URL**: Always `https://github.com/.../tnt.collection.user.js`
+- **Reason**: Core/Dev are local development files, not available online
+- **Users need**: Production script for updates, even during development
+
 ### Development Organization
 - **📂 All dev files in `/dev/`**: Easy to find and work with
 - **🎨 Style management**: Both code and config together
 - **🧪 Clean workspace**: Dev environment ready for experiments
 - **📋 Easy access**: Style documentation right with implementation
+- **🔗 Consistent URLs**: All development scripts point to production for updates
 
 ---
-*This organization balances user requirements (simple root distribution) with developer needs (organized development environment).* 🏗️
-- **🎯 Result**: Much more stable development experience
-
-### Distribution File Importance
-- **🎯 User-facing file**: `tnt.collection.user.js` is what users actually install
-- **🔄 Update mechanism**: Must point to correct update URL
-- **📦 Merge carefully**: All functionality must work in single-file format
-- **🧪 Test independently**: Verify merged file works without dev dependencies
-
+*This organization balances user requirements (simple root distribution) with developer needs (organized development environment) while ensuring proper update mechanisms.*
 ---
 *This modular approach enables stable development while maintaining a clean, single-file distribution for users.* 🏗️

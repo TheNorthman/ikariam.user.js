@@ -48,4 +48,4 @@ MIT License - See project files for details.
 
 **Version**: Production v1.5.22 | Core v1.5.24 | Dev v1.0.2  
 **Compatibility**: All modern browsers with userscript manager support  
-**Last Updated**: 2025-06-15
+**Last Updated**: 2025-06-16

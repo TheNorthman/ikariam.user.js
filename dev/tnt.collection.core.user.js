@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection Core
-// @version      1.5.24
+// @version      1.5.26
 // @namespace    tnt.collection.core
 // @author       Ronny Jespersen
 // @description  TNT Collection Core - Stable functionality for Ikariam enhancements
@@ -13,8 +13,8 @@
 // @grant        GM_setValue
 // @grant        GM_log
 // @grant        GM_xmlhttpRequest
-// @downloadURL  https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.core.user.js
-// @updateURL    https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.core.user.js
+// @downloadURL  https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
+// @updateURL    https://github.com/TheNorthman/ikariam.user.js/raw/refs/heads/main/tnt.collection.user.js
 // ==/UserScript==
 
 // ===== AI-NOTICE: IMPORTANT FOR AI TOOLS - HUMAN SUPERVISION REQUIRED FOR THIS SECTION =====
@@ -518,6 +518,426 @@ const tnt = {
         }
     },
 
+    // Add missing functions that are called but not defined
+    all() {
+        // Common functionality that runs on all pages
+        const settings = this.settings.getFeatureSettings();
+
+        // Apply global UI modifications
+        if (settings.removePremiumOffers) {
+            $('.premiumOfferBox').hide();
+        }
+
+        // Show city levels on islands if enabled
+        if (settings.showCityLvl && $("body").attr("id") === "island") {
+            this.showCityLevels();
+        }
+    },
+
+    island() {
+        // Island-specific functionality
+        tnt.core.debug.log('Island view loaded');
+
+        // Show city levels if setting is enabled
+        if (tnt.settings.get("islandShowCityLvl", true)) {
+            this.showCityLevels();
+        }
+    },
+
+    city() {
+        // City-specific functionality
+        tnt.core.debug.log('City view loaded');
+
+        // Apply city-specific modifications
+        const settings = tnt.settings.getFeatureSettings();
+        if (settings.removeFlyingShop) {
+            $('.premiumOfferBox').hide();
+        }
+    },
+
+    world() {
+        // World map specific functionality
+        tnt.core.debug.log('World map loaded');
+    },
+
+    showCityLevels() {
+        // Show city levels on island view
+        if ($("body").attr("id") !== "island") return;
+
+        // Add level displays to cities on the island
+        $('.city').each(function () {
+            const $city = $(this);
+            if ($city.find('.tntLvl').length === 0) {
+                // Try to extract level from city data or DOM
+                const levelText = $city.find('.level').text() || '1';
+                const level = levelText.match(/\d+/)?.[0] || '1';
+
+                $city.append(`<div class="tntLvl">${level}</div>`);
+            }
+        });
+    },
+
+    // Table builder - complete implementation matching working HTML structure
+    tableBuilder: {
+        buildTable(type) {
+            if (type === 'resources') {
+                return this.buildResourceTable();
+            } else if (type === 'buildings') {
+                return this.buildBuildingTable();
+            }
+            return '';
+        },
+
+        buildResourceTable() {
+            const cities = tnt.data.storage.resources.city || {};
+            const sortedCityIds = tnt.dataCollector.sortCities();
+            const settings = tnt.settings.getResourceDisplaySettings();
+            const currentCityId = tnt.get.cityId();
+
+            if (sortedCityIds.length === 0) {
+                return '<div>No city data available</div>';
+            }
+
+            let html = '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
+            
+            // Category header row - buttons go inside the first cell
+            html += '<tr class="tnt_category_header">';
+            html += '<th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;">';
+            html += '<span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="position:absolute;left:2px;top:2px;"></span>';
+            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span>';
+            html += '<span class="tnt_refresh_btn" title="Refresh all cities" style="position:absolute;right:25px;top:2px;"></span>';
+            html += '</th>';
+            
+            // City Info category span
+            let cityInfoSpan = 1; // Town Hall always visible
+            if (settings.showPopulation) cityInfoSpan++;
+            if (settings.showCitizens) cityInfoSpan++;
+            html += `<th colspan="${cityInfoSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>`;
+            
+            // Resources category span
+            let resourcesSpan = 0;
+            if (settings.showWood) resourcesSpan++;
+            if (settings.showWine) resourcesSpan++;
+            if (settings.showMarble) resourcesSpan++;
+            if (settings.showCrystal) resourcesSpan++;
+            if (settings.showSulfur) resourcesSpan++;
+            if (resourcesSpan > 0) {
+                html += `<th colspan="${resourcesSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resources</th>`;
+            }
+            html += '</tr>';
+
+            // Subcategory header row
+            html += '<tr class="tnt_subcategory_header">';
+            html += '<th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+            html += '<div style="position:relative; min-width:120px; text-align:center;">';
+            html += '<span style="display:inline-block; text-align:center; min-width:60px;">City</span>';
+            html += '</div></th>';
+            
+            // Town Hall header
+            html += '<th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+            html += '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&buildingId=0&helpId=1\');return false;" title="Learn more about Town Hall...">';
+            html += '<img class="tnt_resource_icon tnt_building_icon" title="Town Hall" src="/cdn/all/both/img/city/townhall_l.png">';
+            html += '</a></th>';
+            
+            // Optional columns
+            if (settings.showPopulation) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon('population') + '</th>';
+            }
+            if (settings.showCitizens) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon('citizens') + '</th>';
+            }
+            if (settings.showWood) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon(0) + '</th>';
+            }
+            if (settings.showWine) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon(1) + '</th>';
+            }
+            if (settings.showMarble) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon(2) + '</th>';
+            }
+            if (settings.showCrystal) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon(3) + '</th>';
+            }
+            if (settings.showSulfur) {
+                html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                html += tnt.dataCollector.getIcon(4) + '</th>';
+            }
+            html += '</tr>';
+
+            // Data rows
+            sortedCityIds.forEach(cityId => {
+                const city = cities[cityId];
+                if (!city) return;
+
+                const isCurrentCity = (cityId == currentCityId);
+                const hasConstruction = city.hasConstruction;
+                const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
+                
+                html += `<tr${rowClass}>`;
+                
+                // City name cell
+                const constructionClass = hasConstruction ? ' tnt_construction' : '';
+                html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
+                html += `<a onclick="$('#dropDown_js_citySelectContainer li[selectValue=\\"${cityId}\\"]').trigger('click'); return false;">`;
+                html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
+                html += '</a></td>';
+                
+                // Town Hall level
+                let townHallLevel = '-';
+                if (city.buildings && Array.isArray(city.buildings['townHall']) && city.buildings['townHall'].length > 0) {
+                    townHallLevel = city.buildings['townHall'].reduce((acc, b) => acc + (parseInt(b.level) || 0), 0);
+                }
+                html += `<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">${townHallLevel}</td>`;
+                
+                // Optional data columns
+                if (settings.showPopulation) {
+                    const val = parseInt(Math.round(city.population)).toLocaleString();
+                    html += `<td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">${val}</td>`;
+                }
+                if (settings.showCitizens) {
+                    const val = parseInt(Math.round(city.citizens)).toLocaleString();
+                    html += `<td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">${val}</td>`;
+                }
+                if (settings.showWood) {
+                    const cssClass = tnt.dataCollector.checkMinMax(city, 0);
+                    const production = tnt.calc.production(cityId, 24).wood;
+                    html += `<td class="tnt_wood${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="${production}">${city.wood.toLocaleString()}</span></td>`;
+                }
+                if (settings.showWine) {
+                    const cssClass = tnt.dataCollector.checkMinMax(city, 1);
+                    const production = tnt.calc.production(cityId, 24).wine;
+                    const fontWeight = city.producedTradegood == 1 ? 'font-weight:bold;' : '';
+                    html += `<td class="tnt_wine${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${fontWeight}"><span title="${production}">${city.wine.toLocaleString()}</span></td>`;
+                }
+                if (settings.showMarble) {
+                    const cssClass = tnt.dataCollector.checkMinMax(city, 2);
+                    const production = tnt.calc.production(cityId, 24).marble;
+                    const fontWeight = city.producedTradegood == 2 ? 'font-weight:bold;' : '';
+                    html += `<td class="tnt_marble${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${fontWeight}"><span title="${production}">${city.marble.toLocaleString()}</span></td>`;
+                }
+                if (settings.showCrystal) {
+                    const cssClass = tnt.dataCollector.checkMinMax(city, 3);
+                    const production = tnt.calc.production(cityId, 24).crystal;
+                    const fontWeight = city.producedTradegood == 3 ? 'font-weight:bold;' : '';
+                    html += `<td class="tnt_crystal${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${fontWeight}"><span title="${production}">${city.crystal.toLocaleString()}</span></td>`;
+                }
+                if (settings.showSulfur) {
+                    const cssClass = tnt.dataCollector.checkMinMax(city, 4);
+                    const production = tnt.calc.production(cityId, 24).sulfur;
+                    const fontWeight = city.producedTradegood == 4 ? 'font-weight:bold;' : '';
+                    html += `<td class="tnt_sulfur${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${fontWeight}"><span title="${production}">${city.sulfur.toLocaleString()}</span></td>`;
+                }
+                
+                html += '</tr>';
+            });
+
+            // Totals row
+            const totals = tnt.dataCollector.calculateTotals();
+            html += '<tr>';
+            html += '<td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>';
+            html += '<td style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>';
+            
+            if (settings.showPopulation) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.population.toLocaleString()}</td>`;
+            }
+            if (settings.showCitizens) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.citizens.toLocaleString()}</td>`;
+            }
+            if (settings.showWood) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.wood.toLocaleString()}</td>`;
+            }
+            if (settings.showWine) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.wine.toLocaleString()}</td>`;
+            }
+            if (settings.showMarble) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.marble.toLocaleString()}</td>`;
+            }
+            if (settings.showCrystal) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.crystal.toLocaleString()}</td>`;
+            }
+            if (settings.showSulfur) {
+                html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.sulfur.toLocaleString()}</td>`;
+            }
+            html += '</tr>';
+
+            html += '</tbody></table>';
+            return html;
+        },
+
+        buildBuildingTable() {
+            const cities = tnt.data.storage.resources.city || {};
+            const sortedCityIds = tnt.dataCollector.sortCities();
+            const currentCityId = tnt.get.cityId();
+            const buildingDefs = tnt.dataCollector.getBuildingDefinitions();
+            const mergedColumns = tnt.dataCollector.getMergedBuildingColumns(buildingDefs);
+            const categorySpans = tnt.dataCollector.calculateCategorySpans(mergedColumns);
+
+            if (sortedCityIds.length === 0) {
+                return '<div>No city data available</div>';
+            }
+
+            let html = '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
+            
+            // Category header row - buttons go inside the first cell  
+            html += '<tr class="tnt_category_header">';
+            html += '<th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;">';
+            html += '<span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="position:absolute;left:2px;top:2px;"></span>';
+            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span>';
+            html += '<span class="tnt_refresh_btn" title="Refresh all cities" style="position:absolute;right:25px;top:2px;"></span>';
+            html += '</th>';
+            
+            // Building category headers
+            Object.entries(categorySpans).forEach(([category, span]) => {
+                if (span > 0) {
+                    let displayName = category.replace(/([A-Z])/g, ' $1')
+                        .split(' ')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
+                    html += `<th colspan="${span}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">${displayName}</th>`;
+                }
+            });
+            html += '</tr>';
+
+            // Subcategory header row
+            html += '<tr class="tnt_subcategory_header">';
+            html += '<th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+            html += '<div style="position:relative; min-width:120px; text-align:center;">';
+            html += '<span style="display:inline-block; text-align:center; min-width:60px;">City</span>';
+            html += '</div></th>';
+            
+            // Building column headers
+            mergedColumns.forEach(building => {
+                if (building.key === 'palaceOrColony') {
+                    html += '<th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                    html += `<a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&buildingId=11&helpId=1');return false;" title="Learn more about Palace...">`;
+                    html += `<img class="tnt_resource_icon tnt_building_icon" title="Palace" src="${building.icon}">`;
+                    html += '</a>';
+                    html += `<a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&buildingId=17&helpId=1');return false;" title="Learn more about Governor's Residence...">`;
+                    html += `<img class="tnt_resource_icon tnt_building_icon" title="Governor's Residence" src="${building.icon2}">`;
+                    html += '</a></th>';
+                } else {
+                    html += '<th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
+                    html += `<a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&buildingId=${building.buildingId}&helpId=${building.helpId}');return false;" title="Learn more about ${building.name}...">`;
+                    html += `<img class="tnt_resource_icon tnt_building_icon" title="${building.name}" src="${building.icon}">`;
+                    html += '</a></th>';
+                }
+            });
+            html += '</tr>';
+
+            // Data rows
+            sortedCityIds.forEach(cityId => {
+                const city = cities[cityId];
+                if (!city) return;
+
+                const isCurrentCity = (cityId == currentCityId);
+                const hasConstruction = city.hasConstruction;
+                const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
+                
+                html += `<tr${rowClass}>`;
+                
+                // City name cell
+                const constructionClass = hasConstruction ? ' tnt_construction' : '';
+                html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
+                html += `<a onclick="$('#dropDown_js_citySelectContainer li[selectValue=\\"${cityId}\\"]').trigger('click'); return false;">`;
+                html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
+                html += '</a></td>';
+                
+                // Building level cells
+                mergedColumns.forEach(building => {
+                    const cityBuildings = city.buildings || {};
+                    if (building.key === 'palaceOrColony') {
+                        const palaceArr = Array.isArray(cityBuildings['palace']) ? cityBuildings['palace'] : [];
+                        const colonyArr = Array.isArray(cityBuildings['palaceColony']) ? cityBuildings['palaceColony'] : [];
+                        const buildingData = palaceArr.concat(colonyArr);
+
+                        if (buildingData.length > 0) {
+                            const sumLevel = buildingData.reduce((acc, building) => acc + (parseInt(building.level) || 0), 0);
+                            const tooltip = buildingData.map(building =>
+                                (building.name === 'palace' ? 'Palace' : "Governor's Residence") +
+                                ' (Pos ' + building.position + '): lvl ' + building.level
+                            ).join('\\n');
+                            html += `<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="${tooltip.replace(/"/g, '&quot;')}">${sumLevel}</td>`;
+                        } else {
+                            html += '<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">-</td>';
+                        }
+                    } else {
+                        const arr = cityBuildings[building.key];
+                        if (Array.isArray(arr) && arr.length > 0) {
+                            const sumLevel = arr.reduce((acc, building) => acc + (building.level || 0), 0);
+                            const tooltip = arr.map(building => {
+                                let text = 'Pos ' + building.position + ': lvl ' + building.level;
+                                if (building.underConstruction) {
+                                    text += ' (Upgrading from ' + building.currentLevel + ' to ' + building.targetLevel + ')';
+                                }
+                                return text;
+                            }).join('\\n');
+                            const bgColor = arr.some(building => building.underConstruction) ? '#80404050' : '#fdf7dd';
+                            html += `<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:${bgColor};" title="${tooltip.replace(/"/g, '&quot;')}">${sumLevel}</td>`;
+                        } else {
+                            html += '<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>';
+                        }
+                    }
+                });
+                
+                html += '</tr>';
+            });
+
+            // Total row
+            html += '<tr>';
+            html += '<td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>';
+            mergedColumns.forEach(() => {
+                html += '<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>';
+            });
+            html += '</tr>';
+
+            html += '</tbody></table>';
+            return html;
+        },
+
+        attachEventHandlers() {
+            // Panel minimize/maximize - target the spans inside the table
+            $('.tnt_panel_minimize_btn').off('click').on('click', function () {
+                const $panel = $('#tnt_info_resources');
+                const $btn = $(this);
+
+                if ($panel.hasClass('minimized')) {
+                    $panel.removeClass('minimized');
+                    $btn.removeClass('tnt_foreward').addClass('tnt_back');
+                } else {
+                    $panel.addClass('minimized');
+                    $btn.removeClass('tnt_back').addClass('tnt_foreward');
+                }
+            });
+
+            // Toggle between resources/buildings tables - target the spans inside the table
+            $('.tnt_table_toggle_btn').off('click').on('click', function () {
+                const $resourceContent = $('#tnt_info_resources_content');
+                const $buildingContent = $('#tnt_info_buildings_content');
+
+                if ($resourceContent.is(':visible')) {
+                    $resourceContent.hide();
+                    $buildingContent.show();
+                    $(this).addClass('active');
+                } else {
+                    $buildingContent.hide();
+                    $resourceContent.show();
+                    $(this).removeClass('active');
+                }
+            });
+
+            // Refresh all cities button - target the spans inside the table
+            $('.tnt_refresh_btn').off('click').on('click', function () {
+                tnt.citySwitcher.start();
+            });
+        }
+    },
+
     // Main data structure to hold all data
     data: {
         ikariam: {
@@ -585,17 +1005,20 @@ const tnt = {
 
         ajax: {
             send(data, url = tnt.url.update, callback = null) {
-                tnt.core.debug.log('Data length: ' + JSON.stringify(data).length, 3);
+                // Remove noisy debug logging
+                // tnt.core.debug.log('Data length: ' + JSON.stringify(data).length, 3);
                 GM_xmlhttpRequest({
                     url, method: 'POST',
                     data: "data=" + encodeURIComponent(JSON.stringify(data)),
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     onload: resp => {
-                        tnt.core.debug.dir(resp.responseText, 5);
+                        // Remove noisy debug logging
+                        // tnt.core.debug.dir(resp.responseText, 5);
                         if (callback) callback();
                     },
                     onerror: (error) => {
-                        tnt.core.debug.log("AJAX Error: " + error.message, 1);
+                        // Keep error logging but make it cleaner
+                        console.error("TNT AJAX Error:", error.message);
                     }
                 });
             }
@@ -603,10 +1026,26 @@ const tnt = {
 
         debug: {
             log(val) {
-                if (tnt.settings.debug.enable) console.log(val);
+                // Reduce debug noise - only log important messages
+                if (tnt.settings.debug.enable) {
+                    // Filter out excessive debug messages
+                    if (typeof val === 'string' && (
+                        val.includes('Error in safeGet') ||
+                        val.includes('Using fallback city ID') ||
+                        val.includes('updateGlobalData') ||
+                        val.includes('updateBackgroundData') ||
+                        val.includes('changeView')
+                    )) {
+                        return; // Skip these noisy debug messages
+                    }
+                    console.log(val);
+                }
             },
             dir(obj, level = 0) {
-                if (tnt.settings.debug.enable) console.dir(obj);
+                // Only show directory output for level 0 (most important)
+                if (tnt.settings.debug.enable && level === 0) {
+                    console.dir(obj);
+                }
             }
         },
 
@@ -807,6 +1246,12 @@ const tnt = {
                 return;
             }
 
+            // 🔧 FIX: Only collect data for own cities
+            if (!tnt.game.city.isOwn()) {
+                tnt.core.debug.log(`Skipping data collection for non-own city: ${currentCityId}`);
+                return;
+            }
+
             const prev = $.extend(true, {}, tnt.data.storage.resources.city[currentCityId] || {});
 
             const cityData = {
@@ -917,11 +1362,13 @@ const tnt = {
         },
 
         show() {
-            if (tnt.settings.getResourceDisplaySettings().showResources && $("body").attr("id") == "city") {
+            // 🔧 FIX: Only show resource tables for own cities
+            if (tnt.settings.getResourceDisplaySettings().showResources &&
+                $("body").attr("id") == "city" &&
+                tnt.game.city.isOwn()) {
+
                 if ($('#tnt_info_resources').length === 0) {
-                    $('body').append(
-                        tnt.template.resources.replace('<span class="tnt_panel_minimize_btn tnt_back"></span>', '')
-                    );
+                    $('body').append(tnt.template.resources);
                 }
 
                 $('#tnt_info_resources_content').empty();
@@ -1203,12 +1650,13 @@ const tnt = {
             const cities = this.cityList();
             const cityIds = Object.keys(cities);
             if (cityIds.length > 0) {
-                tnt.core.debug.log('Using fallback city ID: ' + cityIds[0]);
+                // Clean up debug logging
+                // tnt.core.debug.log('Using fallback city ID: ' + cityIds[0]);
                 return cityIds[0];
             }
 
-            // Final validation
-            tnt.core.debug.log('No valid city ID found');
+            // Clean up debug logging - only log real errors
+            console.warn('TNT: No valid city ID found');
             return null;
         },
 
@@ -1248,6 +1696,16 @@ const tnt = {
         wineSpending: () => tnt.game.resources.getCapacity().wineSpending,
         construction: () => tnt.utils.hasConstruction()
     },
+
+    // Add missing calc object that tableBuilder expects
+    calc: {
+        production: (cityID, hours) => tnt.utils.calculateProduction(cityID, hours)
+    },
+
+    // Add missing has object 
+    has: {
+        construction: () => tnt.utils.hasConstruction()
+    }
 };
 
 $(document).ready(() => tnt.core.init());
