@@ -213,7 +213,6 @@ tnt.collection/
 BACKUP DEV
 UPDATE VERSION CORE
 BACKUP BOTH
-```
 
 ### Command Safety
 - **Backup commands** - Only executed when explicitly requested
@@ -252,3 +251,51 @@ See: `docs/development/command-system.md`
 - **Documentation**: Clean, current, no deprecated references
 - **PowerShell Integration**: File watcher system with approved verbs
 - **Project Structure**: Organized, maintainable, ready for development
+
+## 🔧 **PowerShell Command Formatting Requirements**
+
+### **Mandatory Line Endings**
+All PowerShell commands in documentation and command responses MUST include proper line endings:
+
+```powershell
+# Example command
+Get-ChildItem "folder" | Select-Object Name
+
+```
+
+**Key Requirements:**
+- ✅ **Always include blank line after closing backticks**
+- ✅ **Use CRLF/LF line endings for proper execution**
+- ✅ **Include error handling with `-ErrorAction SilentlyContinue`**
+- ✅ **Add verification commands to show results**
+
+### **Example Violations**
+❌ **Missing line ending**:
+```powershell
+Remove-Item "file.txt" -Force
+```
+**Problem**: No blank line after closing backticks
+
+❌ **No error handling**:
+```powershell
+Remove-Item "file.txt"
+
+```
+**Problem**: Will fail if file doesn't exist
+
+### **Correct Format**
+✅ **Proper formatting**:
+```powershell
+# Remove file with error handling
+Remove-Item "file.txt" -Force -ErrorAction SilentlyContinue
+
+# Verify results
+Test-Path "file.txt"
+
+```
+
+### **Why This Matters**
+- **Command execution**: Improper line endings prevent PowerShell commands from running
+- **User experience**: Users expect copy-paste commands to work immediately
+- **Documentation quality**: Proper formatting shows attention to detail
+- **Automation**: Scripts and command sequences depend on correct formatting

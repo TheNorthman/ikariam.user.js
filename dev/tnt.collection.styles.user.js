@@ -25,23 +25,32 @@
 // =============================================================
 
 GM_addStyle(`
-    /* Show level styles */
+    /* Show level styles - using table background color */
     .tntLvl{
-        position:relative;
-        top:10px;
-        left:10px;
-        color:black;
-        line-height:13px;
-        background:gold;
-        font-size:9px;
-        font-weight:bold;
-        text-align:center;
-        vertical-align:middle;
-        height: 14px;
-        width: 14px;
-        border-radius: 50%;
-        border: 1px solid #000;
-        display: inline-block;
+        position: absolute !important;
+        top: 32px !important;
+        left: 40px !important;
+        color: #000 !important;
+        line-height: 14px !important;
+        background-color: #DBBE8C !important;
+        font-size: 9px !important;
+        font-weight: bold !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        height: 16px !important;
+        width: 16px !important;
+        border-radius: 50% !important;
+        border: 1px solid #000 !important;
+        display: inline-block !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+        z-index: 1000 !important;
+        pointer-events: none !important;
+    }
+    
+    .tntLvl:hover {
+        background-color: #faeac6 !important;
+        transform: scale(1.05) !important;
+        transition: all 0.2s ease !important;
     }
     /* TNT table styles with higher specificity - override Ikariam's .table01 styles */
     body #tnt_info_resources #tnt_resource_table,

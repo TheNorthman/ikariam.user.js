@@ -47,8 +47,8 @@ const tnt = {
 
     init() {
         console.log('[TNT-Dev] Initializing TNT Collection Development Environment');
-        console.log('[TNT-Dev] Version:', tntDev.version);
-        console.log('[TNT-Dev] Core TNT Version:', typeof tnt !== 'undefined' ? tnt.version : 'Not loaded');
+        console.log('[TNT-Dev] Version:', tnt.version); // ✅ FIXED: Use tnt.version, not tntDev.version
+        console.log('[TNT-Dev] Core TNT Version:', typeof window.tnt !== 'undefined' ? window.tnt.version : 'Not loaded');
     },
 
     // Add modules/functions here as needed for development

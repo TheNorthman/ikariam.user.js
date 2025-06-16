@@ -550,9 +550,18 @@ const tnt = {
 
         // Apply city-specific modifications
         const settings = tnt.settings.getFeatureSettings();
+
+        // Remove premium offers if setting is enabled
         if (settings.removeFlyingShop) {
             $('.premiumOfferBox').hide();
         }
+
+        // Remove the expandable premium offers on the left
+        if (settings.removeFlyingShop) {
+            $('.expandable.resourceShop, .expandable.slot1').hide();
+        }
+
+
     },
 
     world() {
@@ -564,17 +573,27 @@ const tnt = {
         // Show city levels on island view
         if ($("body").attr("id") !== "island") return;
 
-        // Add level displays to cities on the island
-        $('.city').each(function () {
-            const $city = $(this);
-            if ($city.find('.tntLvl').length === 0) {
-                // Try to extract level from city data or DOM
-                const levelText = $city.find('.level').text() || '1';
-                const level = levelText.match(/\d+/)?.[0] || '1';
+        // Simple loop through city positions 0-16 (actual city slots only)
+        for (let i = 0; i <= 16; i++) {
+            const $cityLocation = $(`#cityLocation${i}`);
 
-                $city.append(`<div class="tntLvl">${level}</div>`);
+            // Skip if this city location doesn't exist or already has level indicator
+            if ($cityLocation.length === 0 || $cityLocation.find('.tntLvl').length > 0) {
+                continue;
             }
-        });
+
+            // Only add indicators to actual player cities (not buildplaces, barbarian village, etc.)
+            if ($cityLocation.hasClass('city')) {
+                // Extract level from CSS classes - simple and reliable
+                const classes = $cityLocation.attr('class') || '';
+                const levelMatch = classes.match(/level(\d+)/);
+                const level = levelMatch ? levelMatch[1] : '?';
+
+                // Create and append level indicator
+                const $levelIndicator = $('<div class="tntLvl">' + level + '</div>');
+                $cityLocation.append($levelIndicator);
+            }
+        }
     },
 
     // Table builder - complete implementation matching working HTML structure
@@ -599,7 +618,7 @@ const tnt = {
             }
 
             let html = '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
-            
+
             // Category header row - buttons go inside the first cell
             html += '<tr class="tnt_category_header">';
             html += '<th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;">';
@@ -607,13 +626,13 @@ const tnt = {
             html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span>';
             html += '<span class="tnt_refresh_btn" title="Refresh all cities" style="position:absolute;right:25px;top:2px;"></span>';
             html += '</th>';
-            
+
             // City Info category span
             let cityInfoSpan = 1; // Town Hall always visible
             if (settings.showPopulation) cityInfoSpan++;
             if (settings.showCitizens) cityInfoSpan++;
             html += `<th colspan="${cityInfoSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>`;
-            
+
             // Resources category span
             let resourcesSpan = 0;
             if (settings.showWood) resourcesSpan++;
@@ -632,13 +651,13 @@ const tnt = {
             html += '<div style="position:relative; min-width:120px; text-align:center;">';
             html += '<span style="display:inline-block; text-align:center; min-width:60px;">City</span>';
             html += '</div></th>';
-            
+
             // Town Hall header
             html += '<th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
             html += '<a href="#" onclick="ajaxHandlerCall(\'?view=buildingDetail&buildingId=0&helpId=1\');return false;" title="Learn more about Town Hall...">';
             html += '<img class="tnt_resource_icon tnt_building_icon" title="Town Hall" src="/cdn/all/both/img/city/townhall_l.png">';
             html += '</a></th>';
-            
+
             // Optional columns
             if (settings.showPopulation) {
                 html += '<th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
@@ -678,23 +697,23 @@ const tnt = {
                 const isCurrentCity = (cityId == currentCityId);
                 const hasConstruction = city.hasConstruction;
                 const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
-                
+
                 html += `<tr${rowClass}>`;
-                
+
                 // City name cell
                 const constructionClass = hasConstruction ? ' tnt_construction' : '';
                 html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
                 html += `<a onclick="$('#dropDown_js_citySelectContainer li[selectValue=\\"${cityId}\\"]').trigger('click'); return false;">`;
                 html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
                 html += '</a></td>';
-                
+
                 // Town Hall level
                 let townHallLevel = '-';
                 if (city.buildings && Array.isArray(city.buildings['townHall']) && city.buildings['townHall'].length > 0) {
                     townHallLevel = city.buildings['townHall'].reduce((acc, b) => acc + (parseInt(b.level) || 0), 0);
                 }
                 html += `<td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">${townHallLevel}</td>`;
-                
+
                 // Optional data columns
                 if (settings.showPopulation) {
                     const val = parseInt(Math.round(city.population)).toLocaleString();
@@ -733,7 +752,7 @@ const tnt = {
                     const fontWeight = city.producedTradegood == 4 ? 'font-weight:bold;' : '';
                     html += `<td class="tnt_sulfur${cssClass}" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;${fontWeight}"><span title="${production}">${city.sulfur.toLocaleString()}</span></td>`;
                 }
-                
+
                 html += '</tr>';
             });
 
@@ -742,7 +761,7 @@ const tnt = {
             html += '<tr>';
             html += '<td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>';
             html += '<td style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>';
-            
+
             if (settings.showPopulation) {
                 html += `<td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">${totals.population.toLocaleString()}</td>`;
             }
@@ -783,7 +802,7 @@ const tnt = {
             }
 
             let html = '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
-            
+
             // Category header row - buttons go inside the first cell  
             html += '<tr class="tnt_category_header">';
             html += '<th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;">';
@@ -791,7 +810,7 @@ const tnt = {
             html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span>';
             html += '<span class="tnt_refresh_btn" title="Refresh all cities" style="position:absolute;right:25px;top:2px;"></span>';
             html += '</th>';
-            
+
             // Building category headers
             Object.entries(categorySpans).forEach(([category, span]) => {
                 if (span > 0) {
@@ -810,7 +829,7 @@ const tnt = {
             html += '<div style="position:relative; min-width:120px; text-align:center;">';
             html += '<span style="display:inline-block; text-align:center; min-width:60px;">City</span>';
             html += '</div></th>';
-            
+
             // Building column headers
             mergedColumns.forEach(building => {
                 if (building.key === 'palaceOrColony') {
@@ -838,16 +857,16 @@ const tnt = {
                 const isCurrentCity = (cityId == currentCityId);
                 const hasConstruction = city.hasConstruction;
                 const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
-                
+
                 html += `<tr${rowClass}>`;
-                
+
                 // City name cell
                 const constructionClass = hasConstruction ? ' tnt_construction' : '';
                 html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
                 html += `<a onclick="$('#dropDown_js_citySelectContainer li[selectValue=\\"${cityId}\\"]').trigger('click'); return false;">`;
                 html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
                 html += '</a></td>';
-                
+
                 // Building level cells
                 mergedColumns.forEach(building => {
                     const cityBuildings = city.buildings || {};
@@ -884,7 +903,7 @@ const tnt = {
                         }
                     }
                 });
-                
+
                 html += '</tr>';
             });
 

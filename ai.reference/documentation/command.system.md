@@ -282,6 +282,125 @@ Smallest: backup/dev/tnt.collection.dev.2025-06-14.01.user.js (2.1KB)
 #### `OPEN DEV [number]`
 **Purpose**: Display content of specific Dev backup for inspection
 
+### 🔄 **FILE ANALYSIS COMMANDS**
+
+#### `UPDATE_FILES`
+**Purpose**: Analyze files attached to the prompt and update AI internal memory with actual metrics  
+**Execution**: Immediate (when files are provided)  
+
+**🚨 CRITICAL BEHAVIOR REQUIREMENTS:**
+- **MUST** only analyze files explicitly attached to current prompt
+- **MUST** never reference cached information from previous conversations  
+- **MUST** show "No files provided" error when no files are attached
+- **MUST** report exact count of files analyzed
+- **MUST** never assume or fill in file data from memory
+
+**Process**:
+1. **Count attached files** - Verify how many files are actually provided
+2. **Analyze ONLY provided files** - Count actual lines, calculate file sizes
+3. **Report exact file count** - State how many files were analyzed
+4. **Update verification baselines** - Use real metrics instead of cached assumptions
+5. **Show error if none** - Display clear error message when no files provided
+
+**Usage**: Provide current files with the command to refresh AI memory
+
+**Mandatory Response Format**:
+```
+🔄 **Executing Command: UPDATE_FILES**
+
+### **File Analysis Results**
+
+**Analyzing ONLY the [X] files provided in current prompt and updating AI internal memory...**
+
+[File analysis for each provided file]
+
+### **Current File Status Summary**
+
+| File | Version | Lines | Size | Status |
+|------|---------|-------|------|--------|
+[Only files that were actually provided]
+
+**🎯 VERIFICATION: MEMORY SUCCESSFULLY UPDATED**
+
+**AI internal memory is now current with the [X] files you actually provided.**
+```
+
+**Example Output (with 4 files provided)**:
+```
+🔄 **Executing Command: UPDATE_FILES**
+
+### **File Analysis Results**
+
+**Analyzing ONLY the 4 files provided in current prompt and updating AI internal memory...**
+
+✅ **Core Script**: `dev/tnt.collection.core.user.js`
+   - **Lines**: 1714 (actual count from provided file)
+   - **Size**: 68.2KB (calculated from content)
+   - **Version**: 1.5.26 (from @version header)
+   - **Status**: Complete implementation with all critical modules
+
+✅ **Styles Script**: `dev/tnt.collection.styles.user.js`
+   - **Lines**: 415 (actual count from provided file)
+   - **Size**: 16.8KB (calculated from content)
+   - **Version**: 1.0.0 (from @version header)
+   - **Status**: Complete CSS styling system
+
+✅ **Dev Script**: `dev/tnt.collection.dev.user.js`
+   - **Lines**: 82 (actual count from provided file)
+   - **Size**: 3.4KB (calculated from content)
+   - **Version**: 1.0.2 (from @version header)
+   - **Status**: Clean slate ready for development
+
+✅ **Styles Config**: `dev/styles.jsonc`
+   - **Lines**: 122 (actual count from provided file)
+   - **Size**: 7.2KB (calculated from content)
+   - **Type**: JSON configuration file
+
+### **Current File Status Summary**
+
+| File | Version | Lines | Size | Status |
+|------|---------|-------|------|--------|
+| Core Script | 1.5.26 | 1714 | 68.9KB | ✅ Complete & Working |
+| Styles Script | 1.0.0 | 415 | 16.8KB | ✅ Complete CSS System |
+| Dev Script | 1.0.2 | 82 | 3.4KB | ✅ Clean Slate Ready |
+| Styles Config | N/A | 122 | 7.2KB | ✅ Complete Styling Rules |
+
+**🎯 VERIFICATION: MEMORY SUCCESSFULLY UPDATED**
+
+**AI internal memory is now current with the 4 files you actually provided.**
+```
+
+**Example Output (no files provided)**:
+```
+🔄 **Executing Command: UPDATE_FILES**
+
+### **File Analysis Results**
+
+**Analyzing ONLY the files provided in current prompt and updating AI internal memory...**
+
+❌ **No files provided in current prompt**
+
+### **Current File Status Summary**
+
+| File | Version | Lines | Size | Status |
+|------|---------|-------|------|--------|
+| No files | N/A | 0 | 0KB | ❌ No files attached to analyze |
+
+**🚨 ERROR: No files provided for analysis**
+
+**AI internal memory should ONLY work with files explicitly attached to the current prompt. Since no files were provided, I should not reference any file data from memory cache.**
+```
+
+**🚨 ENFORCEMENT RULES:**
+- ✅ **Only analyzes files actually attached to the prompt**
+- ✅ **Reports "No files provided" if prompt has no files**
+- ✅ **Never uses cached file information from previous conversations**
+- ✅ **Forces dynamic analysis of provided content only**
+- ✅ **Always states exact number of files analyzed**
+- ❌ **FORBIDDEN: Analyzing files not provided in current prompt**
+- ❌ **FORBIDDEN: Using cached file data when no files provided**
+- ❌ **FORBIDDEN: Assuming file contents from memory**
+
 ## 📋 **DOCUMENTATION COMMANDS**
 
 #### `UPDATE_DOCS`
@@ -330,25 +449,116 @@ Status: SUCCESS/ERROR
 
 ## 🔧 Command Execution Rules
 
-### ✅ **Execute Immediately**
+### 🚨 **CRITICAL: Command Validation Requirements**
+
+**Commands will ONLY be executed if ALL of the following conditions are met:**
+
+1. **🎯 Each command must be on its own line**
+   - ✅ Valid: 
+     ```
+     BACKUP_CORE
+     UPDATE_VERSION_CORE
+     ```
+   - ✅ Valid: `UPDATE_FILES`
+   - ❌ Invalid: `UPDATE_FILES BACKUP_CORE` (multiple commands on same line)
+   - ❌ Invalid: `Look at this file!!!! :-) UPDATE_FILES`
+
+2. **🔤 Each command must be ALL UPPERCASE**
+   - ✅ Valid: `UPDATE_FILES`
+   - ✅ Valid: `BACKUP_CORE`
+   - ❌ Invalid: `update_files`
+   - ❌ Invalid: `Update_Files`
+   - ❌ Invalid: `backup_core`
+
+3. **📋 Each command must match exact format**
+   - ✅ Valid: `BACKUP_DEV`
+   - ✅ Valid: `LIST_BACKUPS_CORE`
+   - ❌ Invalid: `BACKUP THE DEV`
+   - ❌ Invalid: `LIST BACKUPS FOR CORE`
+
+4. **🚫 No surrounding text on the same line as a command**
+   - ✅ Valid: 
+     ```
+     BACKUP_CORE
+     LIST_BACKUPS_CORE
+     ```
+   - ❌ Invalid: `Please run BACKUP_CORE`
+   - ❌ Invalid: `BACKUP_CORE please`
+
+### ✅ **Execute Immediately** (when validation passes)
 - All VERSION commands
 - All LIST commands  
 - STATUS
 - All ANALYSIS commands (DIFF, HISTORY, SIZE REPORT)
 - VALIDATE BACKUPS
 - OPEN commands
+- **UPDATE_FILES**
 
-### ⚠️ **Execute Only When Explicitly Requested**
+### ⚠️ **Execute Only When Explicitly Requested** (when validation passes)
 - All BACKUP commands
 - All RESTORE commands
 - All CLEAN commands
 - MERGE DEV TO CORE
 
+### ❌ **NEVER Execute Commands When:**
+- Command is embedded in conversational text
+- Command is in mixed case or lowercase
+- Command is followed by explanatory text **on the same line**
+- Command is preceded by introductory text **on the same line**
+- Multiple commands appear **on the same line**
+- Command is part of a question or request
+
+### ✅ **VALID Multi-Command Examples**
+
+```
+✅ Multiple commands on separate lines:
+BACKUP_CORE
+UPDATE_VERSION_CORE
+LIST_BACKUPS_CORE
+
+✅ Single command:
+UPDATE_FILES
+
+✅ Multiple commands with blank lines:
+BACKUP_DEV
+
+UPDATE_VERSION_DEV
+
+STATUS
+```
+
+### ❌ **INVALID Multi-Command Examples**
+
+```
+❌ Multiple commands on same line:
+UPDATE_FILES BACKUP_CORE
+
+❌ Commands with surrounding text:
+Please run BACKUP_CORE
+And then UPDATE_VERSION_CORE
+
+❌ Mixed valid/invalid:
+BACKUP_CORE
+Please also run UPDATE_VERSION_CORE
+```
+
+### 🛡️ **AI Enforcement Protocol**
+
+Before executing ANY command, AI must verify:
+
+1. **🔍 Parse each line separately** - Treat each line as a potential individual command
+2. **🔤 Check case sensitivity** - Is each command 100% uppercase?
+3. **📋 Validate format** - Does each command match documented patterns?
+4. **🚫 Check for surrounding text** - Is there any other text on the same line as the command?
+5. **✅ Execute valid commands** - Process each valid command that passes all checks
+6. **❌ Skip invalid lines** - Treat invalid lines as conversational text
+
 ### 📋 **Command Format Requirements**
 - **ALL CAPS**: `BACKUP_DEV` not `backup dev`
 - **Exact match**: `BACKUP_DEV` not `BACKUP THE DEV`
-- **At prompt start**: "BACKUP_DEV please" works, "Please BACKUP_DEV" doesn't auto-execute
-- **Space separation**: Use single spaces between words
+- **Standalone only**: Command must be the ENTIRE prompt content
+- **No surrounding text**: No explanations, questions, or additional content
+- **Space separation**: Use single spaces between words in multi-word commands
 
 ## 🛡️ Safety Features
 
@@ -370,6 +580,89 @@ Status: SUCCESS/ERROR
 - Report any anomalies found
 - Suggest manual review when needed
 
+## 🛡️ **BACKUP VERIFICATION SYSTEM**
+
+### **CRITICAL REQUIREMENT**
+**ALL backup operations MUST include verification to ensure the backup is identical to the source file.**
+
+### **Verification Process**
+1. **Create backup** from source file
+2. **Compare files** byte-for-byte or line-for-line  
+3. **Report verification status** - PASS/FAIL
+4. **Only report success** if verification passes
+5. **Report specific differences** if verification fails
+
+### **Verification Methods**
+- **Line count comparison** - Must match exactly
+- **File size comparison** - Must match exactly  
+- **Content hash comparison** - Must match exactly
+- **Key function verification** - Critical functions must be present
+
+### **Command Response Format with Verification**
+```markdown
+### Executing Command: BACKUP_CORE
+
+**Creating**: backup/core/tnt.collection.core.{date}.{running number}.user.js
+**Source**: dev/tnt.collection.core.user.js (analyzing file...)
+**Status**: ✅ Backup created successfully
+
+**Verification Results**:
+✅ **File size**: [source size] → [backup size] (MATCH)
+✅ **Line count**: [source lines] → [backup lines] (MATCH) 
+✅ **Content hash**: SHA256 verified (IDENTICAL)
+✅ **Critical functions**: All tableBuilder, citySwitcher functions present
+✅ **Version header**: @version preserved
+
+🎯 **VERIFICATION: PASSED** - Backup is identical to source
+
+**Restore Command**:
+```powershell
+Copy-Item "backup\core\tnt.collection.core.{date}.{running number}.user.js" "dev\tnt.collection.core.user.js" -Force
+```
+```
+
+### **Failed Verification Response**
+```markdown
+### Executing Command: BACKUP_CORE
+
+**Creating**: backup/core/tnt.collection.core.{date}.{running number}.user.js
+**Source**: dev/tnt.collection.core.user.js (analyzing file...)
+**Status**: ❌ Backup verification FAILED
+
+**Verification Results**:
+✅ **File size**: [source size] → [backup size] (MATCH/MISMATCH)
+❌ **Line count**: [source lines] → [backup lines] (MISMATCH: difference details)
+❌ **Content differences detected**:
+   - Specific differences found during verification
+   - Missing or truncated sections identified
+
+🚨 **VERIFICATION: FAILED** - Backup is NOT identical to source
+
+**Action Required**: 
+- Review backup creation process
+- Check for truncation or corruption issues
+- Do NOT use this backup for restoration
+```
+
+### **Mandatory Verification Checks**
+1. **File Existence** - Backup file was actually created
+2. **Size Match** - Byte-for-byte size comparison
+3. **Line Count** - Exact line count comparison
+4. **Critical Content** - Key functions and objects present:
+   - `tnt.tableBuilder.buildResourceTable()`
+   - `tnt.tableBuilder.buildBuildingTable()`
+   - `tnt.citySwitcher.start()`
+   - `tnt.dataCollector.update()`
+   - `tnt.calc.production()`
+   - `tnt.has.construction()`
+
+### **Trust Rebuilding Protocol**
+- **Never report backup success** without verification
+- **Always show verification details** in command output
+- **Flag any discrepancies immediately**
+- **Provide specific difference details** when verification fails
+- **Update backup system** if verification consistently fails
+
 ## 📝 Command Templates
 
 ### **Backup Command Response**
@@ -382,154 +675,81 @@ Status: SUCCESS/ERROR
 **Source**: dev/tnt.collection.[target].user.js ([size]KB)
 **Status**: ✅ Backup created successfully
 
+**Cleanup PowerShell Commands**:
+```powershell
+# Verify backup was created successfully
+Test-Path "backup\[target]\tnt.collection.[target].2025-06-14.[X+1].user.js"
+
+# Show backup folder contents
+Get-ChildItem "backup\[target]\" | Sort-Object Name
+
+# Cleanup old backups if needed (keep last 5)
+Get-ChildItem "backup\[target]\*.user.js" | Sort-Object Name | Select-Object -SkipLast 5 | ForEach-Object { Write-Host "Would remove: $($_.Name)" }
+
+```
+
 **Restore Command**:
 ```powershell
 Copy-Item "backup\[target]\tnt.collection.[target].2025-06-14.[X+1].user.js" "dev\tnt.collection.[target].user.js" -Force
+
 ```
 ```
 
-### **Restore Command Response**
+### **File Organization Command Response**
 ```markdown
-### Executing Command: RESTORE [TARGET] [NUMBER]
+### Executing Command: [FILE_ORGANIZATION]
 
-**Searching**: backup/[target]/ for backup number [N]
-**Found**: tnt.collection.[target].2025-06-XX.[N].user.js ([size]KB)
-**Target**: dev/tnt.collection.[target].user.js
-**Status**: ✅ Restore completed successfully
+**Status**: ✅ File organization completed successfully
 
-**Current backup available**: Use BACKUP [TARGET] to create restore point
-```
-
-### **Version Update Response**
-```markdown
-### Executing Command: UPDATE VERSION [TARGET]
-
-**Target**: [target] script
-**Previous**: 1.5.24
-**New**: 1.5.25
-**Status**: ✅ Version updated successfully
-
-**Documentation Update**: Running UPDATE_DOCS to document version change...
-**Version Log**: Updated with new version milestone
-**Next**: Consider BACKUP [TARGET] to save this version
-```
-
-### **Backup Command Response with Documentation**
-```markdown
-### Executing Command: BACKUP [TARGET]
-
-**Creating**: backup/[target]/tnt.collection.[target].2025-06-14.[X+1].user.js
-**Status**: ✅ Backup created successfully
-
-**Documentation Update**: 
-- Updated backup status in project documentation
-- Recorded backup milestone in version log
-- Updated Command.Backup.Output with new backup entry
-
-**Available Actions**:
-[RESTORE [TARGET] [X+1]]  [LIST BACKUPS [TARGET]]  [VALIDATE BACKUPS]
-```
-
-## 💡 **ADDITIONAL COMMAND IDEAS**
-
-### 🎯 **Smart Workflow Commands**
-- `WORKFLOW_START` - Begin development workflow (backup current state, show next steps)
-- `WORKFLOW_SAVE` - Save current progress (backup + version increment)
-- `WORKFLOW_RESET` - Reset to last known good state
-- `WORKFLOW_COMPLETE` - Complete feature (backup, merge suggestions, documentation)
-
-### 🔄 **Automated Sequences**
-- `AUTO_BACKUP_ON_CHANGE` - Monitor file changes and auto-backup when modified
-- `DAILY_BACKUP` - Create daily snapshot backups
-- `SMART_RESTORE` - Restore with conflict detection and merge suggestions
-
-### 📊 **Enhanced Reports** 
-- `REPORT_DEVELOPMENT` - Generate development progress report
-- `REPORT_CHANGES` - Show what changed since last backup
-- `REPORT_RISKS` - Identify potential issues (large file changes, missing backups)
-- `REPORT_METRICS` - Development velocity, backup frequency, etc.
-
-### 🧪 **Development Helpers**
-- `CREATE_FEATURE_BRANCH` - Start new feature development with clean state
-- `TEST_ENVIRONMENT` - Set up isolated testing environment
-- `DEPLOY_PREVIEW` - Create preview of changes for testing
-- `ROLLBACK_FEATURE` - Remove feature and restore previous state
-
-### 🔗 **Integration Commands**
-- `SYNC_WITH_GIT` - Compare backup system with Git repository
-- `EXPORT_TO_GIT` - Convert backup to Git commit
-- `IMPORT_FROM_GIT` - Restore from Git commit to backup system
-- `BRIDGE_SYSTEMS` - Synchronize backup and Git systems
-
-### 📱 **Quick Access Commands**
-- `OPEN_CORE` - Open Core script in editor
-- `OPEN_DEV` - Open Dev script in editor  
-- `OPEN_DOCS` - Open documentation folder
-- `OPEN_REPORTS` - Open reports folder
-- `OPEN_BACKUPS` - Open backup folder
-
-### 🎨 **Report Enhancements**
-- **Folder structure**: `reports/{type}/{name}.{date}.md`
-- **PowerShell integration**: Executable buttons for file operations
-- **Double-click commands**: Underscore format for easy selection
-- **Smart organization**: Most important info at bottom
-- **Multiple report types**: Status, backups, validation, changes, etc.
-
-### 🔧 **Command Format Improvements**
-- **Underscore notation**: All commands use `COMMAND_TARGET_ACTION` format
-- **Auto-completion**: Predictable command patterns
-- **Contextual commands**: Commands adapt based on current project state
-- **Batch operations**: Execute multiple related commands together
-
-### 📋 **Report Types by Folder**
-```
-reports/
-├── status/           - STATUS command outputs
-├── backups/          - LIST_BACKUPS outputs  
-├── validation/       - VALIDATE_BACKUPS outputs
-├── changes/          - DIFF command outputs
-├── development/      - Development progress reports
-├── errors/           - Error reports and troubleshooting
-└── metrics/          - Performance and usage statistics
-```
-
-### 🎯 **Command Categories with PowerShell Integration**
-
-#### **File Operations** (PowerShell buttons)
+**Cleanup PowerShell Commands**:
 ```powershell
-# Open files directly
-code "dev\tnt.collection.dev.user.js"
-code "docs\development\command-system.md"
+# Remove deprecated files
+Remove-Item "path\to\deprecated\file.ext" -Force -ErrorAction SilentlyContinue
 
-# Navigate folders
-Set-Location "backup\core"
-explorer "reports\status"
+# Move files to correct locations
+if (Test-Path "source\path\file.ext") {
+    Move-Item "source\path\file.ext" "destination\path\file.ext" -Force
+}
 
-# File management
-Copy-Item "backup\dev\*.01.user.js" "dev\tnt.collection.dev.user.js"
+# Verify clean structure
+Write-Host "✅ Cleanup completed. Current structure:"
+Get-ChildItem "target\folder" -Recurse | Select-Object FullName
+
+```
 ```
 
-#### **Double-Click Commands** (Text selection)
-- BACKUP_DEV
-- LIST_BACKUPS_CORE  
-- UPDATE_VERSION_DEV
-- RESTORE_CORE_LATEST
-- VALIDATE_BACKUPS
+## 🔧 **CRITICAL: PowerShell Command Requirements**
 
-#### **Hybrid Approach Benefits**
-- **PowerShell buttons**: Direct file operations and system commands
-- **Double-click text**: AI command interface for project management
-- **Best of both worlds**: Native OS integration + AI intelligence
+**All file management commands MUST include PowerShell commands with proper formatting:**
 
-### 🚀 **Future Possibilities**
-- **Voice commands**: "Backup dev script"
-- **Hotkeys**: Ctrl+B for backup, Ctrl+R for restore
-- **Visual interface**: Command palette with search
-- **Automation**: Smart triggers based on file changes
-- **Integration**: VS Code extension with command buttons
+### **Required Elements**
+1. **Commands end with proper line termination** - Always include CRLF/LF after PowerShell blocks
+2. **Error handling** - Use `-ErrorAction SilentlyContinue` for cleanup operations
+3. **Verification steps** - Include commands to verify results
+4. **Clear formatting** - Use proper PowerShell syntax with backticks for code blocks
 
----
+### **Example of Proper Formatting**
+```powershell
+# Remove deprecated files
+Remove-Item "path\to\file.ext" -Force -ErrorAction SilentlyContinue
 
-**This command system provides reliable, safe, and comprehensive backup management for the TNT Collection project. All commands are documented with exact procedures and can be executed consistently.** 🎯
+# Verify results
+Get-ChildItem "target\folder" -Recurse | Select-Object FullName
 
-**Sweet dreams! The command system will be ready for testing when you wake up!** 😴✨
+```
+
+**Notice the blank line after the closing backticks - this is REQUIRED for proper command execution.**
+
+### **Common Mistakes to Avoid**
+❌ **Missing line ending after PowerShell block**:
+```powershell
+Get-ChildItem "folder"
+```
+**❌ No blank line - commands may not execute properly**
+
+✅ **Correct formatting with line ending**:
+```powershell
+Get-ChildItem "folder"
+
+```
+**✅ Proper blank line ensures command execution**

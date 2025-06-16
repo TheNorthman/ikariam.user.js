@@ -15,6 +15,14 @@
  * CRITICAL_TEMPLATE            → template.resources (in Core script)
  * CRITICAL_CALC_OBJECT         → tnt.calc (in Core script)
  * CRITICAL_HAS_OBJECT          → tnt.has (in Core script)
+ * 
+ * === SCOPE AND SIZE ===
+ * Core script: ~1700+ lines of comprehensive functionality
+ * - Complete table building system with category headers
+ * - Automated city switching with state management
+ * - Comprehensive data collection and storage
+ * - Full UI management and event handling
+ * - Game data integration and error handling
  */
 
 // ===== CITY SWITCHER MODULE =====
@@ -391,4 +399,9 @@ const CRITICAL_HAS_OBJECT = {
  * 4. Test thoroughly to ensure functionality works
  * 
  * Original names are documented above each module for easy reference.
+ */
+
+/**
+ * The code here represents ~1700+ lines of successful development and debugging.
+ * This is our insurance policy against losing critical functionality.
  */

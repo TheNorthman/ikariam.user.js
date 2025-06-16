@@ -11,6 +11,20 @@ This folder contains all development reference materials for the TNT Collection 
 
 ## 📂 Folder Structure
 
+```
+ai.reference/
+├── critical/
+│   ├── modules.js                    # Working code implementations (backup)
+│   ├── backup.verification.js       # Backup verification system
+│   └── working.table.structure.html # Reference HTML structure
+├── documentation/
+│   ├── command.system.md            # Complete command system
+│   ├── ai.memory.limitations.md     # AI memory handling
+│   ├── file.inclusion.system.md     # Future file inclusion concept
+│   └── problem.resolution.log.md    # Problem solving history
+└── README.md                        # This navigation file
+```
+
 ### `/critical/` - Essential Working Code ⚠️ **DO NOT MODIFY**
 - **`modules.js`** - Critical working modules with original name mapping
   - Complete `citySwitcher` implementation (automated city cycling)
