@@ -1426,68 +1426,39 @@ const tnt = {
 
         storage: {
             init() {
+                const scriptStartTime = performance.now();
+                console.log(`[TNT Timing] Script start: ${scriptStartTime.toFixed(2)}ms`);
+                
                 try {
                     const storedData = localStorage.getItem("tnt_storage");
-
+                    
                     if (storedData) {
                         const parsedData = JSON.parse(storedData);
-
-                        // Check if this is old storage structure
-                        if (parsedData.resources && !parsedData.city) {
-                            console.log('[TNT] Detected old storage structure - migrating to new format');
-
-                            // Migrate old structure to new structure with consistent singular naming
-                            const newStructure = {
-                                city: parsedData.resources?.city || {},
-                                foreign: {},
-                                spy: {},
-                                avatar: {
-                                    ambrosia: parsedData.ambrosia || 0,
-                                    gold: parsedData.gold || 0
-                                },
-                                settings: {
-                                    // Migrate notification data to settings.notification (singular)
-                                    notification: {
-                                        city: parsedData.notification?.cities || false,
-                                        military: parsedData.notification?.military || false,
-                                        militaryAlert: parsedData.notification?.militaryAlert || false,
-                                        scientist: parsedData.notification?.scientist || false,
-                                        diplomat: parsedData.notification?.diplomat || false
-                                    }
-                                }
-                            };
-
-                            // Apply migrated structure
-                            tnt.data.storage = newStructure;
-                            console.log('[TNT] Storage structure migration completed');
-                            console.log('[TNT] Migrated notification data:', newStructure.settings.notification);
-                            this.save();
-                        } else {
-                            // Use new structure directly - but ensure notifications are properly merged
+                        const storedVersion = parsedData.version;
+                        
+                        console.log(`[TNT Timing] Storage parsed: ${(performance.now() - scriptStartTime).toFixed(2)}ms`);
+                        
+                        // Simple version check - no complex migration
+                        if (storedVersion === tnt.version) {
+                            // Same version - use existing data
                             tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
-
-                            // Handle legacy notification data that might exist at root level
-                            if (parsedData.notification && !tnt.data.storage.settings?.notification) {
-                                console.log('[TNT] Migrating legacy notification data to settings.notification');
-                                if (!tnt.data.storage.settings) {
-                                    tnt.data.storage.settings = {};
-                                }
-                                // Convert plural to singular during migration
-                                tnt.data.storage.settings.notification = {
-                                    city: parsedData.notification.cities || false,
-                                    military: parsedData.notification.military || false,
-                                    militaryAlert: parsedData.notification.militaryAlert || false,
-                                    scientist: parsedData.notification.scientist || false,
-                                    diplomat: parsedData.notification.diplomat || false
-                                };
-                                console.log('[TNT] Notification migration completed:', tnt.data.storage.settings.notification);
-                                this.save();
-                            }
+                            console.log('[TNT] Using existing storage data (version match)');
+                        } else {
+                            // Different or missing version - will be handled later in Phase 2
+                            tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
+                            console.log(`[TNT] Version mismatch detected: stored=${storedVersion}, current=${tnt.version}`);
                         }
+                    } else {
+                        console.log('[TNT] No existing storage found - using defaults');
                     }
+                    
+                    // Check when city list becomes available
+                    const cityList = tnt.get.cityList();
+                    console.log(`[TNT Timing] City list ready: ${(performance.now() - scriptStartTime).toFixed(2)}ms (${Object.keys(cityList).length} cities)`);
+
                 } catch (e) {
                     tnt.core.debug.log("Error parsing tnt_storage: " + e.message);
-                    console.log('[TNT] Using default storage structure');
+                    console.log('[TNT] Using default storage structure due to parse error');
                 }
             },
 
@@ -1627,7 +1598,7 @@ const tnt = {
                             case "transport":
                                 $('#setPremiumJetPropulsion').hide().prev().hide();
                                 break;
-                            case "resource":
+                                                       case "resource":
                                 $('#sidebarWidget .indicator').eq(1).trigger("click");
                                 break;
                             case "merchantNavy":
