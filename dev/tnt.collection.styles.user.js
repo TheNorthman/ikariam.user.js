@@ -61,50 +61,6 @@ GM_addStyle(`
         table-layout: fixed !important;
     }
     
-    /* NUCLEAR OPTION: Force identical computed style for category headers */
-    body #tnt_info_resources #tnt_resources_table tr.tnt_category_header,
-    body #tnt_info_buildings_content #tnt_buildings_table tr.tnt_category_header,
-    #tnt_info_resources.minimized table tr.tnt_category_header,
-    #tnt_info_buildings.minimized table tr.tnt_category_header {
-        height: 25px !important;
-        max-height: 25px !important;
-        min-height: 25px !important;
-        line-height: 17px !important;
-        font-size: 12px !important;
-        border-spacing: 0 !important;
-        border-collapse: collapse !important;
-        display: table-row !important;
-    }
-    
-    /* NUCLEAR OPTION: Force identical computed style for header cells */
-    body #tnt_info_resources #tnt_resources_table th.tnt_category_header,
-    body #tnt_info_buildings_content #tnt_buildings_table th.tnt_category_header,
-    #tnt_info_resources.minimized table tr.tnt_category_header th,
-    #tnt_info_buildings.minimized table tr.tnt_category_header th {
-        height: 25px !important;
-        max-height: 25px !important;
-        min-height: 25px !important;
-        background-color: #DBBE8C !important;
-        border: 1px solid #000 !important;
-        padding: 4px !important;
-        font-weight: bold !important;
-        text-align: center !important;
-        box-sizing: border-box !important;
-        line-height: 17px !important;
-        font-size: 12px !important;
-        vertical-align: middle !important;
-        display: table-cell !important;
-        border-spacing: 0 !important;
-        border-collapse: collapse !important;
-    }
-    
-    /* Category header row - force exact same height */
-    body #tnt_info_resources #tnt_resource_table tr.tnt_category_header,
-    body #tnt_info_buildings_content #tnt_building_table tr.tnt_category_header {
-        height: 25px !important;
-        max-height: 25px !important;
-    }
-    
     /* Category header cells - CLEAN and SIMPLE with no internal elements */
     body #tnt_info_resources #tnt_resources_table th.tnt_category_header,
     body #tnt_info_buildings_content #tnt_buildings_table th.tnt_category_header {
@@ -120,12 +76,6 @@ GM_addStyle(`
         line-height: 17px !important;
         font-size: 12px !important;
         vertical-align: middle !important;
-    }
-    
-    /* Fix border gaps for separate border model */
-    body #tnt_info_resources #tnt_resource_table th.tnt_category_header:last-child,
-    body #tnt_info_buildings_content #tnt_building_table th.tnt_category_header:last-child {
-        border-right: 1px solid #000 !important;
     }
     
     /* External control buttons container - positioned OUTSIDE table, overlaying */
@@ -324,8 +274,8 @@ GM_addStyle(`
     body #tnt_info_buildings_content .tnt_building_level{ text-align:center !important; }
     
     /* Override Ikariam's container table styles specifically for our TNT tables */
-    #container body #tnt_info_resources #tnt_resource_table.table01,
-    #container body #tnt_info_buildings_content #tnt_building_table.table01 {
+    #container body #tnt_info_resources #tnt_resources_table.table01,
+    #container body #tnt_info_buildings_content #tnt_buildings_table.table01 {
         border: none !important;
         margin: 0px !important;
         background-color: #fdf7dd !important;
@@ -333,15 +283,15 @@ GM_addStyle(`
         text-align: center !important;
         width: auto !important;
     }
-    #container body #tnt_info_resources #tnt_resource_table.table01 td,
-    #container body #tnt_info_buildings_content #tnt_building_table.table01 td {
+    #container body #tnt_info_resources #tnt_resources_table.table01 td,
+    #container body #tnt_info_buildings_content #tnt_buildings_table.table01 td {
         text-align: center !important;
         vertical-align: middle !important;
         padding: 4px !important;
         border: 1px #000000 solid !important;
     }
-    #container body #tnt_info_resources #tnt_resource_table.table01 th,
-    #container body #tnt_info_buildings_content #tnt_building_table.table01 th {
+    #container body #tnt_info_resources #tnt_resources_table.table01 th,
+    #container body #tnt_info_buildings_content #tnt_buildings_table.table01 th {
         background-color: #faeac6 !important;
         text-align: center !important;
         height: auto !important;
@@ -694,3 +644,4 @@ GM_addStyle(`
         padding: 4px !important;
     }
 `);
+// Ensure the styles are applied immediately

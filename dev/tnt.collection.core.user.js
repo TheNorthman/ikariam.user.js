@@ -627,18 +627,9 @@ const tnt = {
             if (settings.showCrystal) resourcesSpan++;
             if (settings.showSulfur) resourcesSpan++;
 
-            // Create external button container - OUTSIDE the table
-            let html = '<div class="tnt_external_controls">';
-            html += '<div class="tnt_control_buttons">';
-            html += '<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>';
-            html += '<span class="tnt_refresh_btn" title="Refresh all cities"></span>';
-            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>';
-            html += '</div>';
-            html += '</div>';
+            let html = '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
 
-            html += '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
-
-            // Category header row - CLEAN headers with NO buttons inside
+            // Category header row - COMPLETELY CLEAN with NO buttons whatsoever
             html += '<tr class="tnt_category_header">';
             html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;">Controls</th>';
             html += '<th colspan="2" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>';
@@ -647,7 +638,7 @@ const tnt = {
             }
             html += '</tr>';
 
-            // Subcategory header row - CLEAN with NO buttons
+            // Subcategory header row - COMPLETELY CLEAN with NO buttons whatsoever
             html += '<tr class="tnt_subcategory_header">';
             html += '<th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
             html += '<div style="position:relative; min-width:120px; text-align:center;">';
@@ -803,18 +794,9 @@ const tnt = {
                 return '<div>No city data available</div>';
             }
 
-            // Create external button container
-            let html = '<div class="tnt_external_controls">';
-            html += '<div class="tnt_control_buttons">';
-            html += '<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>';
-            html += '<span class="tnt_refresh_btn" title="Refresh all cities"></span>';
-            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>';
-            html += '</div>';
-            html += '</div>';
+            let html = '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
 
-            html += '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
-
-            // Category header row - simple headers without buttons  
+            // Category header row - COMPLETELY CLEAN with NO buttons whatsoever  
             html += '<tr class="tnt_category_header">';
             html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;">Controls</th>';
             html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City</th>';
@@ -1397,17 +1379,36 @@ const tnt = {
                 }
 
                 $('#tnt_info_resources_content').empty();
+                $('#tnt_info_buildings_content').empty();
 
-                // Build resource table using new table builder
+                // Build resource table using new table builder - NO BUTTONS IN TABLE
                 const resourceTable = tnt.tableBuilder.buildTable('resources');
                 $('#tnt_info_resources_content').html(resourceTable);
 
-                // Build building table using new table builder
+                // Build building table using new table builder - NO BUTTONS IN TABLE
                 const buildingTable = tnt.tableBuilder.buildTable('buildings');
                 $('#tnt_info_buildings_content').html(buildingTable);
 
+                // Create external controls ONLY ONCE per page load
+                this.createExternalControls();
+
                 // Add event handlers
                 tnt.tableBuilder.attachEventHandlers();
+            }
+        },
+
+        createExternalControls() {
+            // Only create if they don't exist yet
+            if ($('.tnt_external_controls').length === 0) {
+                const $externalControls = $('<div class="tnt_external_controls"></div>');
+                const $controlButtons = $('<div class="tnt_control_buttons"></div>');
+
+                $controlButtons.append('<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>');
+                $controlButtons.append('<span class="tnt_refresh_btn" title="Refresh all cities"></span>');
+                $controlButtons.append('<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>');
+
+                $externalControls.append($controlButtons);
+                $('#tnt_info_resources').prepend($externalControls);
             }
         },
 
