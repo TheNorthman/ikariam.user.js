@@ -617,35 +617,37 @@ const tnt = {
                 return '<div>No city data available</div>';
             }
 
-            let html = '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
-
-            // Category header row - buttons go inside the first cell
-            html += '<tr class="tnt_category_header">';
-            html += '<th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;">';
-            html += '<span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="position:absolute;left:2px;top:2px;"></span>';
-            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span>';
-            html += '<span class="tnt_refresh_btn" title="Refresh all cities" style="position:absolute;right:25px;top:2px;"></span>';
-            html += '</th>';
-
-            // City Info category span
-            let cityInfoSpan = 1; // Town Hall always visible
-            if (settings.showPopulation) cityInfoSpan++;
-            if (settings.showCitizens) cityInfoSpan++;
-            html += `<th colspan="${cityInfoSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>`;
-
-            // Resources category span
+            // Calculate resources span based on enabled settings
             let resourcesSpan = 0;
+            if (settings.showPopulation) resourcesSpan++;
+            if (settings.showCitizens) resourcesSpan++;
             if (settings.showWood) resourcesSpan++;
             if (settings.showWine) resourcesSpan++;
             if (settings.showMarble) resourcesSpan++;
             if (settings.showCrystal) resourcesSpan++;
             if (settings.showSulfur) resourcesSpan++;
+
+            // Create external button container - OUTSIDE the table
+            let html = '<div class="tnt_external_controls">';
+            html += '<div class="tnt_control_buttons">';
+            html += '<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>';
+            html += '<span class="tnt_refresh_btn" title="Refresh all cities"></span>';
+            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>';
+            html += '</div>';
+            html += '</div>';
+
+            html += '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
+
+            // Category header row - CLEAN headers with NO buttons inside
+            html += '<tr class="tnt_category_header">';
+            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;">Controls</th>';
+            html += '<th colspan="2" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>';
             if (resourcesSpan > 0) {
                 html += `<th colspan="${resourcesSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resources</th>`;
             }
             html += '</tr>';
 
-            // Subcategory header row
+            // Subcategory header row - CLEAN with NO buttons
             html += '<tr class="tnt_subcategory_header">';
             html += '<th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">';
             html += '<div style="position:relative; min-width:120px; text-align:center;">';
@@ -801,17 +803,21 @@ const tnt = {
                 return '<div>No city data available</div>';
             }
 
-            let html = '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
+            // Create external button container
+            let html = '<div class="tnt_external_controls">';
+            html += '<div class="tnt_control_buttons">';
+            html += '<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>';
+            html += '<span class="tnt_refresh_btn" title="Refresh all cities"></span>';
+            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>';
+            html += '</div>';
+            html += '</div>';
 
-            // Category header row - buttons go inside the first cell  
+            html += '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
+
+            // Category header row - simple headers without buttons  
             html += '<tr class="tnt_category_header">';
-            html += '<th class="tnt_category_spacer" style="position:relative;background:transparent;border:none;padding:4px;text-align:center;">';
-            html += '<span class="tnt_panel_minimize_btn tnt_back" id="tnt_panel_minimize_btn_header" style="position:absolute;left:2px;top:2px;"></span>';
-            html += '<span class="tnt_table_toggle_btn" title="Show buildings/resources" style="position:absolute;right:2px;top:2px;"></span>';
-            html += '<span class="tnt_refresh_btn" title="Refresh all cities" style="position:absolute;right:25px;top:2px;"></span>';
-            html += '</th>';
-
-            // Building category headers
+            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;">Controls</th>';
+            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City</th>';
             Object.entries(categorySpans).forEach(([category, span]) => {
                 if (span > 0) {
                     let displayName = category.replace(/([A-Z])/g, ' $1')

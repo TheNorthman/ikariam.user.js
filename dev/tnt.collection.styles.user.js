@@ -53,67 +53,220 @@ GM_addStyle(`
         transition: all 0.2s ease !important;
     }
     /* TNT table styles with higher specificity - override Ikariam's .table01 styles */
-    body #tnt_info_resources #tnt_resource_table,
-    body #tnt_info_buildings_content #tnt_building_table{
-        border-collapse:collapse !important;
+    body #tnt_info_resources #tnt_resources_table,
+    body #tnt_info_buildings_content #tnt_buildings_table{
+        border-collapse: collapse !important;
         font: 12px Arial, Helvetica, sans-serif !important;
         background-color: #fdf7dd !important;
-    }
-    body #tnt_info_resources #tnt_resource_table td,
-    body #tnt_info_buildings_content #tnt_building_table td{
-        border:1px #000000 solid !important;
-        padding:4px !important;
-        text-align:center !important;
-        vertical-align:middle !important;
-        background-color: #fdf7dd !important;
-    }
-    /* Apply subcategory header height to table row instead of individual cells */
-    body #tnt_info_resources #tnt_resource_table tr.tnt_subcategory_header,
-    body #tnt_info_buildings_content #tnt_building_table tr.tnt_subcategory_header {
-        height: 41px !important;
-    }
-    body #tnt_info_resources #tnt_resource_table th,
-    body #tnt_info_buildings_content #tnt_building_table th{
-        border:1px #000000 solid !important;
-        padding:4px !important;
-        text-align:center !important;
-        vertical-align:middle !important;
-        background-color: #faeac6 !important;
-        font-weight: bold !important;
-        height: auto !important;
-    }
-    body #tnt_info_resources #tnt_resource_table tr.tnt_subcategory_header th,
-    body #tnt_info_buildings_content #tnt_building_table tr.tnt_subcategory_header th {
-        height: 41px !important;
-        line-height: 41px !important;
+        table-layout: fixed !important;
     }
     
-    body #tnt_info_buildings_content #tnt_building_table th.tnt_category_spacer {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 4px !important;
-        text-align:center !important;
+    /* NUCLEAR OPTION: Force identical computed style for category headers */
+    body #tnt_info_resources #tnt_resources_table tr.tnt_category_header,
+    body #tnt_info_buildings_content #tnt_buildings_table tr.tnt_category_header,
+    #tnt_info_resources.minimized table tr.tnt_category_header,
+    #tnt_info_buildings.minimized table tr.tnt_category_header {
+        height: 25px !important;
+        max-height: 25px !important;
+        min-height: 25px !important;
+        line-height: 17px !important;
+        font-size: 12px !important;
+        border-spacing: 0 !important;
+        border-collapse: collapse !important;
+        display: table-row !important;
     }
-    body #tnt_info_buildings_content #tnt_building_table th.tnt_category_header {
+    
+    /* NUCLEAR OPTION: Force identical computed style for header cells */
+    body #tnt_info_resources #tnt_resources_table th.tnt_category_header,
+    body #tnt_info_buildings_content #tnt_buildings_table th.tnt_category_header,
+    #tnt_info_resources.minimized table tr.tnt_category_header th,
+    #tnt_info_buildings.minimized table tr.tnt_category_header th {
+        height: 25px !important;
+        max-height: 25px !important;
+        min-height: 25px !important;
         background-color: #DBBE8C !important;
         border: 1px solid #000 !important;
         padding: 4px !important;
         font-weight: bold !important;
         text-align: center !important;
-        height: auto !important;
+        box-sizing: border-box !important;
+        line-height: 17px !important;
+        font-size: 12px !important;
+        vertical-align: middle !important;
+        display: table-cell !important;
+        border-spacing: 0 !important;
+        border-collapse: collapse !important;
     }
-    body #tnt_info_resources #tnt_resource_table td.tnt_total,
-    body #tnt_info_buildings_content #tnt_building_table td.tnt_total {
-        background-color: #faeac6 !important;
+    
+    /* Category header row - force exact same height */
+    body #tnt_info_resources #tnt_resource_table tr.tnt_category_header,
+    body #tnt_info_buildings_content #tnt_building_table tr.tnt_category_header {
+        height: 25px !important;
+        max-height: 25px !important;
+    }
+    
+    /* Category header cells - CLEAN and SIMPLE with no internal elements */
+    body #tnt_info_resources #tnt_resources_table th.tnt_category_header,
+    body #tnt_info_buildings_content #tnt_buildings_table th.tnt_category_header {
+        height: 25px !important;
+        max-height: 25px !important;
+        min-height: 25px !important;
+        background-color: #DBBE8C !important;
+        border: 1px solid #000 !important;
+        padding: 4px !important;
         font-weight: bold !important;
-        height: auto !important;
+        text-align: center !important;
+        box-sizing: border-box !important;
+        line-height: 17px !important;
+        font-size: 12px !important;
+        vertical-align: middle !important;
     }
-    .storage_min{
-        background-color: #FF000050 !important;
+    
+    /* Fix border gaps for separate border model */
+    body #tnt_info_resources #tnt_resource_table th.tnt_category_header:last-child,
+    body #tnt_info_buildings_content #tnt_building_table th.tnt_category_header:last-child {
+        border-right: 1px solid #000 !important;
     }
-    .storage_danger{
-        color: #FF000050 !important;
+    
+    /* External control buttons container - positioned OUTSIDE table, overlaying */
+    .tnt_external_controls {
+        position: absolute !important;
+        top: 2px !important;
+        left: 2px !important;
+        z-index: 1000 !important;
+        pointer-events: none !important;
+    }
+    
+    /* Control buttons container - now external to table */
+    .tnt_control_buttons {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: 2px !important;
+        pointer-events: none !important;
+    }
+    
+    /* Individual control buttons - restore pointer events */
+    .tnt_control_buttons span {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        height: 16px !important;
+        width: 16px !important;
+        border: 1px solid #8B4513 !important;
+        background: #D2B48C !important;
+        border-radius: 2px !important;
+        cursor: pointer !important;
+        flex-shrink: 0 !important;
+        pointer-events: auto !important;
+        position: relative !important;
+    }
+    
+    .tnt_control_buttons span:hover {
+        background: #DDD !important;
+    }
+    
+    /* Minimize button icons */
+    .tnt_control_buttons .tnt_panel_minimize_btn.tnt_back:after { 
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        border: 3px solid transparent;
+        border-right: 5px solid #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .tnt_control_buttons .tnt_panel_minimize_btn.tnt_back:hover:after { 
+        border-right-color: #000;
+    }
+    
+    .tnt_control_buttons .tnt_panel_minimize_btn.tnt_foreward:after { 
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        border: 3px solid transparent;
+        border-left: 5px solid #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .tnt_control_buttons .tnt_panel_minimize_btn.tnt_foreward:hover:after { 
+        border-left-color: #000;
+    }
+    
+    /* Toggle button icon */
+    .tnt_control_buttons .tnt_table_toggle_btn:after {
+        content: "";
+        display: block;
+        width: 6px;
+        height: 1px;
+        background: #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 
+            0 -2px 0 #333,
+            0 2px 0 #333;
+    }
+    
+    .tnt_control_buttons .tnt_table_toggle_btn:hover:after {
+        background: #000;
+        box-shadow: 
+            0 -2px 0 #000,
+            0 2px 0 #000;
+    }
+    
+    .tnt_control_buttons .tnt_table_toggle_btn.active:after {
+        background: #006600;
+        box-shadow: 
+            0 -2px 0 #006600,
+            0 2px 0 #006600;
+    }
+    
+    /* Refresh button icon */
+    .tnt_control_buttons .tnt_refresh_btn:before {
+        content: "⟳";
+        color: #333;
+        font-size: 14px;
+        font-weight: bold;
+        text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+    }
+    
+    .tnt_control_buttons .tnt_refresh_btn:hover:before {
+        color: #000;
+        font-weight: 900;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+    }
+    
+    /* Remove all old button styles that conflict with new structure */
+    #tnt_info_resources .tnt_back,
+    #tnt_info_resources .tnt_foreward,
+    #tnt_info_updateCities,
+    .tnt_panel_minimize_btn:not(.tnt_control_buttons *),
+    .tnt_table_toggle_btn:not(.tnt_control_buttons *) {
+        display: none !important;
+    }
+    
+    .tnt_city .tnt_panel_minimize_btn {
+        display: none !important;
+    }
+    
+    /* Remove old category spacer styles that are no longer needed */
+    .tnt_category_spacer {
+        display: none !important;
     }
     /* Construction status styling applies to the first cell in any row across all tables */
     .tnt_construction{
@@ -270,6 +423,8 @@ GM_addStyle(`
         text-align: center;
         line-height: 16px;
         font-size: 12px;
+        min-width: 18px;
+        min-height: 18px;
     }
     #tnt_info_resources .tnt_back {
         left: 2px;
@@ -279,6 +434,9 @@ GM_addStyle(`
     #tnt_info_resources .tnt_back:before {
         content: "◀";
         color: #333;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
     }
     #tnt_info_resources .tnt_back:hover {
         background: #DDD;
@@ -294,6 +452,9 @@ GM_addStyle(`
     #tnt_info_resources .tnt_foreward:before {
         content: "▶";
         color: #333;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
     }
     #tnt_info_resources .tnt_foreward:hover {
         background: #DDD;
@@ -325,10 +486,21 @@ GM_addStyle(`
         text-align: center;
         line-height: 16px;
         font-size: 12px;
+        min-width: 18px;
+        min-height: 18px;
+        box-sizing: border-box;
+        overflow: hidden;
     }
     .tnt_panel_minimize_btn.tnt_back:before { 
         content: "◀";
         color: #333;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        line-height: 16px;
+        text-align: center;
+        font-size: 10px;
+        vertical-align: middle;
     }
     .tnt_panel_minimize_btn.tnt_back:hover { 
         background: #DDD;
@@ -342,6 +514,13 @@ GM_addStyle(`
     .tnt_panel_minimize_btn.tnt_foreward:before { 
         content: "▶";
         color: #333;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        line-height: 16px;
+        text-align: center;
+        font-size: 10px;
+        vertical-align: middle;
     }
     .tnt_panel_minimize_btn.tnt_foreward:hover { 
         background: #DDD;
@@ -363,10 +542,21 @@ GM_addStyle(`
         text-align: center;
         line-height: 16px;
         font-size: 12px;
+        min-width: 18px;
+        min-height: 18px;
+        box-sizing: border-box;
+        overflow: hidden;
     }
     .tnt_table_toggle_btn:before {
         content: "⇄";
         color: #333;
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        line-height: 16px;
+        text-align: center;
+        font-size: 10px;
+        vertical-align: middle;
     }
     .tnt_table_toggle_btn:hover { 
         background: #DDD;
@@ -379,84 +569,128 @@ GM_addStyle(`
         color: #006600;
         font-weight: bold;
     }
-    .tnt_city .tnt_panel_minimize_btn { float: left; margin-right: 2px; }
-    #tnt_info_resources.minimized {
-        width: 25px!important;
-        min-width: 25px!important;
-        max-width: 25px!important;
-        overflow: hidden!important;
+    /* Remove duplicate old button styles - keep only this section */
+    .tnt_city .tnt_panel_minimize_btn { 
+        display: none !important;
     }
-    #tnt_military_overview {
-        position: fixed;
-        top: 20px;
-        right: 0px;
-        width: auto;
-        background-color: #DBBE8C;
-        z-index: 100000000;
+    
+    /* Change the minimized state to show the first cell completely for both tables */
+    #tnt_info_resources.minimized,
+    #tnt_info_buildings.minimized {
+        width: auto !important;
+        min-width: auto !important;
+        max-width: none !important;
+        overflow: hidden !important;
     }
-    #tnt_military_header {
-        padding: 5px;
-        cursor: pointer;
-        font-weight: bold;
+    
+    /* Simple minimized state - just hide columns */
+    #tnt_info_resources.minimized table tr td:not(:first-child),
+    #tnt_info_resources.minimized table tr th:not(:first-child),
+    #tnt_info_buildings.minimized table tr td:not(:first-child),
+    #tnt_info_buildings.minimized table tr th:not(:first-child) {
+        display: none !important;
     }
-    #tnt_military_table {
-        border-collapse: collapse;
-        font: 12px Arial, Helvetica, sans-serif;
+    
+    /* Show only the first cell when minimized - keep as table-cell */
+    #tnt_info_resources.minimized table tr th:first-child,
+    #tnt_info_resources.minimized table tr td:first-child,
+    #tnt_info_buildings.minimized table tr th:first-child,
+    #tnt_info_buildings.minimized table tr td:first-child {
+        display: table-cell !important;
+        width: auto !important;
+        min-width: 60px !important;
     }
-    #tnt_military_table td, #tnt_military_table th {
-        border: 1px #000000 solid;
-        margin: 2px 0;
-        padding: 2px !important;
+    
+    /* Special handling for the header row when minimized */
+    #tnt_info_resources.minimized table thead tr,
+    #tnt_info_buildings.minimized table thead tr {
+        display: table-row !important;
     }
-    .movement {
-        padding: 3px;
-        background-color: rgba(255,0,0,0.2);
-        margin: 2px 0;
+    
+    #tnt_info_resources.minimized table thead tr th:first-child,
+    #tnt_info_buildings.minimized table thead tr th:first-child {
+        display: table-cell !important;
+        width: auto !important;
     }
-    .movement.attack {
-        background-color: rgba(255,0,0,0.2);
+    
+    /* Ensure the tables maintain proper structure when minimized */
+    #tnt_info_resources.minimized table,
+    #tnt_info_buildings.minimized table {
+        width: auto !important;
     }
-    #tnt_building_table th:first-child {
-        background-color: rgba(255,255,255,0);
-        border: none !important;
+    
+    /* FORCE exact same heights in minimized state - now completely independent */
+    #tnt_info_resources.minimized table tr.tnt_category_header,
+    #tnt_info_buildings.minimized table tr.tnt_category_header {
+        height: 25px !important;
+        max-height: 25px !important;
+        display: table-row !important;
     }
-    #tnt_building_table th.tnt_category_spacer {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
+    
+    #tnt_info_resources.minimized table tr.tnt_category_header th,
+    #tnt_info_buildings.minimized table tr.tnt_category_header th {
+        height: 25px !important;
+        max-height: 25px !important;
         padding: 4px !important;
+        vertical-align: middle !important;
+        box-sizing: border-box !important;
+        line-height: 17px !important;
+        overflow: hidden !important;
     }
-    #tnt_building_table th.tnt_category_header {
-        background-color: #DBBE8C !important;
-        border: 1px solid #000 !important;
-        padding: 4px !important;
-        font-weight: bold;
-        text-align: center !important;
+    
+    /* External controls remain visible and positioned in minimized state */
+    #tnt_info_resources.minimized .tnt_external_controls,
+    #tnt_info_buildings.minimized .tnt_external_controls {
+        position: absolute !important;
+        top: 2px !important;
+        left: 2px !important;
+        z-index: 1000 !important;
+        pointer-events: none !important;
     }
-
-    /* Set fixed height for subcategory header rows */
-    tr.tnt_subcategory_header {
+    
+    /* Remove all conflicting minimized button positioning - buttons are now external */
+    /* 
+    #tnt_info_resources.minimized .tnt_control_buttons,
+    #tnt_info_buildings.minimized .tnt_control_buttons {
+        // REMOVED - buttons are external now
+    }
+    
+    #tnt_info_resources.minimized .tnt_control_buttons span,
+    #tnt_info_buildings.minimized .tnt_control_buttons span {
+        // REMOVED - buttons are external now  
+    }
+    */
+    
+    /* FORCE exact same subcategory header height in minimized state */
+    #tnt_info_resources.minimized table tr.tnt_subcategory_header,
+    #tnt_info_buildings.minimized table tr.tnt_subcategory_header {
         height: 41px !important;
-    }
-
-    .tnt_refresh_btn {
-        cursor: pointer;
-        display: inline-block;
-        height: 18px;
-        width: 18px;
-        border: 1px solid #8B4513;
-        background: #D2B48C;
-        border-radius: 2px;
-        text-align: center;
-        line-height: 16px;
-        font-size: 12px;
+        min-height: 41px !important;
+        max-height: 41px !important;
+        display: table-row !important;
     }
     
-    .tnt_refresh_btn:before {
-        content: "⟳";
+    #tnt_info_resources.minimized table tr.tnt_subcategory_header th:first-child,
+    #tnt_info_buildings.minimized table tr.tnt_subcategory_header th:first-child {
+        display: table-cell !important;
+        height: 41px !important;
+        min-height: 41px !important;
+        max-height: 41px !important;
+        line-height: 1.2 !important;
+        vertical-align: middle !important;
+        box-sizing: border-box !important;
+        padding: 4px !important;
     }
     
-    .tnt_refresh_btn:hover {
-        background: #DDD;
+    /* Override any conflicting styles for subcategory header cells in minimized state */
+    #tnt_info_resources.minimized table tr.tnt_subcategory_header th,
+    #tnt_info_buildings.minimized table tr.tnt_subcategory_header th {
+        height: 41px !important;
+        min-height: 41px !important;
+        max-height: 41px !important;
+        line-height: 1.2 !important;
+        vertical-align: middle !important;
+        box-sizing: border-box !important;
+        padding: 4px !important;
     }
 `);
