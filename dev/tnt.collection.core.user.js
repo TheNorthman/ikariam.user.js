@@ -1604,8 +1604,7 @@ const tnt = {
                         }
 
                         switch (view) {
-                                                       case "worldmap_iso":
-
+                            case "worldmap_iso":
                                 tnt.core.debug.log($('worldmap_iso: div.islandTile div.cities'), 3);
                                 break;
                             case "city":
