@@ -200,11 +200,8 @@ const tnt = {
             };
         },
 
-        // Initialize default settings with migration from GM storage
+        // Initialize default settings - simplified without migration
         initDefaults() {
-            // Migrate from old GM storage to new unified storage
-            this.migrateFromGMStorage();
-            
             const defaults = {
                 "allRemovePremiumOffers": true,
                 "allRemoveFooterNavigation": true,
@@ -235,36 +232,6 @@ const tnt = {
             });
 
             this.set("version", tnt.version);
-        },
-
-        // Migrate settings from GM storage to new unified storage
-        migrateFromGMStorage() {
-            console.log('[TNT] Migrating settings from GM storage to unified storage');
-            
-            const settingsToMigrate = [
-                "allRemovePremiumOffers", "allRemoveFooterNavigation", "allChangeNavigationCoord",
-                "islandShowCityLvl", "cityRemoveFlyingShop", "cityShowResources",
-                "cityShowResourcesPorpulation", "cityShowResourcesCitizens", "cityShowResourcesWoods",
-                "cityShowResourcesWine", "cityShowResourcesMarble", "cityShowResourcesCrystal",
-                "cityShowResourcesSulfur", "notificationAdvisors", "notificationSound",
-                "citySwitcherActive", "citySwitcherStartCity", "citySwitcherVisited", "version"
-            ];
-
-            // Only migrate if new storage doesn't exist yet
-            if (!tnt.data.storage.settings) {
-                tnt.data.storage.settings = {};
-                
-                settingsToMigrate.forEach(key => {
-                    const value = GM_getValue(key);
-                    if (value !== undefined) {
-                        tnt.data.storage.settings[key] = value;
-                        console.log(`[TNT] Migrated setting: ${key} = ${value}`);
-                    }
-                });
-                
-                console.log('[TNT] Settings migration completed');
-                tnt.core.storage.save();
-            }
         }
     },
 
@@ -1359,19 +1326,19 @@ const tnt = {
         storage: {
             // NEW STRUCTURE: Own cities (existing data)
             city: {},
-            
+
             // NEW STRUCTURE: Foreign cities
             foreign: {},
-            
+
             // NEW STRUCTURE: Cities with spies (subset of foreign)
             spy: {},
-            
+
             // NEW STRUCTURE: Avatar/player data
             avatar: {
                 ambrosia: 0,
                 gold: 0
             },
-            
+
             // NEW STRUCTURE: TNT settings (includes notification settings)
             settings: {
                 notification: {
@@ -1461,14 +1428,14 @@ const tnt = {
             init() {
                 try {
                     const storedData = localStorage.getItem("tnt_storage");
-                    
+
                     if (storedData) {
                         const parsedData = JSON.parse(storedData);
-                        
+
                         // Check if this is old storage structure
                         if (parsedData.resources && !parsedData.city) {
                             console.log('[TNT] Detected old storage structure - migrating to new format');
-                            
+
                             // Migrate old structure to new structure with consistent singular naming
                             const newStructure = {
                                 city: parsedData.resources?.city || {},
@@ -1489,7 +1456,7 @@ const tnt = {
                                     }
                                 }
                             };
-                            
+
                             // Apply migrated structure
                             tnt.data.storage = newStructure;
                             console.log('[TNT] Storage structure migration completed');
@@ -1498,7 +1465,7 @@ const tnt = {
                         } else {
                             // Use new structure directly - but ensure notifications are properly merged
                             tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
-                            
+
                             // Handle legacy notification data that might exist at root level
                             if (parsedData.notification && !tnt.data.storage.settings?.notification) {
                                 console.log('[TNT] Migrating legacy notification data to settings.notification');
@@ -1523,7 +1490,7 @@ const tnt = {
                     console.log('[TNT] Using default storage structure');
                 }
             },
-            
+
             get(group, name) {
                 if (!tnt.data.storage || !tnt.data.storage[group]) return undefined;
                 return tnt.data.storage[group][name];
@@ -1717,7 +1684,7 @@ const tnt = {
             }
 
             const isOwnCity = tnt.game.city.isOwn();
-            
+
             if (isOwnCity) {
                 this.collectOwnCityData(currentCityId);
             } else {
@@ -1766,11 +1733,11 @@ const tnt = {
 
         collectForeignCityData(currentCityId) {
             console.log('[TNT] Collecting foreign city data for:', currentCityId);
-            
+
             const hasSpyAccess = $('.spy_warning').length > 0 || $('#js_spiesInsideText').length > 0;
             const ownerName = tnt.utils.safeGet(() => ikariam.backgroundView.screen.data.ownerName, 'Unknown');
             const ownerId = tnt.utils.safeGet(() => ikariam.backgroundView.screen.data.ownerId, 0);
-            
+
             const foreignCityData = {
                 cityId: currentCityId,
                 name: tnt.utils.safeGet(() => ikariam.backgroundView.screen.data.name, 'Unknown City'),
@@ -1794,13 +1761,13 @@ const tnt = {
 
             // Store in foreign city data
             tnt.data.storage.foreign[currentCityId] = foreignCityData;
-            
+
             // Also store in spy data if we have spy access
             if (hasSpyAccess) {
                 tnt.data.storage.spy[currentCityId] = foreignCityData;
                 console.log('[TNT] Stored spy data for city:', currentCityId);
             }
-            
+
             tnt.core.storage.save();
             console.log('[TNT] Foreign city data collected and stored');
         },
