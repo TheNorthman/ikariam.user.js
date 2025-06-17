@@ -346,6 +346,15 @@ const tnt = {
             if (settings.removeFlyingShop && $("body").attr("id") === "city") {
                 $('.premiumOfferBox').hide();
             }
+        },
+
+        // Dedicated function to remove flying shop elements
+        removeFlyingShop() {
+            const settings = tnt.settings.getFeatureSettings();
+            if (settings.removeFlyingShop) {
+                $('.premiumOfferBox').hide();
+                $('.expandable.resourceShop, .expandable.slot1').hide();
+            }
         }
     },
 
@@ -549,19 +558,7 @@ const tnt = {
         tnt.core.debug.log('City view loaded');
 
         // Apply city-specific modifications
-        const settings = tnt.settings.getFeatureSettings();
-
-        // Remove premium offers if setting is enabled
-        if (settings.removeFlyingShop) {
-            $('.premiumOfferBox').hide();
-        }
-
-        // Remove the expandable premium offers on the left
-        if (settings.removeFlyingShop) {
-            $('.expandable.resourceShop, .expandable.slot1').hide();
-        }
-
-
+        tnt.ui.removeFlyingShop();
     },
 
     world() {
@@ -629,9 +626,9 @@ const tnt = {
 
             let html = '<table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
 
-            // Category header row - COMPLETELY CLEAN with NO buttons whatsoever
+            // Category header row - NO CONTROLS TEXT
             html += '<tr class="tnt_category_header">';
-            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;">Controls</th>';
+            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;"></th>';
             html += '<th colspan="2" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>';
             if (resourcesSpan > 0) {
                 html += `<th colspan="${resourcesSpan}" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resources</th>`;
@@ -796,9 +793,9 @@ const tnt = {
 
             let html = '<table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;"><tbody>';
 
-            // Category header row - COMPLETELY CLEAN with NO buttons whatsoever  
+            // Category header row - NO CONTROLS TEXT
             html += '<tr class="tnt_category_header">';
-            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;">Controls</th>';
+            html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;"></th>';
             html += '<th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City</th>';
             Object.entries(categorySpans).forEach(([category, span]) => {
                 if (span > 0) {
@@ -1140,6 +1137,11 @@ const tnt = {
                         // Check notifications
                         tnt.core.notification.check();
 
+                        // Apply removeFlyingShop during background updates
+                        if (view === "city") {
+                            tnt.ui.removeFlyingShop();
+                        }
+
                         switch (view) {
                             case "worldmap_iso":
                                 tnt.core.debug.log($('worldmap_iso: div.islandTile div.cities'), 3);
@@ -1401,13 +1403,18 @@ const tnt = {
             // Only create if they don't exist yet
             if ($('.tnt_external_controls').length === 0) {
                 const $externalControls = $('<div class="tnt_external_controls"></div>');
-                const $controlButtons = $('<div class="tnt_control_buttons"></div>');
+                
+                // Left side buttons (Min/Max)
+                const $leftButtons = $('<div class="tnt_left_buttons"></div>');
+                $leftButtons.append('<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>');
+                
+                // Right side buttons (Refresh, Toggle)
+                const $rightButtons = $('<div class="tnt_right_buttons"></div>');
+                $rightButtons.append('<span class="tnt_refresh_btn" title="Refresh all cities"></span>');
+                $rightButtons.append('<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>');
 
-                $controlButtons.append('<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>');
-                $controlButtons.append('<span class="tnt_refresh_btn" title="Refresh all cities"></span>');
-                $controlButtons.append('<span class="tnt_table_toggle_btn" title="Show buildings/resources"></span>');
-
-                $externalControls.append($controlButtons);
+                $externalControls.append($leftButtons);
+                $externalControls.append($rightButtons);
                 $('#tnt_info_resources').prepend($externalControls);
             }
         },

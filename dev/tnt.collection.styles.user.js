@@ -83,37 +83,172 @@ GM_addStyle(`
         position: absolute !important;
         top: 2px !important;
         left: 2px !important;
+        width: 116px !important;
+        height: 18px !important;
         z-index: 1000 !important;
         pointer-events: none !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
     
-    /* Control buttons container - now external to table */
-    .tnt_control_buttons {
+    /* Left buttons container (Min/Max) */
+    .tnt_left_buttons {
         display: flex !important;
         align-items: center !important;
-        justify-content: flex-start !important;
-        gap: 2px !important;
+        gap: 0px !important;
         pointer-events: none !important;
+        flex-shrink: 0 !important;
     }
     
-    /* Individual control buttons - restore pointer events */
-    .tnt_control_buttons span {
+    /* Right buttons container (Refresh, Toggle) */
+    .tnt_right_buttons {
+        display: flex !important;
+        align-items: center !important;
+        gap: 2px !important;
+        pointer-events: none !important;
+        flex-shrink: 0 !important;
+        height: 18px !important;
+    }
+    
+    /* Individual control buttons - perfectly sized and aligned */
+    .tnt_left_buttons span,
+    .tnt_right_buttons span {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        height: 16px !important;
-        width: 16px !important;
+        height: 18px !important;
+        width: 18px !important;
+        min-height: 18px !important;
+        min-width: 18px !important;
+        max-height: 18px !important;
+        max-width: 18px !important;
         border: 1px solid #8B4513 !important;
-        background: #D2B48C !important;
-        border-radius: 2px !important;
+        background: linear-gradient(135deg, #E6D3A3 0%, #D2B48C 50%, #C4A47C 100%) !important;
+        border-radius: 3px !important;
         cursor: pointer !important;
         flex-shrink: 0 !important;
         pointer-events: auto !important;
         position: relative !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        font-size: 0 !important;
+        line-height: 1 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
     }
     
-    .tnt_control_buttons span:hover {
-        background: #DDD !important;
+    .tnt_left_buttons span:hover,
+    .tnt_right_buttons span:hover {
+        background: linear-gradient(135deg, #F0E4B6 0%, #E6D3A3 50%, #D2B48C 100%) !important;
+        transform: translateY(-1px) scale(1.05) !important;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.4) !important;
+        border-color: #654321 !important;
+    }
+    
+    .tnt_left_buttons span:active,
+    .tnt_right_buttons span:active {
+        transform: translateY(0px) scale(1.02) !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.3) !important;
+    }
+    
+    /* Minimize button icons - properly centered triangles */
+    .tnt_left_buttons .tnt_panel_minimize_btn.tnt_back:after { 
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        border: 3px solid transparent;
+        border-right: 5px solid #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .tnt_left_buttons .tnt_panel_minimize_btn.tnt_back:hover:after { 
+        border-right-color: #000;
+    }
+    
+    .tnt_left_buttons .tnt_panel_minimize_btn.tnt_foreward:after { 
+        content: "";
+        display: block;
+        width: 0;
+        height: 0;
+        border: 3px solid transparent;
+        border-left: 5px solid #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    
+    .tnt_left_buttons .tnt_panel_minimize_btn.tnt_foreward:hover:after { 
+        border-left-color: #000;
+    }
+    
+    /* Toggle button icon - three centered lines */
+    .tnt_right_buttons .tnt_table_toggle_btn:after {
+        content: "";
+        display: block;
+        width: 8px;
+        height: 2px;
+        background: #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 
+            0 -3px 0 #333,
+            0 3px 0 #333;
+        border-radius: 1px;
+    }
+    
+    .tnt_right_buttons .tnt_table_toggle_btn:hover:after {
+        background: #000;
+        box-shadow: 
+            0 -3px 0 #000,
+            0 3px 0 #000;
+    }
+    
+    .tnt_right_buttons .tnt_table_toggle_btn.active:after {
+        background: #006600;
+        box-shadow: 
+            0 -3px 0 #006600,
+            0 3px 0 #006600;
+    }
+    
+    /* Refresh button icon - perfectly centered */
+    .tnt_right_buttons .tnt_refresh_btn:before {
+        content: "⟳";
+        color: #333;
+        font-size: 13px;
+        font-weight: bold;
+        text-shadow: 0 1px 2px rgba(255,255,255,0.7) !important;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        line-height: 1;
+        width: 13px;
+        height: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .tnt_right_buttons .tnt_refresh_btn:hover:before {
+        color: #000;
+        font-weight: 900;
+        text-shadow: 0 1px 3px rgba(255,255,255,0.9) !important;
+    }
+    
+    /* Remove old control button styles that are no longer needed */
+    .tnt_control_buttons {
+        display: none !important;
     }
     
     /* Minimize button icons */
@@ -202,11 +337,11 @@ GM_addStyle(`
     }
     
     /* Remove all old button styles that conflict with new structure */
+    // .tnt_table_toggle_btn:not(.tnt_control_buttons *), // Should always be visible
     #tnt_info_resources .tnt_back,
     #tnt_info_resources .tnt_foreward,
     #tnt_info_updateCities,
-    .tnt_panel_minimize_btn:not(.tnt_control_buttons *),
-    .tnt_table_toggle_btn:not(.tnt_control_buttons *) {
+    .tnt_panel_minimize_btn:not(.tnt_control_buttons *) {
         display: none !important;
     }
     
@@ -594,8 +729,12 @@ GM_addStyle(`
         position: absolute !important;
         top: 2px !important;
         left: 2px !important;
+        width: 116px !important;
+        height: 18px !important;
         z-index: 1000 !important;
         pointer-events: none !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
     }
     
     /* Remove all conflicting minimized button positioning - buttons are now external */
