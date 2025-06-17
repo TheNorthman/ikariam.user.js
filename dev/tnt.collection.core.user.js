@@ -679,6 +679,77 @@ const tnt = {
                 buildings: foundBuildings,
                 hasConstruction: hasAnyConstruction
             };
+        },
+
+        // City switching utility function - extracted from tableBuilder.attachEventHandlers
+        switchToCity(cityId) {
+            console.log('[TNT] Utils switching to city:', cityId);
+
+            // Try multiple methods to switch cities
+            let switchSuccess = false;
+
+            // Method 1: Direct ajaxHandlerCall (most reliable)
+            try {
+                if (typeof ajaxHandlerCall === 'function') {
+                    console.log('[TNT] Utils using ajaxHandlerCall method');
+                    ajaxHandlerCall(`?view=city&cityId=${cityId}`);
+                    switchSuccess = true;
+                    return true;
+                }
+            } catch (e) {
+                console.log('[TNT] Utils ajaxHandlerCall failed:', e.message);
+            }
+
+            // Method 2: Try to find and trigger the city select dropdown change
+            try {
+                const $citySelect = $('#js_GlobalMenu_citySelect');
+                if ($citySelect.length > 0) {
+                    console.log('[TNT] Utils using city select dropdown method');
+                    $citySelect.val(cityId).trigger('change');
+                    switchSuccess = true;
+                    return true;
+                }
+            } catch (e) {
+                console.log('[TNT] Utils city select dropdown failed:', e.message);
+            }
+
+            // Method 3: Try the dropdown li click with more specific targeting
+            try {
+                const $cityOption = $(`#dropDown_js_citySelectContainer li[selectValue="${cityId}"]`);
+                if ($cityOption.length > 0) {
+                    console.log('[TNT] Utils using improved dropdown click method');
+
+                    // Get the select element that the dropdown controls
+                    const $select = $('#js_GlobalMenu_citySelect, #citySelect');
+                    if ($select.length > 0) {
+                        // Update the select value first
+                        $select.val(cityId);
+
+                        // Then trigger the change event
+                        $select.trigger('change');
+
+                        // Also trigger a click on the option for good measure
+                        $cityOption.trigger('click');
+
+                        switchSuccess = true;
+                        return true;
+                    }
+                }
+            } catch (e) {
+                console.log('[TNT] Utils improved dropdown method failed:', e.message);
+            }
+
+            // Method 4: Direct URL navigation (fallback)
+            if (!switchSuccess) {
+                console.log('[TNT] Utils using URL navigation fallback');
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('cityId', cityId);
+                currentUrl.searchParams.set('currentCityId', cityId);
+                window.location.href = currentUrl.toString();
+                return true;
+            }
+
+            return false;
         }
     },
 
@@ -751,7 +822,13 @@ const tnt = {
             const settings = tnt.settings.getResourceDisplaySettings();
             const currentCityId = tnt.get.cityId();
 
+            console.log('[TNT] Building resource table with cities:', Object.keys(cities).length);
+            console.log('[TNT] Sorted city IDs:', sortedCityIds);
+            console.log('[TNT] Current city ID:', currentCityId);
+            console.log('[TNT] Settings:', settings);
+
             if (sortedCityIds.length === 0) {
+                console.log('[TNT] No sorted cities available');
                 return '<div>No city data available</div>';
             }
 
@@ -823,20 +900,26 @@ const tnt = {
             // Data rows
             sortedCityIds.forEach(cityId => {
                 const city = cities[cityId];
+                console.log(`[TNT] Processing city ${cityId}:`, city ? 'exists' : 'missing');
+
                 if (!city) return;
 
                 const isCurrentCity = (cityId == currentCityId);
                 const hasConstruction = city.hasConstruction;
                 const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
 
+                console.log(`[TNT] City ${cityId} - Current: ${isCurrentCity}, Construction: ${hasConstruction}`);
+
                 html += `<tr${rowClass}>`;
 
                 // City name cell
                 const constructionClass = hasConstruction ? ' tnt_construction' : '';
                 html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
-                html += `<a onclick="$('#dropDown_js_citySelectContainer li[selectValue=\\"${cityId}\\"]').trigger('click'); return false;">`;
+                html += `<a href="#" class="tnt_city_link" data-city-id="${cityId}">`;
                 html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
                 html += '</a></td>';
+
+                console.log(`[TNT] Generated city link for ${cityId}: .tnt_city_link[data-city-id="${cityId}"]`);
 
                 // Town Hall level
                 let townHallLevel = '-';
@@ -989,7 +1072,7 @@ const tnt = {
                 // City name cell
                 const constructionClass = hasConstruction ? ' tnt_construction' : '';
                 html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
-                html += `<a onclick="$('#dropDown_js_citySelectContainer li[selectValue=\\"${cityId}\\"]').trigger('click'); return false;">`;
+                html += `<a href="#" class="tnt_city_link" data-city-id="${cityId}">`;
                 html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
                 html += '</a></td>';
 
@@ -1046,6 +1129,132 @@ const tnt = {
         },
 
         attachEventHandlers() {
+            // City switching event handlers using proper Ikariam method
+            $(document).off('click', '.tnt_city_link').on('click', '.tnt_city_link', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log('[TNT] City link clicked!');
+
+                const cityId = $(this).data('city-id');
+                console.log('[TNT] Switching to city:', cityId);
+
+                // Try multiple methods to switch cities
+                let switchSuccess = false;
+
+                // Method 1: Direct ajaxHandlerCall (most reliable)
+                try {
+                    if (typeof ajaxHandlerCall === 'function') {
+                        console.log('[TNT] Using ajaxHandlerCall method');
+                        ajaxHandlerCall(`?view=city&cityId=${cityId}`);
+                        switchSuccess = true;
+                        return false;
+                    }
+                } catch (e) {
+                    console.log('[TNT] ajaxHandlerCall failed:', e.message);
+                }
+
+                // Method 2: Try to find and trigger the city select dropdown change
+                try {
+                    const $citySelect = $('#js_GlobalMenu_citySelect');
+                    if ($citySelect.length > 0) {
+                        console.log('[TNT] Using city select dropdown method');
+                        $citySelect.val(cityId).trigger('change');
+                        switchSuccess = true;
+                        return false;
+                    }
+                } catch (e) {
+                    console.log('[TNT] City select dropdown failed:', e.message);
+                }
+
+                // Method 3: Try the dropdown li click with more specific targeting
+                try {
+                    const $cityOption = $(`#dropDown_js_citySelectContainer li[selectValue="${cityId}"]`);
+                    if ($cityOption.length > 0) {
+                        console.log('[TNT] Using improved dropdown click method');
+
+                        // Get the select element that the dropdown controls
+                        const $select = $('#js_GlobalMenu_citySelect, #citySelect');
+                        if ($select.length > 0) {
+                            // Update the select value first
+                            $select.val(cityId);
+
+                            // Then trigger the change event
+                            $select.trigger('change');
+
+                            // Also trigger a click on the option for good measure
+                            $cityOption.trigger('click');
+
+                            switchSuccess = true;
+                            return false;
+                        }
+                    }
+                } catch (e) {
+                    console.log('[TNT] Improved dropdown method failed:', e.message);
+                }
+
+                // Method 4: Direct URL navigation (fallback)
+                if (!switchSuccess) {
+                    console.log('[TNT] Using URL navigation fallback');
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('cityId', cityId);
+                    currentUrl.searchParams.set('currentCityId', cityId);
+                    window.location.href = currentUrl.toString();
+                }
+
+                return false;
+            });
+
+            // Also add direct click handlers to newly created elements
+            $('.tnt_city_link').off('click').on('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                console.log('[TNT] Direct city link clicked!');
+
+                const cityId = $(this).data('city-id');
+                console.log('[TNT] Direct switching to city:', cityId);
+
+                // Use the same improved switching logic
+                let switchSuccess = false;
+
+                // Method 1: Direct ajaxHandlerCall
+                try {
+                    if (typeof ajaxHandlerCall === 'function') {
+                        console.log('[TNT] Direct using ajaxHandlerCall method');
+                        ajaxHandlerCall(`?view=city&cityId=${cityId}`);
+                        switchSuccess = true;
+                        return false;
+                    }
+                } catch (e) {
+                    console.log('[TNT] Direct ajaxHandlerCall failed:', e.message);
+                }
+
+                // Method 2: City select dropdown
+                try {
+                    const $citySelect = $('#js_GlobalMenu_citySelect');
+                    if ($citySelect.length > 0) {
+                        console.log('[TNT] Direct using city select dropdown method');
+                        $citySelect.val(cityId).trigger('change');
+                        switchSuccess = true;
+                        return false;
+                    }
+                } catch (e) {
+                    console.log('[TNT] Direct city select dropdown failed:', e.message);
+                }
+
+                // Method 3: URL navigation fallback
+                if (!switchSuccess) {
+                    console.log('[TNT] Direct using URL navigation fallback');
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('cityId', cityId);
+                    currentUrl.searchParams.set('currentCityId', cityId);
+                    window.location.href = currentUrl.toString();
+                }
+
+                return false;
+            });
+
             // Panel minimize/maximize - target the spans inside the table
             $('.tnt_panel_minimize_btn').off('click').on('click', function () {
                 const $panel = $('#tnt_info_resources');
@@ -1447,8 +1656,11 @@ const tnt = {
                 $("body").attr("id") == "city" &&
                 tnt.game.city.isOwn()) {
 
+                console.log('[TNT] Showing resource tables');
+
                 if ($('#tnt_info_resources').length === 0) {
                     $('body').append(tnt.template.resources);
+                    console.log('[TNT] Created tnt_info_resources container');
                 }
 
                 $('#tnt_info_resources_content').empty();
@@ -1457,16 +1669,36 @@ const tnt = {
                 // Build resource table using new table builder - NO BUTTONS IN TABLE
                 const resourceTable = tnt.tableBuilder.buildTable('resources');
                 $('#tnt_info_resources_content').html(resourceTable);
+                console.log('[TNT] Inserted resource table HTML');
 
                 // Build building table using new table builder - NO BUTTONS IN TABLE
                 const buildingTable = tnt.tableBuilder.buildTable('buildings');
                 $('#tnt_info_buildings_content').html(buildingTable);
+                console.log('[TNT] Inserted building table HTML');
 
                 // Create external controls ONLY ONCE per page load
                 this.createExternalControls();
 
-                // Add event handlers
+                // Add event handlers AFTER the tables are created
                 tnt.tableBuilder.attachEventHandlers();
+
+                // Debug: Log created city links
+                const $cityLinks = $('.tnt_city_link');
+                console.log('[TNT] Created city links:', $cityLinks.length);
+
+                if ($cityLinks.length > 0) {
+                    console.log('[TNT] First city link:', $cityLinks.first().get(0));
+                    console.log('[TNT] First city link data-city-id:', $cityLinks.first().data('city-id'));
+                } else {
+                    console.log('[TNT] NO CITY LINKS FOUND - checking if table exists');
+                    console.log('[TNT] Table exists:', $('#tnt_resources_table').length);
+                    console.log('[TNT] Table HTML:', $('#tnt_info_resources_content').html().substring(0, 200));
+                }
+            } else {
+                console.log('[TNT] Not showing resource tables - conditions not met');
+                console.log('[TNT] showResources:', tnt.settings.getResourceDisplaySettings().showResources);
+                console.log('[TNT] isCity:', $("body").attr("id") == "city");
+                console.log('[TNT] isOwn:', tnt.game.city.isOwn());
             }
         },
 
@@ -1663,22 +1895,8 @@ const tnt = {
                 tnt.settings.set("citySwitcherVisited", this.visitedCities);
             }
 
-            const $cityOption = $(`#dropDown_js_citySelectContainer li[selectValue="${cityId}"]`);
-
-            if ($cityOption.length > 0) {
-                console.log('[TNT] Using improved URL method with cityId parameter');
-
-                const currentUrl = new URL(window.location.href);
-                currentUrl.searchParams.set('cityId', cityId);
-                currentUrl.searchParams.set('currentCityId', cityId);
-
-                console.log('[TNT] Navigating to URL:', currentUrl.toString());
-                window.location.href = currentUrl.toString();
-
-                return true;
-            }
-
-            return false;
+            // Use the improved city switching utility
+            return tnt.utils.switchToCity(cityId);
         },
 
         end() {
