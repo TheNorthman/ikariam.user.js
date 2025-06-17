@@ -536,11 +536,6 @@ const tnt = {
         if (settings.removePremiumOffers) {
             $('.premiumOfferBox').hide();
         }
-
-        // Show city levels on islands if enabled
-        if (settings.showCityLvl && $("body").attr("id") === "island") {
-            this.showCityLevels();
-        }
     },
 
     island() {
