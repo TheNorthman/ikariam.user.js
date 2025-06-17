@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         TNT Collection Core
-// @version      1.5.26
+// @version      1.5.27
 // @namespace    tnt.collection.core
 // @author       Ronny Jespersen
 // @description  TNT Collection Core - Stable functionality for Ikariam enhancements
@@ -152,14 +152,18 @@ const tnt = {
     settings: {
         debug: { enable: true },
 
-        // Get setting with default value
+        // Get setting with default value from new storage structure
         get(key, defaultValue = null) {
-            return GM_getValue(key, defaultValue);
+            return tnt.data.storage.settings?.[key] ?? defaultValue;
         },
 
-        // Set setting value
+        // Set setting value in new storage structure
         set(key, value) {
-            GM_setValue(key, value);
+            if (!tnt.data.storage.settings) {
+                tnt.data.storage.settings = {};
+            }
+            tnt.data.storage.settings[key] = value;
+            tnt.core.storage.save();
         },
 
         // Toggle boolean setting
@@ -196,8 +200,11 @@ const tnt = {
             };
         },
 
-        // Initialize default settings
+        // Initialize default settings with migration from GM storage
         initDefaults() {
+            // Migrate from old GM storage to new unified storage
+            this.migrateFromGMStorage();
+            
             const defaults = {
                 "allRemovePremiumOffers": true,
                 "allRemoveFooterNavigation": true,
@@ -213,16 +220,51 @@ const tnt = {
                 "cityShowResourcesCrystal": true,
                 "cityShowResourcesSulfur": true,
                 "notificationAdvisors": true,
-                "notificationSound": true
+                "notificationSound": true,
+                "citySwitcherActive": false,
+                "citySwitcherStartCity": null,
+                "citySwitcherVisited": [],
+                "debugEnabled": true
             };
 
+            // Initialize defaults for any missing settings
             Object.entries(defaults).forEach(([key, defaultValue]) => {
-                if (GM_getValue(key) === undefined) {
+                if (this.get(key) === undefined) {
                     this.set(key, defaultValue);
                 }
             });
 
             this.set("version", tnt.version);
+        },
+
+        // Migrate settings from GM storage to new unified storage
+        migrateFromGMStorage() {
+            console.log('[TNT] Migrating settings from GM storage to unified storage');
+            
+            const settingsToMigrate = [
+                "allRemovePremiumOffers", "allRemoveFooterNavigation", "allChangeNavigationCoord",
+                "islandShowCityLvl", "cityRemoveFlyingShop", "cityShowResources",
+                "cityShowResourcesPorpulation", "cityShowResourcesCitizens", "cityShowResourcesWoods",
+                "cityShowResourcesWine", "cityShowResourcesMarble", "cityShowResourcesCrystal",
+                "cityShowResourcesSulfur", "notificationAdvisors", "notificationSound",
+                "citySwitcherActive", "citySwitcherStartCity", "citySwitcherVisited", "version"
+            ];
+
+            // Only migrate if new storage doesn't exist yet
+            if (!tnt.data.storage.settings) {
+                tnt.data.storage.settings = {};
+                
+                settingsToMigrate.forEach(key => {
+                    const value = GM_getValue(key);
+                    if (value !== undefined) {
+                        tnt.data.storage.settings[key] = value;
+                        console.log(`[TNT] Migrated setting: ${key} = ${value}`);
+                    }
+                });
+                
+                console.log('[TNT] Settings migration completed');
+                tnt.core.storage.save();
+            }
         }
     },
 
@@ -496,9 +538,9 @@ const tnt = {
             return $('.constructionSite').length > 0;
         },
 
-        // Calculate production for a city over time
+        // Calculate production for a city over time - update to use new storage structure
         calculateProduction(cityID, hours) {
-            const city = tnt.data.storage.resources.city[cityID];
+            const city = tnt.data.storage.city[cityID]; // Use new storage structure
             if (city && city.hasOwnProperty('resourceProduction') && city.hasOwnProperty('tradegoodProduction')) {
                 return {
                     wood: (city.resourceProduction * hours * 3600).toLocaleString(),
@@ -509,7 +551,6 @@ const tnt = {
                 };
             }
 
-            // Only log if city is completely missing or lacks production data structure
             if (!city) {
                 tnt.core.debug.log(`City ID ${cityID} not found in storage`);
             } else {
@@ -817,7 +858,7 @@ const tnt = {
         },
 
         buildResourceTable() {
-            const cities = tnt.data.storage.resources.city || {};
+            const cities = tnt.data.storage.city || {}; // Use new storage structure
             const sortedCityIds = tnt.dataCollector.sortCities();
             const settings = tnt.settings.getResourceDisplaySettings();
             const currentCityId = tnt.get.cityId();
@@ -1004,7 +1045,7 @@ const tnt = {
         },
 
         buildBuildingTable() {
-            const cities = tnt.data.storage.resources.city || {};
+            const cities = tnt.data.storage.city || {}; // Use new storage structure
             const sortedCityIds = tnt.dataCollector.sortCities();
             const currentCityId = tnt.get.cityId();
             const buildingDefs = tnt.dataCollector.getBuildingDefinitions();
@@ -1292,7 +1333,7 @@ const tnt = {
         }
     },
 
-    // Main data structure to hold all data
+    // Main data structure to hold all data - NEW STRUCTURE
     data: {
         ikariam: {
             subDomain: location.hostname.split('.')[0],
@@ -1316,17 +1357,30 @@ const tnt = {
             }
         },
         storage: {
-            notification: {
-                cities: false,
-                military: false,
-                militaryAlert: false,
-                scientist: false,
-                diplomat: false
+            // NEW STRUCTURE: Own cities (existing data)
+            city: {},
+            
+            // NEW STRUCTURE: Foreign cities
+            foreign: {},
+            
+            // NEW STRUCTURE: Cities with spies (subset of foreign)
+            spy: {},
+            
+            // NEW STRUCTURE: Avatar/player data
+            avatar: {
+                ambrosia: 0,
+                gold: 0
             },
-            ambrosia: 0,
-            gold: 0,
-            resources: {
-                city: {}
+            
+            // NEW STRUCTURE: TNT settings (includes notification settings)
+            settings: {
+                notification: {
+                    city: false,
+                    military: false,
+                    militaryAlert: false,
+                    scientist: false,
+                    diplomat: false
+                }
             }
         }
     },
@@ -1407,12 +1461,69 @@ const tnt = {
             init() {
                 try {
                     const storedData = localStorage.getItem("tnt_storage");
-                    const parsedData = storedData ? JSON.parse(storedData) : {};
-                    tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
+                    
+                    if (storedData) {
+                        const parsedData = JSON.parse(storedData);
+                        
+                        // Check if this is old storage structure
+                        if (parsedData.resources && !parsedData.city) {
+                            console.log('[TNT] Detected old storage structure - migrating to new format');
+                            
+                            // Migrate old structure to new structure with consistent singular naming
+                            const newStructure = {
+                                city: parsedData.resources?.city || {},
+                                foreign: {},
+                                spy: {},
+                                avatar: {
+                                    ambrosia: parsedData.ambrosia || 0,
+                                    gold: parsedData.gold || 0
+                                },
+                                settings: {
+                                    // Migrate notification data to settings.notification (singular)
+                                    notification: {
+                                        city: parsedData.notification?.cities || false,
+                                        military: parsedData.notification?.military || false,
+                                        militaryAlert: parsedData.notification?.militaryAlert || false,
+                                        scientist: parsedData.notification?.scientist || false,
+                                        diplomat: parsedData.notification?.diplomat || false
+                                    }
+                                }
+                            };
+                            
+                            // Apply migrated structure
+                            tnt.data.storage = newStructure;
+                            console.log('[TNT] Storage structure migration completed');
+                            console.log('[TNT] Migrated notification data:', newStructure.settings.notification);
+                            this.save();
+                        } else {
+                            // Use new structure directly - but ensure notifications are properly merged
+                            tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
+                            
+                            // Handle legacy notification data that might exist at root level
+                            if (parsedData.notification && !tnt.data.storage.settings?.notification) {
+                                console.log('[TNT] Migrating legacy notification data to settings.notification');
+                                if (!tnt.data.storage.settings) {
+                                    tnt.data.storage.settings = {};
+                                }
+                                // Convert plural to singular during migration
+                                tnt.data.storage.settings.notification = {
+                                    city: parsedData.notification.cities || false,
+                                    military: parsedData.notification.military || false,
+                                    militaryAlert: parsedData.notification.militaryAlert || false,
+                                    scientist: parsedData.notification.scientist || false,
+                                    diplomat: parsedData.notification.diplomat || false
+                                };
+                                console.log('[TNT] Notification migration completed:', tnt.data.storage.settings.notification);
+                                this.save();
+                            }
+                        }
+                    }
                 } catch (e) {
-                    tnt.core.debug.log("Error parsing tnt_storage: " + e.message, 1);
+                    tnt.core.debug.log("Error parsing tnt_storage: " + e.message);
+                    console.log('[TNT] Using default storage structure');
                 }
             },
+            
             get(group, name) {
                 if (!tnt.data.storage || !tnt.data.storage[group]) return undefined;
                 return tnt.data.storage[group][name];
@@ -1493,7 +1604,8 @@ const tnt = {
                         }
 
                         switch (view) {
-                            case "worldmap_iso":
+                                                       case "worldmap_iso":
+
                                 tnt.core.debug.log($('worldmap_iso: div.islandTile div.cities'), 3);
                                 break;
                             case "city":
@@ -1605,13 +1717,17 @@ const tnt = {
                 return;
             }
 
-            // 🔧 FIX: Only collect data for own cities
-            if (!tnt.game.city.isOwn()) {
-                tnt.core.debug.log(`Skipping data collection for non-own city: ${currentCityId}`);
-                return;
+            const isOwnCity = tnt.game.city.isOwn();
+            
+            if (isOwnCity) {
+                this.collectOwnCityData(currentCityId);
+            } else {
+                this.collectForeignCityData(currentCityId);
             }
+        },
 
-            const prev = $.extend(true, {}, tnt.data.storage.resources.city[currentCityId] || {});
+        collectOwnCityData(currentCityId) {
+            const prev = $.extend(true, {}, tnt.data.storage.city[currentCityId] || {});
 
             const cityData = {
                 ...prev,
@@ -1626,32 +1742,72 @@ const tnt = {
                 marble: tnt.get.resources.marble(),
                 crystal: tnt.get.resources.crystal(),
                 sulfur: tnt.get.resources.sulfur(),
-                hasConstruction: false, // Initialize as false, will be set properly below
+                hasConstruction: false,
                 cityLvl: tnt.get.cityLvl(),
                 resourceProduction: tnt.get.resourceProduction(),
                 tradegoodProduction: tnt.get.tradegoodProduction(),
-                lastUpdate: Date.now()
+                lastUpdate: Date.now(),
+                isOwn: true
             };
 
             // Only update buildings when in city view
             if ($("body").attr("id") === "city") {
-                // Use the new utility function for building detection
                 const buildingData = tnt.utils.scanAllBuildings();
                 cityData.buildings = buildingData.buildings;
                 cityData.hasConstruction = buildingData.hasConstruction;
             } else {
-                // When not in city view, preserve previous construction status
                 cityData.hasConstruction = prev.hasConstruction || false;
             }
 
-            // Store final data and update display
-            tnt.data.storage.resources.city[currentCityId] = cityData;
+            // Store in own city data
+            tnt.data.storage.city[currentCityId] = cityData;
             tnt.core.storage.save();
             tnt.dataCollector.show();
         },
 
+        collectForeignCityData(currentCityId) {
+            console.log('[TNT] Collecting foreign city data for:', currentCityId);
+            
+            const hasSpyAccess = $('.spy_warning').length > 0 || $('#js_spiesInsideText').length > 0;
+            const ownerName = tnt.utils.safeGet(() => ikariam.backgroundView.screen.data.ownerName, 'Unknown');
+            const ownerId = tnt.utils.safeGet(() => ikariam.backgroundView.screen.data.ownerId, 0);
+            
+            const foreignCityData = {
+                cityId: currentCityId,
+                name: tnt.utils.safeGet(() => ikariam.backgroundView.screen.data.name, 'Unknown City'),
+                ownerName: ownerName,
+                ownerId: parseInt(ownerId),
+                cityIslandCoords: tnt.get.cityIslandCoords(),
+                cityLvl: tnt.get.cityLvl(),
+                producedTradegood: parseInt(tnt.get.producedTradegood()),
+                hasSpyAccess: hasSpyAccess,
+                buildings: {},
+                lastUpdate: Date.now(),
+                isOwn: false
+            };
+
+            // Collect visible building data
+            if ($("body").attr("id") === "city") {
+                const buildingData = tnt.utils.scanAllBuildings();
+                foreignCityData.buildings = buildingData.buildings;
+                foreignCityData.hasConstruction = buildingData.hasConstruction;
+            }
+
+            // Store in foreign city data
+            tnt.data.storage.foreign[currentCityId] = foreignCityData;
+            
+            // Also store in spy data if we have spy access
+            if (hasSpyAccess) {
+                tnt.data.storage.spy[currentCityId] = foreignCityData;
+                console.log('[TNT] Stored spy data for city:', currentCityId);
+            }
+            
+            tnt.core.storage.save();
+            console.log('[TNT] Foreign city data collected and stored');
+        },
+
         show() {
-            // 🔧 FIX: Only show resource tables for own cities
+            // Only show resource tables for own cities
             if (tnt.settings.getResourceDisplaySettings().showResources &&
                 $("body").attr("id") == "city" &&
                 tnt.game.city.isOwn()) {
@@ -1666,39 +1822,24 @@ const tnt = {
                 $('#tnt_info_resources_content').empty();
                 $('#tnt_info_buildings_content').empty();
 
-                // Build resource table using new table builder - NO BUTTONS IN TABLE
                 const resourceTable = tnt.tableBuilder.buildTable('resources');
                 $('#tnt_info_resources_content').html(resourceTable);
                 console.log('[TNT] Inserted resource table HTML');
 
-                // Build building table using new table builder - NO BUTTONS IN TABLE
                 const buildingTable = tnt.tableBuilder.buildTable('buildings');
                 $('#tnt_info_buildings_content').html(buildingTable);
                 console.log('[TNT] Inserted building table HTML');
 
-                // Create external controls ONLY ONCE per page load
                 this.createExternalControls();
-
-                // Add event handlers AFTER the tables are created
                 tnt.tableBuilder.attachEventHandlers();
 
-                // Debug: Log created city links
                 const $cityLinks = $('.tnt_city_link');
                 console.log('[TNT] Created city links:', $cityLinks.length);
-
-                if ($cityLinks.length > 0) {
-                    console.log('[TNT] First city link:', $cityLinks.first().get(0));
-                    console.log('[TNT] First city link data-city-id:', $cityLinks.first().data('city-id'));
-                } else {
-                    console.log('[TNT] NO CITY LINKS FOUND - checking if table exists');
-                    console.log('[TNT] Table exists:', $('#tnt_resources_table').length);
-                    console.log('[TNT] Table HTML:', $('#tnt_info_resources_content').html().substring(0, 200));
-                }
             } else {
                 console.log('[TNT] Not showing resource tables - conditions not met');
-                console.log('[TNT] showResources:', tnt.settings.getResourceDisplaySettings().showResources);
-                console.log('[TNT] isCity:', $("body").attr("id") == "city");
-                console.log('[TNT] isOwn:', tnt.game.city.isOwn());
+                if (!tnt.game.city.isOwn()) {
+                    console.log('[TNT] Foreign city detected - not showing own city tables');
+                }
             }
         },
 
@@ -1722,6 +1863,7 @@ const tnt = {
             }
         },
 
+        // NEW: Calculate totals across all cities
         calculateTotals() {
             let total = {
                 population: 0,
@@ -1733,7 +1875,7 @@ const tnt = {
                 sulfur: 0
             };
 
-            $.each(tnt.data.storage.resources.city, function (cityID, cityData) {
+            $.each(tnt.data.storage.city, function (cityID, cityData) {
                 total.population += cityData.population || 0;
                 total.citizens += cityData.citizens || 0;
                 total.wood += cityData.wood || 0;
@@ -1753,7 +1895,7 @@ const tnt = {
         getMergedBuildingColumns(buildingColumns) {
             // Determine which building columns are used in any city
             const usedColumns = buildingColumns.filter(function (col) {
-                const cities = Object.values(tnt.data.storage.resources.city);
+                const cities = Object.values(tnt.data.storage.city);
                 if (col.key === 'palace' || col.key === 'palaceColony') {
                     return cities.some(city =>
                         (city.buildings?.['palace']?.length > 0) ||
@@ -1812,7 +1954,7 @@ const tnt = {
 
         sortCities() {
             var list = {};
-            var cities = tnt.data.storage.resources.city || {};
+            var cities = tnt.data.storage.city || {};
             $.each(cities, (cityID, value) => {
                 if (value && typeof value.producedTradegood !== 'undefined') {
                     list[cityID] = value.producedTradegood;
