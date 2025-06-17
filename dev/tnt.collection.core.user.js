@@ -511,6 +511,64 @@ const tnt = {
 
             tnt.core.debug.log(`City ID ${cityID} not found in storage`);
             return { wood: "0", wine: "0", marble: "0", crystal: "0", sulfur: "0" };
+        },
+
+        // Extract level from CSS classes pattern
+        extractLevelFromElement($element) {
+            const classes = $element.attr('class') || '';
+            const levelMatch = classes.match(/level(\d+)/);
+            return levelMatch ? levelMatch[1] : '?';
+        },
+
+        // Create level indicator element
+        createLevelIndicator(level) {
+            return $('<div class="tntLvl">' + level + '</div>');
+        },
+
+        // Check if current page is island view
+        isIslandView() {
+            return $("body").attr("id") === "island";
+        },
+
+        // Validate city element for level display
+        validateCityElement($element) {
+            // Check if element exists
+            if ($element.length === 0) return false;
+
+            // Check if already has level indicator
+            if ($element.find('.tntLvl').length > 0) return false;
+
+            // Check if it's actually a player city
+            if (!$element.hasClass('city')) return false;
+
+            return true;
+        },
+
+        // Iterate through city positions with callback
+        iterateCityPositions(callback) {
+            for (let i = 0; i <= 16; i++) {
+                const $cityLocation = $(`#cityLocation${i}`);
+                callback($cityLocation, i);
+            }
+        },
+
+        // Complete city level display logic
+        displayCityLevels() {
+            // Only run on island view
+            if (!this.isIslandView()) return;
+
+            // Iterate through all city positions
+            this.iterateCityPositions(($cityLocation, position) => {
+                // Validate the city element
+                if (!this.validateCityElement($cityLocation)) return;
+
+                // Extract level from element
+                const level = this.extractLevelFromElement($cityLocation);
+
+                // Create and append level indicator
+                const $levelIndicator = this.createLevelIndicator(level);
+                $cityLocation.append($levelIndicator);
+            });
         }
     },
 
@@ -544,7 +602,7 @@ const tnt = {
 
         // Show city levels if setting is enabled
         if (tnt.settings.get("islandShowCityLvl", true)) {
-            this.showCityLevels();
+            tnt.utils.displayCityLevels();
         }
     },
 
@@ -562,30 +620,8 @@ const tnt = {
     },
 
     showCityLevels() {
-        // Show city levels on island view
-        if ($("body").attr("id") !== "island") return;
-
-        // Simple loop through city positions 0-16 (actual city slots only)
-        for (let i = 0; i <= 16; i++) {
-            const $cityLocation = $(`#cityLocation${i}`);
-
-            // Skip if this city location doesn't exist or already has level indicator
-            if ($cityLocation.length === 0 || $cityLocation.find('.tntLvl').length > 0) {
-                continue;
-            }
-
-            // Only add indicators to actual player cities (not buildplaces, barbarian village, etc.)
-            if ($cityLocation.hasClass('city')) {
-                // Extract level from CSS classes - simple and reliable
-                const classes = $cityLocation.attr('class') || '';
-                const levelMatch = classes.match(/level(\d+)/);
-                const level = levelMatch ? levelMatch[1] : '?';
-
-                // Create and append level indicator
-                const $levelIndicator = $('<div class="tntLvl">' + level + '</div>');
-                $cityLocation.append($levelIndicator);
-            }
-        }
+        // Delegate to the utility function
+        tnt.utils.displayCityLevels();
     },
 
     // Table builder - complete implementation matching working HTML structure
@@ -1398,11 +1434,11 @@ const tnt = {
             // Only create if they don't exist yet
             if ($('.tnt_external_controls').length === 0) {
                 const $externalControls = $('<div class="tnt_external_controls"></div>');
-                
+
                 // Left side buttons (Min/Max)
                 const $leftButtons = $('<div class="tnt_left_buttons"></div>');
                 $leftButtons.append('<span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span>');
-                
+
                 // Right side buttons (Refresh, Toggle)
                 const $rightButtons = $('<div class="tnt_right_buttons"></div>');
                 $rightButtons.append('<span class="tnt_refresh_btn" title="Refresh all cities"></span>');
