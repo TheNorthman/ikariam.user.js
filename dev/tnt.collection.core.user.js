@@ -139,6 +139,12 @@ const TNT_STYLES = `
         background-color: #80404050 !important;
         border-left: 3px solid #804040 !important;
     }
+
+    /* Phase 4: Visual progress styles */
+    .tnt_progress_visited {
+        background-color: #d4edda !important;
+        color: #155724 !important;
+    }
 `;
 
 const tnt = {
@@ -914,15 +920,18 @@ const tnt = {
 
                 const isCurrentCity = (cityId == currentCityId);
                 const hasConstruction = city.hasConstruction;
+
+                // Phase 4: Add visual progress indicators
+                const isVisited = tnt.citySwitcher.isActive && tnt.citySwitcher.visitedCities.includes(cityId);
+                const progressClass = this.getProgressClass(cityId, isCurrentCity, hasConstruction, isVisited);
                 const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
 
-                console.log(`[TNT] City ${cityId} - Current: ${isCurrentCity}, Construction: ${hasConstruction}`);
+                console.log(`[TNT] City ${cityId} - Current: ${isCurrentCity}, Construction: ${hasConstruction}, Visited: ${isVisited}`);
 
                 html += `<tr${rowClass}>`;
 
-                // City name cell
-                const constructionClass = hasConstruction ? ' tnt_construction' : '';
-                html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
+                // City name cell with progress styling
+                html += `<td class="tnt_city tnt_left${progressClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
                 html += `<a href="#" class="tnt_city_link" data-city-id="${cityId}">`;
                 html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
                 html += '</a></td>';
@@ -1073,13 +1082,16 @@ const tnt = {
 
                 const isCurrentCity = (cityId == currentCityId);
                 const hasConstruction = city.hasConstruction;
+
+                // Phase 4: Add visual progress indicators
+                const isVisited = tnt.citySwitcher.isActive && tnt.citySwitcher.visitedCities.includes(cityId);
+                const progressClass = this.getProgressClass(cityId, isCurrentCity, hasConstruction, isVisited);
                 const rowClass = isCurrentCity ? ' class="tnt_selected"' : '';
 
                 html += `<tr${rowClass}>`;
 
-                // City name cell
-                const constructionClass = hasConstruction ? ' tnt_construction' : '';
-                html += `<td class="tnt_city tnt_left${constructionClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
+                // City name cell with progress styling
+                html += `<td class="tnt_city tnt_left${progressClass}" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;">`;
                 html += `<a href="#" class="tnt_city_link" data-city-id="${cityId}">`;
                 html += tnt.dataCollector.getIcon(city.producedTradegood) + ' ' + tnt.get.cityName(cityId);
                 html += '</a></td>';
@@ -1134,6 +1146,27 @@ const tnt = {
 
             html += '</tbody></table>';
             return html;
+        },
+
+        // Phase 4: Visual progress class determination
+        getProgressClass(cityId, isCurrentCity, hasConstruction, isVisited) {
+            // Only apply progress styling during active city switching
+            if (!tnt.citySwitcher.isActive) {
+                // Normal state - show construction status only
+                return hasConstruction ? ' tnt_construction' : '';
+            }
+
+            // During city switching - show progress indicators
+            if (isCurrentCity) {
+                // Current city during switching - always show construction status if present
+                return hasConstruction ? ' tnt_construction' : '';
+            } else if (isVisited) {
+                // Visited city during switching - green background
+                return ' tnt_progress_visited';
+            } else {
+                // Unvisited city during switching - normal styling
+                return hasConstruction ? ' tnt_construction' : '';
+            }
         },
 
         attachEventHandlers() {
@@ -1428,16 +1461,16 @@ const tnt = {
             init() {
                 const scriptStartTime = performance.now();
                 console.log(`[TNT Timing] Script start: ${scriptStartTime.toFixed(2)}ms`);
-                
+
                 try {
                     const storedData = localStorage.getItem("tnt_storage");
-                    
+
                     if (storedData) {
                         const parsedData = JSON.parse(storedData);
                         const storedVersion = parsedData.version;
-                        
+
                         console.log(`[TNT Timing] Storage parsed: ${(performance.now() - scriptStartTime).toFixed(2)}ms`);
-                        
+
                         // Enhanced version check - detect structure compatibility
                         if (storedVersion === tnt.version) {
                             // Same version - use existing data
@@ -1511,7 +1544,7 @@ const tnt = {
                             }
                         }, 200);
                     }
-                    
+
                     // Check when city list becomes available
                     const cityList = tnt.get.cityList();
                     console.log(`[TNT Timing] City list ready: ${(performance.now() - scriptStartTime).toFixed(2)}ms (${Object.keys(cityList).length} cities)`);
@@ -1575,6 +1608,7 @@ const tnt = {
                     // updateGlobalData = Move this into its own function
                     ajax.Responder.tntUpdateGlobalData = ajax.Responder.updateGlobalData;
                     ajax.Responder.updateGlobalData = function (response) {
+
                         var view = $('body').attr('id');
                         tnt.core.debug.log("updateGlobalData (View: " + view + ")", 3);
 
@@ -1665,7 +1699,7 @@ const tnt = {
                             case "transport":
                                 $('#setPremiumJetPropulsion').hide().prev().hide();
                                 break;
-                                                       case "resource":
+                            case "resource":
                                 $('#sidebarWidget .indicator').eq(1).trigger("click");
                                 break;
                             case "merchantNavy":
@@ -2017,6 +2051,10 @@ const tnt = {
             tnt.settings.set("citySwitcherVisited", this.visitedCities);
 
             console.log('[TNT] CitySwitcher started from city:', this.startCityId);
+
+            // Phase 4: Update visual progress immediately
+            this.updateVisualProgress();
+
             this.nextCity();
         },
 
@@ -2039,6 +2077,9 @@ const tnt = {
             if (!this.visitedCities.includes(cityId)) {
                 this.visitedCities.push(cityId);
                 tnt.settings.set("citySwitcherVisited", this.visitedCities);
+
+                // Phase 4: Update visual progress when visiting new city
+                this.updateVisualProgress();
             }
 
             // Use the improved city switching utility
@@ -2052,7 +2093,53 @@ const tnt = {
             this.switchToCity(this.startCityId);
             this.isActive = false;
             tnt.settings.set("citySwitcherActive", false);
+
+            // Phase 4: Restore normal visual state after completion
+            this.restoreNormalVisualState();
+
             console.log('[TNT] CitySwitcher finished and deactivated');
+        },
+
+        // Phase 4: Update visual progress indicators
+        updateVisualProgress() {
+            // Only update if tables are visible and we're in city view
+            if ($('#tnt_info_resources').is(':visible') && $("body").attr("id") === "city") {
+                console.log('[TNT] Updating visual progress indicators');
+
+                // Rebuild tables to reflect current progress state
+                setTimeout(() => {
+                    const resourceTable = tnt.tableBuilder.buildTable('resources');
+                    $('#tnt_info_resources_content').html(resourceTable);
+
+                    const buildingTable = tnt.tableBuilder.buildTable('buildings');
+                    $('#tnt_info_buildings_content').html(buildingTable);
+
+                    // Reattach event handlers
+                    tnt.tableBuilder.attachEventHandlers();
+                }, 100);
+            }
+        },
+
+        // Phase 4: Restore normal visual state (construction status only)
+        restoreNormalVisualState() {
+            console.log('[TNT] Restoring normal visual state');
+
+            // Clear visited cities
+            this.visitedCities = [];
+
+            // Rebuild tables to show normal state (construction status only)
+            if ($('#tnt_info_resources').is(':visible') && $("body").attr("id") === "city") {
+                setTimeout(() => {
+                    const resourceTable = tnt.tableBuilder.buildTable('resources');
+                    $('#tnt_info_resources_content').html(resourceTable);
+
+                    const buildingTable = tnt.tableBuilder.buildTable('buildings');
+                    $('#tnt_info_buildings_content').html(buildingTable);
+
+                    // Reattach event handlers
+                    tnt.tableBuilder.attachEventHandlers();
+                }, 100);
+            }
         },
 
         checkAndContinue() {
@@ -2068,6 +2155,9 @@ const tnt = {
                     this.startCityId = tnt.settings.get("citySwitcherStartCity");
                     this.visitedCities = visitedCities;
 
+                    // Phase 4: Update visual progress when continuing
+                    this.updateVisualProgress();
+
                     setTimeout(() => {
                         this.nextCity();
                     }, 1000);
@@ -2076,6 +2166,9 @@ const tnt = {
                     console.log('[TNT] Direct navigation detected - stopping citySwitcher');
                     this.isActive = false;
                     tnt.settings.set("citySwitcherActive", false);
+
+                    // Phase 4: Restore normal state
+                    this.restoreNormalVisualState();
                 }
             }
         }

@@ -357,6 +357,34 @@ GM_addStyle(`
     .tnt_construction{
         background-color: #80404050 !important;
     }
+    
+    /* Phase 4: Visual progress indicators */
+    .tnt_progress_visited {
+        background-color: #90EE9050 !important;
+        border-left: 3px solid #32CD32 !important;
+    }
+    
+    /* Ensure progress indicators work with selected state */
+    body #tnt_info_resources .tnt_selected .tnt_progress_visited,
+    body #tnt_info_buildings_content .tnt_selected .tnt_progress_visited {
+        background-color: #90EE9050 !important;
+        border-left: 3px solid #32CD32 !important;
+    }
+    
+    /* Progress indicator takes precedence over construction during active switching */
+    .tnt_progress_visited.tnt_construction {
+        background-color: #90EE9050 !important;
+        border-left: 3px solid #32CD32 !important;
+    }
+    
+    /* Remove old category spacer styles that are no longer needed */
+    .tnt_category_spacer {
+        display: none !important;
+    }
+    /* Construction status styling applies to the first cell in any row across all tables */
+    .tnt_construction{
+        background-color: #80404050 !important;
+    }
     /* Current city highlighting with 2px black border - no background change */
     body #tnt_info_resources .tnt_selected,
     body #tnt_info_buildings_content .tnt_selected {
