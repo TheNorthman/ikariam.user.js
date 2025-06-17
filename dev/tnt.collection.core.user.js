@@ -1438,18 +1438,78 @@ const tnt = {
                         
                         console.log(`[TNT Timing] Storage parsed: ${(performance.now() - scriptStartTime).toFixed(2)}ms`);
                         
-                        // Simple version check - no complex migration
+                        // Enhanced version check - detect structure compatibility
                         if (storedVersion === tnt.version) {
                             // Same version - use existing data
                             tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
                             console.log('[TNT] Using existing storage data (version match)');
                         } else {
-                            // Different or missing version - will be handled later in Phase 2
-                            tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
-                            console.log(`[TNT] Version mismatch detected: stored=${storedVersion}, current=${tnt.version}`);
+                            // Check if stored data has new structure (city, foreign, spy, settings)
+                            const hasNewStructure = parsedData.city &&
+                                parsedData.settings &&
+                                typeof parsedData.settings === 'object';
+
+                            if (hasNewStructure) {
+                                // New structure exists - just update version, no reset needed
+                                tnt.data.storage = $.extend(true, {}, tnt.data.storage, parsedData);
+                                tnt.data.storage.version = tnt.version;
+                                tnt.core.storage.save();
+                                console.log(`[TNT] Updated version from ${storedVersion} to ${tnt.version} (structure compatible)`);
+                            } else {
+                                // Old structure or incompatible - reset and auto-start
+                                console.log(`[TNT] Incompatible storage structure - resetting and starting data collection`);
+                                console.log(`[TNT] Stored: ${storedVersion}, Current: ${tnt.version}`);
+
+                                // Reset to clean defaults with current version
+                                tnt.data.storage.version = tnt.version;
+                                tnt.core.storage.save();
+
+                                // Smart auto-start data collection with 200ms delay
+                                setTimeout(() => {
+                                    const cityList = tnt.get.cityList();
+                                    const cityCount = Object.keys(cityList).length;
+
+                                    console.log(`[TNT] Auto-starting data collection for ${cityCount} cities`);
+
+                                    if (cityCount > 1) {
+                                        // Multiple cities - start city switcher
+                                        console.log('[TNT] Starting city switcher for multi-city data collection');
+                                        tnt.citySwitcher.start();
+                                    } else if (cityCount === 1) {
+                                        // Single city - just collect current city data
+                                        console.log('[TNT] Single city detected - collecting current city data');
+                                        tnt.dataCollector.update();
+                                    } else {
+                                        console.log('[TNT] No cities detected - skipping auto-collection');
+                                    }
+                                }, 200);
+                            }
                         }
                     } else {
-                        console.log('[TNT] No existing storage found - using defaults');
+                        // No existing storage - new user
+                        console.log('[TNT] No existing storage found - new user detected');
+                        tnt.data.storage.version = tnt.version;
+                        tnt.core.storage.save();
+
+                        // Smart auto-start for new users with 200ms delay  
+                        setTimeout(() => {
+                            const cityList = tnt.get.cityList();
+                            const cityCount = Object.keys(cityList).length;
+
+                            console.log(`[TNT] New user auto-starting data collection for ${cityCount} cities`);
+
+                            if (cityCount > 1) {
+                                // Multiple cities - start city switcher
+                                console.log('[TNT] Starting city switcher for new user');
+                                tnt.citySwitcher.start();
+                            } else if (cityCount === 1) {
+                                // Single city - just collect current city data
+                                console.log('[TNT] Single city new user - collecting current city data');
+                                tnt.dataCollector.update();
+                            } else {
+                                console.log('[TNT] New user with no cities - skipping auto-collection');
+                            }
+                        }, 200);
                     }
                     
                     // Check when city list becomes available
@@ -1459,19 +1519,26 @@ const tnt = {
                 } catch (e) {
                     tnt.core.debug.log("Error parsing tnt_storage: " + e.message);
                     console.log('[TNT] Using default storage structure due to parse error');
+
+                    // On parse error, treat as new user
+                    tnt.data.storage.version = tnt.version;
+                    tnt.core.storage.save();
                 }
             },
 
+            // Get setting value from storage
             get(group, name) {
                 if (!tnt.data.storage || !tnt.data.storage[group]) return undefined;
                 return tnt.data.storage[group][name];
             },
+            // Set setting value in storage
             set(group, name, value) {
                 if (!tnt.data.storage) tnt.data.storage = {};
                 if (!tnt.data.storage[group]) tnt.data.storage[group] = {};
                 tnt.data.storage[group][name] = value;
                 tnt.core.storage.save();
             },
+            // Save data to storage
             save() {
                 try {
                     localStorage.setItem("tnt_storage", JSON.stringify(tnt.data.storage));
