@@ -499,7 +499,7 @@ const tnt = {
         // Calculate production for a city over time
         calculateProduction(cityID, hours) {
             const city = tnt.data.storage.resources.city[cityID];
-            if (city && city.resourceProduction && city.tradegoodProduction) {
+            if (city && city.hasOwnProperty('resourceProduction') && city.hasOwnProperty('tradegoodProduction')) {
                 return {
                     wood: (city.resourceProduction * hours * 3600).toLocaleString(),
                     wine: city.producedTradegood == 1 ? (city.tradegoodProduction * hours * 3600).toLocaleString() : "0",
@@ -509,7 +509,12 @@ const tnt = {
                 };
             }
 
-            tnt.core.debug.log(`City ID ${cityID} not found in storage`);
+            // Only log if city is completely missing or lacks production data structure
+            if (!city) {
+                tnt.core.debug.log(`City ID ${cityID} not found in storage`);
+            } else {
+                tnt.core.debug.log(`City ID ${cityID} missing production data (resourceProduction: ${city.resourceProduction}, tradegoodProduction: ${city.tradegoodProduction})`);
+            }
             return { wood: "0", wine: "0", marble: "0", crystal: "0", sulfur: "0" };
         },
 
@@ -569,6 +574,111 @@ const tnt = {
                 const $levelIndicator = this.createLevelIndicator(level);
                 $cityLocation.append($levelIndicator);
             });
+        },
+
+        // Building Detection Utilities
+
+        // Extract position number from element ID
+        extractPositionFromElement($element) {
+            const posId = $element.attr('id');
+            if (!posId) return null;
+            const match = posId.match(/\d+$/);
+            return match ? match[0] : null;
+        },
+
+        // Detect building type from CSS classes
+        detectBuildingType($element) {
+            const classes = ($element.attr('class') || '').split(/\s+/);
+            return classes.find(c => validBuildingTypes.includes(c)) || null;
+        },
+
+        // Check if building is under construction
+        isUnderConstruction($element) {
+            return $element.hasClass('constructionSite');
+        },
+
+        // Extract building level information
+        extractBuildingLevel($element) {
+            const underConstruction = this.isUnderConstruction($element);
+            const classes = ($element.attr('class') || '').split(/\s+/);
+            let level = 0;
+            let targetLevel = 0;
+
+            if (underConstruction) {
+                // For buildings under construction, try to get current and target levels
+                const $level = $element.find('.level');
+                const currentLevelText = $level.text();
+                level = parseInt(currentLevelText.match(/\d+/)?.[0] || '0');
+
+                // Try to get target level from title or construction info
+                const title = $element.find('a').attr('title') || '';
+                const titleMatch = title.match(/\((\d+)\)/);
+                targetLevel = titleMatch ? parseInt(titleMatch[1]) : level + 1;
+            } else {
+                const levelClass = classes.find(c => c.startsWith('level'));
+                const $level = $element.find('.level');
+                level = parseInt(levelClass?.match(/\d+$/)?.[0] || $level.text().match(/\d+/)?.[0] || '0');
+                targetLevel = level;
+            }
+
+            return { level, targetLevel, underConstruction };
+        },
+
+        // Create building data object
+        createBuildingData(position, buildingType, levelInfo) {
+            return {
+                position,
+                level: levelInfo.targetLevel || levelInfo.level,
+                currentLevel: levelInfo.level,
+                targetLevel: levelInfo.targetLevel,
+                name: buildingType,
+                underConstruction: levelInfo.underConstruction
+            };
+        },
+
+        // Add building to collection
+        addBuildingToCollection(collection, buildingData) {
+            const buildingType = buildingData.name;
+            collection[buildingType] = collection[buildingType] || [];
+
+            const existingIndex = collection[buildingType].findIndex(b => b.position === buildingData.position);
+            if (existingIndex >= 0) {
+                collection[buildingType][existingIndex] = buildingData;
+            } else {
+                collection[buildingType].push(buildingData);
+            }
+        },
+
+        // Complete building detection for current city
+        scanAllBuildings() {
+            const $positions = $('div[id^="position"].building, div[id^="js_CityPosition"].building');
+            if (!$positions.length) return { buildings: {}, hasConstruction: false };
+
+            const foundBuildings = {};
+            const hasAnyConstruction = this.hasConstruction();
+
+            $positions.each((index, element) => {
+                const $pos = $(element);
+
+                // Extract basic building information
+                const position = this.extractPositionFromElement($pos);
+                if (!position) return;
+
+                const buildingType = this.detectBuildingType($pos);
+                if (!buildingType) return;
+
+                const levelInfo = this.extractBuildingLevel($pos);
+                if (levelInfo.level <= 0 && levelInfo.targetLevel <= 0) return;
+
+                // Create and add building data
+                const buildingData = this.createBuildingData(position, buildingType, levelInfo);
+                this.addBuildingToCollection(foundBuildings, buildingData);
+            });
+
+            return {
+                buildings: foundBuildings,
+                hasConstruction: hasAnyConstruction
+            };
         }
     },
 
@@ -1316,80 +1426,10 @@ const tnt = {
 
             // Only update buildings when in city view
             if ($("body").attr("id") === "city") {
-                const detectBuildings = () => {
-                    const $positions = $('div[id^="position"].building, div[id^="js_CityPosition"].building');
-                    if (!$positions.length) return;
-
-                    const foundBuildings = {};
-                    // Simplified construction detection - just check if any .constructionSite elements exist
-                    const hasAnyConstruction = $('.constructionSite').length > 0;
-
-                    $positions.each(function () {
-                        const $pos = $(this);
-                        const posId = $pos.attr('id');
-                        if (!posId) return;
-
-                        const position = posId.match(/\d+$/)?.[0];
-                        if (!position) return;
-
-                        const classes = ($pos.attr('class') || '').split(/\s+/);
-                        const buildingType = classes.find(c => validBuildingTypes.includes(c));
-                        if (!buildingType) return;
-
-                        // Check if this specific position has construction
-                        const underConstruction = $pos.hasClass('constructionSite');
-
-                        // Get level information
-                        let level = 0;
-                        let targetLevel = 0;
-
-                        if (underConstruction) {
-                            // For buildings under construction, try to get current and target levels
-                            const $level = $pos.find('.level');
-                            const currentLevelText = $level.text();
-                            level = parseInt(currentLevelText.match(/\d+/)?.[0] || '0');
-
-                            // Try to get target level from title or construction info
-                            const title = $pos.find('a').attr('title') || '';
-                            const titleMatch = title.match(/\((\d+)\)/);
-                            targetLevel = titleMatch ? parseInt(titleMatch[1]) : level + 1;
-                        } else {
-                            const levelClass = classes.find(c => c.startsWith('level'));
-                            const $level = $pos.find('.level');
-                            level = parseInt(levelClass?.match(/\d+$/)?.[0] || $level.text().match(/\d+/)?.[0] || '0');
-                            targetLevel = level;
-                        }
-
-                        if (level > 0 || targetLevel > 0) {
-                            foundBuildings[buildingType] = foundBuildings[buildingType] || [];
-                            const existingIndex = foundBuildings[buildingType].findIndex(b => b.position === position);
-                            const buildingData = {
-                                position,
-                                level: targetLevel || level,
-                                currentLevel: level,
-                                targetLevel,
-                                name: buildingType,
-                                underConstruction
-                            };
-
-                            if (existingIndex >= 0) {
-                                foundBuildings[buildingType][existingIndex] = buildingData;
-                            } else {
-                                foundBuildings[buildingType].push(buildingData);
-                            }
-                        }
-                    });
-
-                    // Update city data with found buildings and construction status
-                    cityData.buildings = foundBuildings;
-                    cityData.hasConstruction = hasAnyConstruction;
-
-                    tnt.data.storage.resources.city[currentCityId] = cityData;
-                    tnt.core.storage.save();
-                    tnt.dataCollector.show();
-                };
-
-                detectBuildings();
+                // Use the new utility function for building detection
+                const buildingData = tnt.utils.scanAllBuildings();
+                cityData.buildings = buildingData.buildings;
+                cityData.hasConstruction = buildingData.hasConstruction;
             } else {
                 // When not in city view, preserve previous construction status
                 cityData.hasConstruction = prev.hasConstruction || false;
