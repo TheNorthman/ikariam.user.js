@@ -1,0 +1,23 @@
+﻿{
+    "currentDate":  "2025-06-20",
+    "updateInfo":  {
+                       "scriptVersion":  "1.0.0",
+                       "updateFrequency":  "hourly",
+                       "nextUpdate":  "2025-06-20 11:05"
+                   },
+    "systemInfo":  {
+                       "gitBranch":  "claude35sonnet",
+                       "lastCommit":  "2025-06-18",
+                       "scriptLocation":  "C:\\Projects\\Private\\Ikariam\\tnt.collection\\tools\\update-external-context.ps1",
+                       "workingDirectory":  "modified"
+                   },
+    "currentTime":  "10:05",
+    "dayOfWeek":  "Friday",
+    "lastUpdate":  "2025-06-20 10:05:15",
+    "projectContext":  {
+                           "lastBackupCore":  "none-yet",
+                           "projectPath":  "C:\\Projects\\Private\\Ikariam\\tnt.collection",
+                           "lastBackupDev":  "none-yet",
+                           "activePhase":  "tooltip-development"
+                       }
+}

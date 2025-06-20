@@ -377,6 +377,49 @@ GM_addStyle(`
         border-left: 3px solid #32CD32 !important;
     }
     
+    /* === RESOURCE STORAGE INDICATORS (FIX FOR ISSUE #002) === */
+    
+    /* Storage danger - high storage warning (RED background, no borders) */
+    .storage_danger {
+        background-color: #ff8888 !important;
+    }
+    
+    /* Storage minimum - low resource warning (YELLOW background, no borders) */
+    .storage_min {
+        background-color: #ff8888 !important;
+    }
+    
+    /* Ensure storage indicators work with TNT table styling */
+    body #tnt_info_resources .storage_danger,
+    body #tnt_info_buildings_content .storage_danger {
+        background-color: #ff8888 !important;
+    }
+    
+    body #tnt_info_resources .storage_min,
+    body #tnt_info_buildings_content .storage_min {
+        background-color: #ff8888 !important;
+    }
+    
+    /* Storage indicators with current city selection */
+    body #tnt_info_resources .tnt_selected .storage_danger,
+    body #tnt_info_buildings_content .tnt_selected .storage_danger {
+        background-color: #ff8888 !important;
+    }
+    
+    body #tnt_info_resources .tnt_selected .storage_min,
+    body #tnt_info_buildings_content .tnt_selected .storage_min {
+        background-color: #ff8888 !important;
+    }
+    
+    /* Storage indicators take precedence over construction status */
+    .storage_danger.tnt_construction {
+        background-color: #ff8888 !important;
+    }
+    
+    .storage_min.tnt_construction {
+        background-color: #ff8888 !important;
+    }
+    
     /* Remove old category spacer styles that are no longer needed */
     .tnt_category_spacer {
         display: none !important;

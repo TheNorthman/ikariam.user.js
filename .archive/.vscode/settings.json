@@ -1,0 +1,8 @@
+{
+    "files.exclude": {
+        "**/backup/**": true,
+        "**/ai.reference/**": true,
+        "**/*.backup": true,
+        "**/Untitled-*": true
+    }
+}

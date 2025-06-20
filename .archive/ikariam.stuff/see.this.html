@@ -1,0 +1,626 @@
+<div id="tnt_info_resources">
+    <div class="tnt_external_controls">
+        <div class="tnt_left_buttons"><span class="tnt_panel_minimize_btn tnt_back" title="Minimize/Maximize panel"></span></div>
+        <div class="tnt_right_buttons"><span class="tnt_refresh_btn" title="Refresh all cities"></span><span class="tnt_table_toggle_btn" title="Show buildings/resources"></span></div>
+    </div>
+    <div id="tnt_info_resources_content">
+        <table id="tnt_resources_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;">
+            <tbody>
+                <tr class="tnt_category_header">
+                    <th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;"></th>
+                    <th colspan="2" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City Info</th>
+                    <th colspan="7" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resources</th>
+                </tr>
+                <tr class="tnt_subcategory_header">
+                    <th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
+                        <div style="position:relative; min-width:120px; text-align:center;"><span style="display:inline-block; text-align:center; min-width:60px;">City</span></div>
+                    </th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=0&amp;helpId=1');return false;" title="Learn more about Town Hall..."><img class="tnt_resource_icon tnt_building_icon" title="Town Hall" src="/cdn/all/both/img/city/townhall_l.png"></a></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Population" src="//gf3.geo.gfsrv.net/cdn2f/6d077d68d9ae22f9095515f282a112.png" style="width: 10px;"></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Citizens" src="/cdn/all/both/resources/icon_population.png"></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Wood" src="/cdn/all/both/resources/icon_wood.png"></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png"></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png"></th>
+                    <th class="tnt_center" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png"></th>
+                </tr>
+                <tr class="tnt_selected">
+                    <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15812"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Chonburi</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">33</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">4,230</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">1,335</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="67,921.92">5,567,266</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">21,097</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="75,710.88">149,519</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">2,050</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">59,486</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15813"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Bang Saen</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">31</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,642</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">831</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="59,431.68">5,567,266</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">69,199</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="69,864.48">62,173</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">6,022</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">56,180</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15816"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Korat</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">30</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,219</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">605</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="53,568">3,558,388</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">19,075</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="63,021.84">266,842</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">7,952</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">112,758</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15818"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Phanat Nikhom</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">30</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,476</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">689</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="59,431.68">5,372,033</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">9,301</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="69,279.84">72,874</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">5,579</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">87,181</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15820"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Chiang Mai</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">31</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,642</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">831</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="57,888">3,177,157</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">45,307</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="68,695.2">295,609</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">2,972</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">176,540</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15821"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Laem Chabang</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">30</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,476</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">689</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="59,431.68">5,567,266</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">5,725</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="69,279.84">84,834</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">5,006</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">86,295</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15822"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Phan Thong</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">29</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,312</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">548</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="58,659.84">3,982,861</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">8,273</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="68,695.2">214,486</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">5,379</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">75,425</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15814"><img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png"> Ayutthaya</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">30</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,476</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">937</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="51,308.64">3,558,388</span></td>
+                    <td class="tnt_wine" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="72,405.216">208,551</span></td>
+                    <td class="tnt_marble storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">280</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">5,055</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">77,118</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15817"><img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png"> Phuket</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">29</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,312</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">796</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="51,308.64">2,834,782</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="71,783.712">29,866</span></td>
+                    <td class="tnt_marble storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">3,510</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">1,832</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">119,522</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15819"><img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png"> Pak Chong</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">29</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">3,312</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">545</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="57,888">2,527,324</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">40,896</span></td>
+                    <td class="tnt_marble storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">16,456</span></td>
+                    <td class="tnt_crystal" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="69,279.84">316,357</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">50,911</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="39303"><img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png"> Ang Sila</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">6</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">482</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">22</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">405,071</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">23,202</span></td>
+                    <td class="tnt_marble" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">203,919</span></td>
+                    <td class="tnt_crystal" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="7,360">112,343</span></td>
+                    <td class="tnt_sulfur storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">26,521</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15815"><img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png"> Hua Hin</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;">29</td>
+                    <td class="tnt_population" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">2,535</td>
+                    <td class="tnt_citizens" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;">941</td>
+                    <td class="tnt_wood storage_max" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="34,058.88">2,527,324</span></td>
+                    <td class="tnt_wine storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">20,048</span></td>
+                    <td class="tnt_marble storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">383</span></td>
+                    <td class="tnt_crystal storage_min" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;"><span title="0">21,466</span></td>
+                    <td class="tnt_sulfur" style="padding:4px;text-align:right;border:1px solid #000;background-color:#fdf7dd;font-weight:bold;"><span title="48,541.68">1,340,824</span></td>
+                </tr>
+                <tr>
+                    <td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>
+                    <td style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">38,113.456</td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">8,768.925</td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">44,645,126</td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">500,540</td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">1,370,885</td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">492,013</td>
+                    <td class="tnt_total" style="padding:4px;text-align:right;border:1px solid #000;background-color:#faeac6;font-weight:bold;">2,268,761</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="tnt_info_buildings_content" style="display:none;">
+        <table id="tnt_buildings_table" border="1" style="border-collapse:collapse;font:12px Arial,Helvetica,sans-serif;background-color:#fdf7dd;">
+            <tbody>
+                <tr class="tnt_category_header">
+                    <th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;width:60px;"></th>
+                    <th class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">City</th>
+                    <th colspan="4" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Government</th>
+                    <th colspan="1" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Storage</th>
+                    <th colspan="4" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Trade</th>
+                    <th colspan="5" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Culture</th>
+                    <th colspan="5" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resource Reducers</th>
+                    <th colspan="5" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Resource Enhancers</th>
+                    <th colspan="4" class="tnt_category_header" style="background-color:#DBBE8C;border: 1px solid #000;padding:4px;font-weight:bold;text-align:center;">Military</th>
+                </tr>
+                <tr class="tnt_subcategory_header">
+                    <th class="tnt_center tnt_bold" style="position:relative;text-align:center;padding:4px;font-weight:bold;border:1px solid #000;background-color:#faeac6;">
+                        <div style="position:relative; min-width:120px; text-align:center;"><span style="display:inline-block; text-align:center; min-width:60px;">City</span></div>
+                    </th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=0&amp;helpId=1');return false;" title="Learn more about Town Hall..."><img class="tnt_resource_icon tnt_building_icon" title="Town Hall" src="/cdn/all/both/img/city/townhall_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=11&amp;helpId=1');return false;" title="Learn more about Palace..."><img class="tnt_resource_icon tnt_building_icon" title="Palace" src="/cdn/all/both/img/city/palace_l.png"></a><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=17&amp;helpId=1');return false;" title="Learn more about Governor's Residence..."><img class="tnt_resource_icon tnt_building_icon" title="Governor's Residence" src="/cdn/all/both/img/city/palaceColony_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=12&amp;helpId=1');return false;" title="Learn more about Embassy..."><img class="tnt_resource_icon tnt_building_icon" title="Embassy" src="/cdn/all/both/img/city/embassy_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=35&amp;helpId=1');return false;" title="Learn more about Chronos' Forge..."><img class="tnt_resource_icon tnt_building_icon" title="Chronos' Forge" src="/cdn/all/both/img/city/chronosForge_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=7&amp;helpId=1');return false;" title="Learn more about Warehouse..."><img class="tnt_resource_icon tnt_building_icon" title="Warehouse" src="/cdn/all/both/img/city/warehouse_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=3&amp;helpId=1');return false;" title="Learn more about Trading Port..."><img class="tnt_resource_icon tnt_building_icon" title="Trading Port" src="/cdn/all/both/img/city/port_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=33&amp;helpId=1');return false;" title="Learn more about Dockyard..."><img class="tnt_resource_icon tnt_building_icon" title="Dockyard" src="/cdn/all/both/img/city/dockyard_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=32&amp;helpId=1');return false;" title="Learn more about Sea Chart Archive..."><img class="tnt_resource_icon tnt_building_icon" title="Sea Chart Archive" src="/cdn/all/both/img/city/marinechartarchive_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=13&amp;helpId=1');return false;" title="Learn more about Trading Post..."><img class="tnt_resource_icon tnt_building_icon" title="Trading Post" src="/cdn/all/both/img/city/branchoffice_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=4&amp;helpId=1');return false;" title="Learn more about Academy..."><img class="tnt_resource_icon tnt_building_icon" title="Academy" src="/cdn/all/both/img/city/academy_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=10&amp;helpId=1');return false;" title="Learn more about Museum..."><img class="tnt_resource_icon tnt_building_icon" title="Museum" src="/cdn/all/both/img/city/museum_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=9&amp;helpId=1');return false;" title="Learn more about Tavern..."><img class="tnt_resource_icon tnt_building_icon" title="Tavern" src="/cdn/all/both/img/city/taverne_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=28&amp;helpId=1');return false;" title="Learn more about Temple..."><img class="tnt_resource_icon tnt_building_icon" title="Temple" src="/cdn/all/both/img/city/temple_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=34&amp;helpId=1');return false;" title="Learn more about Gods' Shrine..."><img class="tnt_resource_icon tnt_building_icon" title="Gods' Shrine" src="/cdn/all/both/img/city/shrineOfOlympus_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=23&amp;helpId=1');return false;" title="Learn more about Carpenter..."><img class="tnt_resource_icon tnt_building_icon" title="Carpenter" src="/cdn/all/both/img/city/carpentering_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=24&amp;helpId=1');return false;" title="Learn more about Architect's Office..."><img class="tnt_resource_icon tnt_building_icon" title="Architect's Office" src="/cdn/all/both/img/city/architect_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=26&amp;helpId=1');return false;" title="Learn more about Wine Press..."><img class="tnt_resource_icon tnt_building_icon" title="Wine Press" src="/cdn/all/both/img/city/vineyard_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=25&amp;helpId=1');return false;" title="Learn more about Optician..."><img class="tnt_resource_icon tnt_building_icon" title="Optician" src="/cdn/all/both/img/city/optician_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=27&amp;helpId=1');return false;" title="Learn more about Firework Test Area..."><img class="tnt_resource_icon tnt_building_icon" title="Firework Test Area" src="/cdn/all/both/img/city/fireworker_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=18&amp;helpId=1');return false;" title="Learn more about Forester's House..."><img class="tnt_resource_icon tnt_building_icon" title="Forester's House" src="/cdn/all/both/img/city/forester_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=19&amp;helpId=1');return false;" title="Learn more about Stonemason..."><img class="tnt_resource_icon tnt_building_icon" title="Stonemason" src="/cdn/all/both/img/city/stonemason_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=21&amp;helpId=1');return false;" title="Learn more about Winegrower..."><img class="tnt_resource_icon tnt_building_icon" title="Winegrower" src="/cdn/all/both/img/city/winegrower_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=20&amp;helpId=1');return false;" title="Learn more about Glassblower..."><img class="tnt_resource_icon tnt_building_icon" title="Glassblower" src="/cdn/all/both/img/city/glassblowing_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=22&amp;helpId=1');return false;" title="Learn more about Alchemist's Tower..."><img class="tnt_resource_icon tnt_building_icon" title="Alchemist's Tower" src="/cdn/all/both/img/city/alchemist_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=8&amp;helpId=1');return false;" title="Learn more about Wall..."><img class="tnt_resource_icon tnt_building_icon" title="Wall" src="/cdn/all/both/img/city/wall.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=6&amp;helpId=1');return false;" title="Learn more about Barracks..."><img class="tnt_resource_icon tnt_building_icon" title="Barracks" src="/cdn/all/both/img/city/barracks_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=16&amp;helpId=1');return false;" title="Learn more about Hideout..."><img class="tnt_resource_icon tnt_building_icon" title="Hideout" src="/cdn/all/both/img/city/safehouse_l.png"></a></th>
+                    <th class="tnt_center tnt_bold" style="padding:4px;text-align:center;font-weight:bold;border:1px solid #000;background-color:#faeac6;"><a href="#" onclick="ajaxHandlerCall('?view=buildingDetail&amp;buildingId=5&amp;helpId=1');return false;" title="Learn more about Shipyard..."><img class="tnt_resource_icon tnt_building_icon" title="Shipyard" src="/cdn/all/both/img/city/shipyard_l.png"></a></th>
+                </tr>
+                <tr class="tnt_selected">
+                    <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15812"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Chonburi</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 33">33</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Palace (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 32\nPos 8: lvl 32\nPos 9: lvl 32">96</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 33\nPos 2: lvl 32">65</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 19">19</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 23">23</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 15">15</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 23: lvl 38">38</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 28">28</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 28">28</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 28">28</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 38">38</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 43">43</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15813"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Bang Saen</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 31">31</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 32\nPos 8: lvl 32\nPos 9: lvl 32">96</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 32\nPos 2: lvl 32">64</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 15">15</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 40">40</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 49">49</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 49">49</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 27">27</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 28">28</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 36">36</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15816"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Korat</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 28\nPos 8: lvl 28\nPos 9: lvl 28">84</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 27\nPos 2: lvl 23">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 10">10</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 14">14</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 37">37</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 47">47</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 25">25</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 25">25</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 34">34</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15818"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Phanat Nikhom</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 32\nPos 8: lvl 31\nPos 9: lvl 32">95</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 32\nPos 2: lvl 30">62</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 22">22</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 14">14</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 49">49</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 27">27</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 27">27</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 35">35</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 43">43</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15820"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Chiang Mai</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 31">31</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 2">2</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 27\nPos 8: lvl 27\nPos 9: lvl 27">81</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 31">31</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 17">17</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 23">23</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 15">15</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 46">46</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 25">25</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 33">33</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 2: lvl 29">29</td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15821"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Laem Chabang</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 2">2</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 32\nPos 8: lvl 32\nPos 9: lvl 32">96</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 32\nPos 2: lvl 30">62</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 22">22</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 14">14</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 27">27</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 27">27</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 31">31</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 44">44</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15822"><img class="tnt_resource_icon" title="Marble" src="/cdn/all/both/resources/icon_marble.png"> Phan Thong</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 2">2</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 29\nPos 8: lvl 29\nPos 9: lvl 29">87</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 27\nPos 2: lvl 26">53</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 19">19</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 13">13</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 14">14</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 21">21</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 48">48</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 26">26</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 41">41</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15814"><img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png"> Ayutthaya</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 2">2</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 28\nPos 8: lvl 28\nPos 9: lvl 28">84</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 2: lvl 23">23</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 17">17</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 22">22</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 12">12</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 23: lvl 33">33</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 44">44</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 41">41</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 40">40</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 24">24</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 25">25</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 24">24</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15817"><img class="tnt_resource_icon" title="Wine" src="/cdn/all/both/resources/icon_wine.png"> Phuket</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 26\nPos 8: lvl 26\nPos 9: lvl 26">78</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 27\nPos 2: lvl 25">52</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 14">14</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 22">22</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 13">13</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 23: lvl 31">31</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 28">28</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 43">43</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 41">41</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 24">24</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 24">24</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 25">25</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 36">36</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15819"><img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png"> Pak Chong</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 25\nPos 8: lvl 25\nPos 9: lvl 25">75</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 27\nPos 2: lvl 22">49</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 12">12</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 12">12</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 23: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 45">45</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 47">47</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 25">25</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 27">27</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 20">20</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 28">28</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 33">33</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="39303"><img class="tnt_resource_icon" title="Crystal" src="/cdn/all/both/resources/icon_crystal.png"> Ang Sila</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 6">6</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 7">7</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 2">2</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 7: lvl 11\nPos 8: lvl 11\nPos 9: lvl 10">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 5">5</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 23: lvl 5">5</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 9">9</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                </tr>
+                <tr>
+                    <td class="tnt_city tnt_left tnt_construction" style="padding:4px;text-align:left;border:1px solid #000;background-color:#fdf7dd;"><a href="#" class="tnt_city_link" data-city-id="15815"><img class="tnt_resource_icon" title="Sulfur" src="/cdn/all/both/resources/icon_sulfur.png"> Hua Hin</a></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 0: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Governor's Residence (Pos 19): lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 13: lvl 3">3</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 8: lvl 25\nPos 9: lvl 25">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 1: lvl 23">23</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 24: lvl 1">1</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 10: lvl 13">13</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 6: lvl 23">23</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 15: lvl 11">11</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 23: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 5: lvl 29">29</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 22: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 21: lvl 50">50</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 3: lvl 43">43</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 18: lvl 46">46</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 20: lvl 35">35</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 11: lvl 22">22</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 16: lvl 22">22</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 14: lvl 21">21</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 4: lvl 30">30</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 12: lvl 32">32</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#fdf7dd;" title="Pos 2: lvl 30">30</td>
+                </tr>
+                <tr>
+                    <td class="tnt_total" style="padding:4px;text-align:left;border:1px solid #000;background-color:#faeac6;font-weight:bold;">Total</td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                    <td class="tnt_building_level" style="padding:4px;text-align:center;border:1px solid #000;background-color:#faeac6;"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
